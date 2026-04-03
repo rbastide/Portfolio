@@ -141,8 +141,8 @@ const Model = {
             { 
                 title: "ERP Centralisé", category: "Fullstack", level: 4, 
                 desc: "Application web de gestion centralisée des fiches ressources à destination des professeurs.", 
-                role: "Développeur Fullstack — Développement de l'API REST avec SpringBoot et de l'interface front-end réactive en Vue.js.",
-                livrables: [{ nom: "Dépôt GitHub", url: "https://github.com/rbastide/sae_erp" }],
+                role: "Développeur Fullstack (orienté résolution de problèmes) — Développement de la connexion grâce à un CAS, création de l'API REST avec SpringBoot et du front-end en Vue.js.",
+                livrables: [{ nom: "Dépôt GitHub", url: "https://github.com/rbastide/Erp" }],
                 tech: ["Vue.js", "Docker", "SpringBoot"], tags: ["AC 12.04", "AC 41.03"] 
             },
             { 

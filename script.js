@@ -1,20 +1,23 @@
+// ============================================
+// MODEL — Data Layer
+// ============================================
 const Model = {
     levelDefinitions: {
-        1: { label: "Compétences Basiques", color: "bg-blue-400", desc: "Niveau novice." },
-        2: { label: "Compétences Acquises", color: "bg-green-400", desc: "Niveau intermédiaire." },
-        3: { label: "Compétences Maîtrisées", color: "bg-indigo-500", desc: "Niveau avancé." },
-        4: { label: "Compétences Expertes", color: "bg-purple-600", desc: "Niveau expert." }
+        1: { label: "Basique", color: "level-1" },
+        2: { label: "Acquis", color: "level-2" },
+        3: { label: "Maîtrisé", color: "level-3" },
+        4: { label: "Expert", color: "level-4" }
     },
     data: {
         profile: {
             name: "Bastide Rémi",
-            role: "Développeur Junior & Administrateur Système",
+            role: "Développeur Junior // Administrateur Système",
             bio: "Étudiant en 2ème année de BUT Informatique. Je conçois des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.",
-            stats: { projects: 12, years: 2, cups_of_coffee: 450 }
+            stats: { projects: 6, years: 2, level: "N2" }
         },
         competences: [
             {
-                id: 1, title: "Réaliser", icon: "code-2", level: 4, description: "Concevoir, coder, tester et intégrer.",
+                id: 1, title: "Réaliser", icon: "&lt;/&gt;", level: 4, description: "Concevoir, coder, tester et intégrer.",
                 acs: [
                     { code: "AC 11.01", label: "Implémenter des conceptions simples" },
                     { code: "AC 11.02", label: "Élaborer des conceptions simples" },
@@ -30,7 +33,7 @@ const Model = {
                 }
             },
             {
-                id: 2, title: "Optimiser", icon: "zap", level: 3, description: "Améliorer performances et algorithmes.",
+                id: 2, title: "Optimiser", icon: "⚡", level: 3, description: "Améliorer performances et algorithmes.",
                 acs: [
                     { code: "AC 21.01", label: "Analyser un problème" },
                     { code: "AC 21.02", label: "Comparer des algorithmes" },
@@ -44,7 +47,7 @@ const Model = {
                 }
             },
             {
-                id: 3, title: "Administrer", icon: "server", level: 3, description: "Gérer systèmes et réseaux.",
+                id: 3, title: "Administrer", icon: "◈", level: 3, description: "Gérer systèmes et réseaux.",
                 acs: [
                     { code: "AC 31.01", label: "Installer poste de travail" },
                     { code: "AC 31.02", label: "Réseau local simple" },
@@ -60,7 +63,7 @@ const Model = {
                 }
             },
             {
-                id: 4, title: "Gérer", icon: "database", level: 3, description: "Exploiter les données d'entreprise.",
+                id: 4, title: "Gérer", icon: "⬡", level: 3, description: "Exploiter les données d'entreprise.",
                 acs: [
                     { code: "AC 41.01", label: "SQL et Mises à jour" },
                     { code: "AC 41.02", label: "Reporting simple" },
@@ -76,7 +79,7 @@ const Model = {
                 }
             },
             {
-                id: 5, title: "Conduire", icon: "kanban", level: 4, description: "Gestion de projet et besoins.",
+                id: 5, title: "Conduire", icon: "▦", level: 4, description: "Gestion de projet et besoins.",
                 acs: [
                     { code: "AC 51.01", label: "Identifier besoins métiers" },
                     { code: "AC 51.02", label: "Cycle de développement" },
@@ -91,7 +94,7 @@ const Model = {
                 }
             },
             {
-                id: 6, title: "Collaborer", icon: "users", level: 4, description: "Travail d'équipe et communication.",
+                id: 6, title: "Collaborer", icon: "◎", level: 4, description: "Travail d'équipe et communication.",
                 acs: [
                     { code: "AC 61.01", label: "Communication écrite/orale" },
                     { code: "AC 61.02", label: "Droit et éthique" },
@@ -110,356 +113,603 @@ const Model = {
             { 
                 title: "Jeu Latice", category: "Réaliser", level: 3, 
                 desc: "Jeu de société complet développé en Java.", 
-                role: "Développeur Lead - Conception de l'algorithme de validation des coups et création de l'interface utilisateur en JavaFX.",
-                livrables: [{ nom: "Dépôt GitHub", url: "#" }, { nom: "Documentation JavaDoc", url: "#" }],
+                role: "Développeur Lead — Conception de l'algorithme de validation des coups et création de l'interface utilisateur en JavaFX.",
+                livrables: [{ nom: "Dépôt GitHub", url: "https://github.com/rbastide/latice" }],
                 tech: ["Java", "JavaFX"], tags: ["AC 11.01", "AC 12.03"] 
             },
             { 
                 title: "Optimisation SQL", category: "Optimiser", level: 3, 
                 desc: "Amélioration des requêtes SQL et refonte partielle d'une base de données existante.", 
-                role: "Administrateur de la Base - Analyse des goulets d'étranglement, restructuration du schéma et ajout d'index.",
-                livrables: [{ nom: "Scripts SQL", url: "#" }, { nom: "Rapport d'optimisation", url: "#" }],
+                role: "Administrateur de la Base — Analyse des goulets d'étranglement, restructuration du schéma et ajout d'index.",
+                livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/1MkoOj10LHxPi9Ie-tQKfuMqT1fgx-wu88fBNFWs4SAw/edit?usp=sharing" }],
                 tech: ["Python", "SQL"], tags: ["AC 21.01", "AC 42.01"] 
             },
             { 
                 title: "Réseau Sécurisé", category: "Administrer", level: 4, 
                 desc: "Mise en place d'une architecture réseau virtuelle complète et sécurisée.", 
-                role: "Administrateur Système - Configuration des machines virtuelles, du routage interne et des règles iptables.",
-                livrables: [{ nom: "Schéma Topologique", url: "#" }, { nom: "Document de recette", url: "#" }],
+                role: "Administrateur Système — Configuration des machines virtuelles, du routage interne et des règles iptables.",
+                livrables: [{ nom: "Dépôt GitHub", url: "https://github.com/rbastide/Reseau" }],
                 tech: ["Linux", "SSH"], tags: ["AC 31.03", "AC 32.04"] 
             },
             { 
                 title: "Bibliothèque", category: "Gérer", level: 4, 
                 desc: "Création de scripts d'automatisation pour la gestion d'une bibliothèque.", 
-                role: "Développeur de Scripts - Automatisation du processus de sauvegarde des bases et gestion des logs applicatifs.",
-                livrables: [{ nom: "Scripts Bash", url: "#" }],
+                role: "Développeur de Scripts — Automatisation du processus de sauvegarde des bases et gestion des logs applicatifs.",
+                livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/1L1QfFlK6oreZq4vJf2hF_2ptG4T0Kd8z_afSNKuYrWo/edit?tab=t.0" }],
                 tech: ["Bash"], tags: ["AC 41.01"] 
             },
             { 
                 title: "ERP Centralisé", category: "Fullstack", level: 4, 
                 desc: "Application web de gestion centralisée des fiches ressources à destination des professeurs.", 
-                role: "Développeur Fullstack - Développement de l'API REST avec SpringBoot et de l'interface front-end réactive en Vue.js.",
-                livrables: [{ nom: "Lien de l'application", url: "#" }, { nom: "Code Source Front", url: "#" }],
+                role: "Développeur Fullstack — Développement de l'API REST avec SpringBoot et de l'interface front-end réactive en Vue.js.",
+                livrables: [{ nom: "Dépôt GitHub", url: "https://github.com/rbastide/sae_erp" }],
                 tech: ["Vue.js", "Docker", "SpringBoot"], tags: ["AC 12.04", "AC 41.03"] 
             },
             { 
                 title: "Gestion de projet", category: "Conduire", level: 4, 
                 desc: "Création complète d'un plan de projet pour une entreprise fictive dans le cadre d'un module d'études.", 
-                role: "Scrum Master - Découpage du projet en user stories, animation des rituels agiles et suivi de l'avancement global.",
-                livrables: [{ nom: "Présentation de soutenance", url: "#" }, { nom: "Tableau Trello/Jira", url: "#" }],
-                tech: ["Méthodes Agiles","PowerPoint"], tags: ["AC 51.03", "AC 52.02"] 
+                role: "Scrum Master — Découpage du projet en user stories, animation des rituels agiles et suivi de l'avancement global.",
+                livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/104-1ie-kug6LXTbefCX5LY-iyqoJ5MWg1y1rLxulLbw/edit?usp=sharing" }],
+                tech: ["Méthodes Agiles", "PowerPoint"], tags: ["AC 51.03", "AC 52.02"] 
             }
         ]
     },
     getData() { return this.data; },
-    getLevelInfo(levelNumber) {
-        return this.levelDefinitions[levelNumber] || { label: "Non défini", color: "bg-gray-300" };
-    }
+    getLevelInfo(n) { return this.levelDefinitions[n] || { label: "—", color: "" }; }
 };
 
-const View = {
-    appContainer: document.getElementById('app'),
-    navContainer: document.getElementById('desktop-nav'),
 
-    init() {
-        this.renderNav();
-        this.renderAllSections();
+// ============================================
+// VIEW — Rendering Layer
+// ============================================
+const View = {
+    app: document.getElementById('app'),
+
+    renderAll() {
+        const d = Model.getData();
+        this.app.innerHTML = 
+            this.heroHTML(d) +
+            this.skillsHTML(d) +
+            this.projectsHTML(d) +
+            this.contactHTML(d);
     },
 
-    renderNav() {
-        const links = [
-            { id: 'home', label: 'Accueil' },
-            { id: 'skills', label: 'Compétences' },
-            { id: 'projects', label: 'Projets' },
-            { id: 'contact', label: 'Contact' }
-        ];
-        
-        let navHtml = links.map(link => `
-            <a href="#${link.id}" class="hidden md:inline hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
-                ${link.label}
-            </a>
+    heroHTML(d) {
+        const p = d.profile;
+        return `
+        <section id="home">
+            <div class="hero-content">
+                <div class="hero-pre reveal">
+<span class="cmd">&gt;</span> INIT.FIRMWARE // BASTIDE_RÉMI_
+<span class="cmd">&gt;</span> [OK] MOD_DÉVELOPPEMENT......... [ACTIVE]
+<span class="cmd">&gt;</span> [OK] MOD_ADMINISTRATION........ [ONLINE]
+<span class="cmd">&gt;</span> [OK] MOD_GESTION_PROJET........ [LOADED]
+<span class="cmd">&gt;</span> SILICON_READY. HANDING_CONTROL_TO_KERNEL...
+                </div>
+                <h1 class="hero-name reveal delay-1">BASTIDE<br><span class="accent">RÉMI;</span></h1>
+                <p class="hero-role reveal delay-2">${p.role}</p>
+                <p class="hero-bio reveal delay-2">${p.bio}</p>
+                <div class="hero-stats reveal delay-3">
+                    <div class="stat">
+                        <span class="stat-value">${p.stats.projects}</span>
+                        <span class="stat-label">Projets</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">${p.stats.years}</span>
+                        <span class="stat-label">Années</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">${p.stats.level}</span>
+                        <span class="stat-label">Niveau</span>
+                    </div>
+                </div>
+                <a href="#projects" class="hero-cta reveal delay-4">
+                    Découvrir mon travail <span class="arrow">↓</span>
+                </a>
+            </div>
+        </section>`;
+    },
+
+    skillsHTML(d) {
+        const cards = d.competences.map((c, i) => {
+            const info = Model.getLevelInfo(c.level);
+            const fill = c.level / 4;
+            return `
+            <div class="skill-card reveal delay-${(i % 3) + 1}">
+                <div class="skill-card-header">
+                    <div class="skill-icon">${c.icon}</div>
+                    <span class="skill-level ${info.color}">NIV.${c.level} — ${info.label.toUpperCase()}</span>
+                </div>
+                <h3 class="skill-title">${c.title}</h3>
+                <p class="skill-desc">${c.description}</p>
+                <div class="skill-bar-track">
+                    <div class="skill-bar-fill" style="--fill: ${fill}" data-fill="${fill}"></div>
+                </div>
+                <button class="skill-details-toggle" onclick="Controller.toggleDetails(${c.id})">
+                    <span>// voir les détails</span>
+                    <span class="chevron" id="chevron-${c.id}">▼</span>
+                </button>
+                <div class="skill-details" id="details-${c.id}">
+                    <h4>Apprentissages Critiques</h4>
+                    ${c.acs.map(ac => `<div class="ac-item"><span class="ac-code">${ac.code}</span><span class="ac-label">${ac.label}</span></div>`).join('')}
+                    <div class="reflexion-block">
+                        <h4>Analyse Réflexive</h4>
+                        <p><strong>Difficultés :</strong> ${c.reflexion.difficultes}</p>
+                        <p><strong>Savoirs :</strong> ${c.reflexion.savoirs}</p>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+
+        return `
+        <section id="skills">
+            <div class="section-header reveal">
+                <span class="section-tag">&gt; cat /skills</span>
+                <h2 class="section-title">Compé<span class="highlight">tences</span></h2>
+                <p class="section-desc">Une expertise technique acquise au fil des projets et validée par le référentiel national.</p>
+            </div>
+            <div class="skills-grid">${cards}</div>
+        </section>`;
+    },
+
+    projectsHTML(d) {
+        const cards = d.projects.map((p, i) => `
+            <div class="project-card reveal delay-${(i % 2) + 1}">
+                <div class="project-meta">
+                    <span class="project-category">${p.category}</span>
+                    <span class="project-level">N${p.level}</span>
+                </div>
+                <h3 class="project-title">${p.title}</h3>
+                <div class="project-info">
+                    <p><strong>Description :</strong> ${p.desc}</p>
+                    <p><strong>Mon rôle :</strong> ${p.role}</p>
+                </div>
+                <div class="project-livrables">
+                    <div class="project-livrables-label">Livrables :</div>
+                    ${p.livrables.map(l => `<a href="${l.url}" target="_blank" class="livrable-link">↗ ${l.nom}</a>`).join('')}
+                </div>
+                <div class="project-tags">
+                    ${p.tech.map(t => `<span class="tag-tech">${t}</span>`).join('')}
+                    ${(p.tags || []).map(t => `<span class="tag-ac">${t}</span>`).join('')}
+                </div>
+            </div>
         `).join('');
 
-        navHtml += `
-            <button onclick="Controller.toggleTheme()" class="ml-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
-                <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-            </button>
-        `;
-        
-        this.navContainer.innerHTML = navHtml;
-    },
-
-    renderAllSections() {
-        const data = Model.getData();
-        let html = '';
-        html += this.getHomeHTML(data);
-        html += this.getSkillsHTML(data);
-        html += this.getProjectsHTML(data);
-        html += this.getContactHTML(data);
-        
-        this.appContainer.innerHTML = html;
-        lucide.createIcons();
-        Controller.initObserver();
-    },
-
-    getHomeHTML(data) {
         return `
-            <section id="home" class="min-h-screen flex flex-col justify-center items-center py-20">
-                <div class="text-center max-w-3xl mx-auto px-4 reveal">
-                    <div class="mb-8 inline-block p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-3xl shadow-sm rotate-3 hover:rotate-0 transition-all duration-500">
-                        <i data-lucide="terminal" class="w-16 h-16 text-indigo-600 dark:text-indigo-400"></i>
-                    </div>
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white mb-6 tracking-tight leading-tight transition-colors">
-                        ${data.profile.name}
-                    </h1>
-                    <div class="inline-block bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2 rounded-full text-base font-medium mb-8 shadow-lg shadow-indigo-200 dark:shadow-indigo-900/20 reveal delay-100 transition-colors">
-                        ${data.profile.role}
-                    </div>
-                    <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-12 reveal delay-200 transition-colors">
-                        ${data.profile.bio}
-                    </p>
-                    <div class="grid grid-cols-3 gap-8 mb-16 border-t border-b border-slate-100 dark:border-slate-800 py-8 reveal delay-300 transition-colors">
-                        <div><span class="block text-4xl font-bold text-slate-900 dark:text-white">${data.profile.stats.projects}</span><span class="text-sm text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Projets</span></div>
-                        <div><span class="block text-4xl font-bold text-slate-900 dark:text-white">${data.profile.stats.years}</span><span class="text-sm text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Années</span></div>
-                        <div><span class="block text-4xl font-bold text-slate-900 dark:text-white">N2</span><span class="text-sm text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Niveau</span></div>
-                    </div>
-                    <div class="reveal delay-300">
-                        <a href="#projects" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-slate-900 dark:bg-white dark:text-slate-900 rounded-full hover:bg-slate-800 dark:hover:bg-slate-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 dark:focus:ring-white dark:focus:ring-offset-slate-900">
-                            Découvrir mon travail
-                            <i data-lucide="arrow-down" class="ml-2 w-5 h-5"></i>
-                        </a>
-                    </div>
+        <section id="projects">
+            <div class="projects-header reveal">
+                <div class="section-header" style="margin-bottom:0">
+                    <span class="section-tag">&gt; ls ~/projects</span>
+                    <h2 class="section-title">Projets <span class="highlight">Récents</span></h2>
+                    <p class="section-desc">Sélection de réalisations concrètes en développement et administration.</p>
                 </div>
-            </section>
-        `;
-    },
-
-    getSkillsHTML(data) {
-        const skillsCards = data.competences.map((comp, index) => {
-            const levelInfo = Model.getLevelInfo(comp.level);
-            const percentage = (comp.level / 4) * 100;
-            const delayClass = index % 3 === 0 ? '' : (index % 3 === 1 ? 'delay-100' : 'delay-200');
-
-            return `
-            <div class="group bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 reveal ${delayClass}">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-2xl text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 dark:group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
-                        <i data-lucide="${comp.icon}" class="w-8 h-8"></i>
-                    </div>
-                    <span class="text-sm font-bold px-3 py-1 rounded-full ${levelInfo.color} text-white">
-                        Niv ${comp.level}
-                    </span>
-                </div>
-                
-                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">${comp.title}</h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-6 line-clamp-2 transition-colors">${comp.description}</p>
-                
-                <div class="mb-6">
-                    <div class="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden level-bar-container">
-                        <div class="h-full ${levelInfo.color} level-bar-fill" style="--scale: ${percentage/100}"></div>
-                    </div>
-                </div>
-
-                <div class="border-t border-slate-50 dark:border-slate-700 pt-4 transition-colors">
-                    <button onclick="Controller.toggleDetails(${comp.id})" class="flex items-center justify-between w-full text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group-btn">
-                        <span>Voir les détails</span>
-                        <i id="icon-${comp.id}" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                    </button>
-                    <div id="details-${comp.id}" class="hidden mt-4 space-y-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-sm transition-colors">
-                        <div class="space-y-2">
-                            <h4 class="font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-1 mb-2">Apprentissages Critiques</h4>
-                            ${comp.acs.map(ac => `<div class="flex gap-2"><span class="font-bold text-slate-700 dark:text-slate-300 min-w-[60px]">${ac.code}</span><span class="text-slate-600 dark:text-slate-400">${ac.label}</span></div>`).join('')}
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
-                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide text-xs">Analyse Réflexive</h4>
-                            <p class="text-slate-600 dark:text-slate-400"><strong class="text-slate-800 dark:text-slate-200">Difficultés :</strong> ${comp.reflexion.difficultes}</p>
-                            <p class="text-slate-600 dark:text-slate-400"><strong class="text-slate-800 dark:text-slate-200">Savoirs :</strong> ${comp.reflexion.savoirs}</p>
-                        </div>
-                    </div>
-                </div>
+                <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="github-link">
+                    Voir GitHub →
+                </a>
             </div>
-            `;
-        }).join('');
-
-        return `
-            <section id="skills" class="min-h-screen py-24 bg-slate-50/50 dark:bg-slate-900/50 transition-colors duration-300">
-                <div class="max-w-6xl mx-auto px-6">
-                    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
-                        <h2 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4 transition-colors">Compétences</h2>
-                        <p class="text-lg text-slate-500 dark:text-slate-400 transition-colors">Une expertise technique acquise au fil des projets et validée par le référentiel national.</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-                        ${skillsCards}
-                    </div>
-                </div>
-            </section>
-        `;
+            <div class="projects-grid">${cards}</div>
+        </section>`;
     },
 
-    getProjectsHTML(data) {
-        const projectsCards = data.projects.map((proj, index) => {
-            const delayClass = index % 2 === 0 ? '' : 'delay-100';
-            return `
-            <div class="relative group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-2xl transition-all duration-500 reveal ${delayClass}">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1">${proj.category}</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${proj.title}</h3>
-                        </div>
-                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-1 rounded transition-colors">N${proj.level}</span>
-                    </div>
-                    
-                    <div class="mb-6 space-y-2">
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed transition-colors"><strong class="text-slate-900 dark:text-slate-200">Description :</strong> ${proj.desc}</p>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed transition-colors"><strong class="text-slate-900 dark:text-slate-200">Mon rôle :</strong> ${proj.role}</p>
-                    </div>
-
-                    <div class="mb-6">
-                        <strong class="block text-sm text-slate-900 dark:text-slate-200 mb-2 transition-colors">Livrables :</strong>
-                        <div class="flex flex-wrap gap-2">
-                            ${proj.livrables.map(l => `<a href="${l.url}" target="_blank" class="inline-flex items-center text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white transition-colors duration-200">${l.nom}</a>`).join('')}
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-100 dark:border-slate-700 transition-colors">
-                        ${proj.tech.map(t => `<span class="px-3 py-1 bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-full border border-slate-200 dark:border-slate-600 transition-colors">${t}</span>`).join('')}
-                        ${proj.tags ? proj.tags.map(tag => `<span class="px-3 py-1 bg-slate-800 dark:bg-slate-600 text-white text-xs font-bold rounded-full transition-colors">${tag}</span>`).join('') : ''}
-                    </div>
-                </div>
+    contactHTML() {
+        return `
+        <section id="contact">
+            <div class="section-header reveal">
+                <span class="section-tag">&gt; ssh contact@bastide</span>
             </div>
-            `;
-        }).join('');
-
-        return `
-            <section id="projects" class="min-h-screen py-24">
-                <div class="max-w-6xl mx-auto px-6">
-                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal">
-                        <div class="max-w-2xl">
-                            <h2 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4 transition-colors">Projets Récents</h2>
-                            <p class="text-lg text-slate-500 dark:text-slate-400 transition-colors">Sélection de réalisations concrètes en développement et administration.</p>
-                        </div>
-                        <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors mt-4 md:mt-0">
-                            Voir GitHub <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+            <div class="contact-wrapper reveal delay-1">
+                <div class="contact-inner">
+                    <div class="contact-info">
+                        <h2 class="contact-title">Travaillons<br><span class="highlight">ensemble.</span></h2>
+                        <p class="contact-text">
+                            Je suis à la recherche d'une alternance ou d'un stage. Si mon profil vous intéresse, n'hésitez pas à me laisser un message.
+                        </p>
+                        <a href="mailto:remi.bastide29@gmail.com" class="contact-link">
+                            <span class="contact-link-icon">✉</span>
+                            <span>remi.bastide29@gmail.com</span>
                         </a>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        ${projectsCards}
-                    </div>
-                </div>
-            </section>
-        `;
-    },
-
-    getContactHTML(data) {
-        return `
-            <section id="contact" class="min-h-[80vh] flex items-center py-24 bg-slate-900 dark:bg-slate-950 text-white rounded-t-[3rem] mt-12 transition-colors duration-300">
-                <div class="max-w-4xl mx-auto px-6 w-full">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div class="reveal">
-                            <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Travaillons <br/><span class="text-indigo-400">ensemble.</span></h2>
-                            <p class="text-slate-400 text-lg mb-8 leading-relaxed">
-                                Je suis à la recherche d'une alternance ou d'un stage. Si mon profil vous intéresse, n'hésitez pas à me laisser un message.
-                            </p>
-                            <div class="space-y-4">
-                                <a href="mailto:remi.bastide@gmail.com" class="flex items-center gap-4 text-slate-300 hover:text-white transition-colors p-4 rounded-2xl bg-white/5 hover:bg-white/10">
-                                    <i data-lucide="mail" class="w-6 h-6 text-indigo-400"></i>
-                                    <span class="text-lg">remi.bastide@gmail.com</span>
-                                </a>
-                                <div class="flex gap-4 mt-8">
-                                    <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="p-4 bg-white/5 rounded-2xl hover:bg-indigo-600 transition-all duration-300 hover:scale-110"><i data-lucide="github" class="w-6 h-6"></i></a>
-                                    <a href="https://www.linkedin.com/in/bremi/" target="_blank" rel="noopener noreferrer" class="p-4 bg-white/5 rounded-2xl hover:bg-indigo-600 transition-all duration-300 hover:scale-110"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
-                                </div>
-                            </div>
+                        <div class="contact-socials">
+                            <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                            </a>
+                            <a href="https://www.linkedin.com/in/bremi/" target="_blank" rel="noopener noreferrer" class="social-btn" title="LinkedIn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                            </a>
                         </div>
-
-                        <form onsubmit="event.preventDefault(); alert('Message envoyé !');" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-8 rounded-3xl shadow-2xl reveal delay-200 transition-colors">
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-bold mb-2">Votre Nom</label>
-                                    <input type="text" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 rounded-xl border-transparent focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all outline-none" placeholder="John Doe">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold mb-2">Email</label>
-                                    <input type="email" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 rounded-xl border-transparent focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all outline-none" placeholder="john@example.com">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold mb-2">Message</label>
-                                    <textarea rows="4" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 rounded-xl border-transparent focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all outline-none" placeholder="Votre message..."></textarea>
-                                </div>
-                                <button class="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all transform hover:scale-[1.02]">
-                                    Envoyer
-                                </button>
-                            </div>
+                    </div>
+                    <div class="contact-form-wrap">
+                        <form onsubmit="event.preventDefault(); alert('Message envoyé !');">
+                            <label>Votre Nom</label>
+                            <input type="text" placeholder="John Doe">
+                            <label>Email</label>
+                            <input type="email" placeholder="john@example.com">
+                            <label>Message</label>
+                            <textarea rows="4" placeholder="Votre message..."></textarea>
+                            <button type="submit" class="submit-btn">&gt; Envoyer_</button>
                         </form>
                     </div>
                 </div>
-            </section>
-        `;
+            </div>
+        </section>`;
     }
 };
 
+
+// ============================================
+// CONTROLLER — Logic Layer
+// ============================================
 const Controller = {
     init() {
-        View.init();
+        this.runBootSequence().then(() => {
+            View.renderAll();
+            this.initObserver();
+            this.initNavHighlight();
+        });
+    },
+
+    async runBootSequence() {
+        const overlay = document.getElementById('boot-overlay');
+        const log = document.getElementById('boot-log');
+
+        // Skip boot on reduced motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            overlay.classList.add('hidden');
+            return;
+        }
+
+        const lines = [
+            { text: '> INIT.FIRMWARE // BASTIDE_RÉMI_', cls: 'line-info', delay: 100 },
+            { text: '', cls: '', delay: 200 },
+            { text: '> [OK] SPI_FLASH_UEFI_MOUNTED', cls: 'line-ok', delay: 80 },
+            { text: '> [OK] CPU_MICROCODE_PATCHED', cls: 'line-ok', delay: 80 },
+            { text: '> [OK] IMC_PCIe_LANES_CALIBRATED', cls: 'line-ok', delay: 80 },
+            { text: '', cls: '', delay: 150 },
+            { text: '> [OK] MOD_DÉVELOPPEMENT......... [ACTIVE]', cls: 'line-module', delay: 120 },
+            { text: '> [OK] MOD_ADMINISTRATION........ [ONLINE]', cls: 'line-module', delay: 120 },
+            { text: '> [OK] MOD_GESTION_PROJET........ [LOADED]', cls: 'line-module', delay: 120 },
+            { text: '> [OK] MOD_COLLABORATION......... [LOADED]', cls: 'line-module', delay: 120 },
+            { text: '', cls: '', delay: 200 },
+            { text: '> SILICON_READY. HANDING_CONTROL_TO_KERNEL...', cls: 'line-info', delay: 300 },
+            { text: '', cls: '', delay: 150 },
+            { text: '> Press F10 to load profile... █', cls: 'line-warn', delay: 400 },
+            { text: '', cls: '', delay: 100 },
+            { text: '> ./init-portfolio.sh', cls: 'line-info', delay: 600 },
+        ];
+
+        for (const line of lines) {
+            await this.sleep(line.delay);
+            const span = document.createElement('div');
+            span.className = line.cls;
+            span.textContent = line.text;
+            log.appendChild(span);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        await this.sleep(400);
+        overlay.classList.add('hidden');
+    },
+
+    sleep(ms) {
+        return new Promise(r => setTimeout(r, ms));
     },
 
     toggleDetails(id) {
-        const content = document.getElementById(`details-${id}`);
-        const icon = document.getElementById(`icon-${id}`);
-        content.classList.toggle('hidden');
-        icon.classList.toggle('rotated');
-    },
-
-    // Nouvelle fonction pour gérer le bouton de thème
-    toggleTheme() {
-        if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            localStorage.theme = 'light';
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.theme = 'dark';
-        }
+        const el = document.getElementById(`details-${id}`);
+        const chevron = document.getElementById(`chevron-${id}`);
+        const btn = chevron.closest('.skill-details-toggle');
+        
+        el.classList.toggle('open');
+        btn.classList.toggle('open');
     },
 
     initObserver() {
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Animate skill bars
+                    entry.target.querySelectorAll('.skill-bar-fill').forEach((bar, i) => {
+                        setTimeout(() => bar.classList.add('active'), i * 100);
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    },
+
+    initNavHighlight() {
+        const links = document.querySelectorAll('.nav-link[data-section]');
+        const sections = ['home', 'skills', 'projects', 'contact'].map(id => document.getElementById(id));
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                const el = entry.target;
                 if (entry.isIntersecting) {
-                    el.classList.add('active');
-                    try {
-                        el.querySelectorAll('.level-bar-fill').forEach((bar, idx) => {
-                            bar._shouldFill = true;
-                            setTimeout(() => {
-                                if (bar._shouldFill) bar.classList.add('fill-active');
-                            }, idx * 80);
-                        });
-                    } catch(e) {}
-                } else {
-                    el.classList.remove('active');
-                    try {
-                        el.querySelectorAll('.level-bar-fill').forEach((bar) => {
-                            bar._shouldFill = false;
-                            bar.classList.remove('fill-active');
-                        });
-                    } catch(e) {}
+                    links.forEach(l => l.classList.remove('active'));
+                    const active = document.querySelector(`.nav-link[data-section="${entry.target.id}"]`);
+                    if (active) active.classList.add('active');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.3 });
 
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
+        sections.forEach(s => { if (s) observer.observe(s); });
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => Controller.init());
+
+// ============================================
+// CHATBOT — ReyMysterio (local, no API)
+// ============================================
+const Chatbot = {
+    isOpen: false,
+    botName: 'REYMYSTERIO',
+
+    // Knowledge base built from Model data
+    kb: {
+        profil: {
+            keys: ['qui', 'rémi', 'remi', 'profil', 'présent', 'present', 'parcours', 'formation', 'étud', 'etud', 'but', 'informatique', 'toi', 'about', 'à propos', 'c\'est qui'],
+            answers: [
+                "Rémi Bastide est étudiant en 2ème année de BUT Informatique. Il est Développeur Junior & Administrateur Système. Il conçoit des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.",
+                "Bastide Rémi — 2ème année de BUT Informatique. Développeur Junior et Admin Système, il a déjà 6 projets à son actif et 2 ans d'expérience dans le domaine.",
+            ]
+        },
+        contact: {
+            keys: ['contact', 'mail', 'email', 'joindre', 'écrire', 'ecrire', 'recrut', 'embauche', 'linkedin', 'github', 'téléphone', 'telephone', 'adresse'],
+            answers: [
+                "Vous pouvez contacter Rémi par email : remi.bastide29@gmail.com. Il est aussi sur GitHub (github.com/rbastide) et LinkedIn (linkedin.com/in/bremi/).",
+                "Pour joindre Rémi → email : remi.bastide29@gmail.com | GitHub : github.com/rbastide | LinkedIn : linkedin.com/in/bremi/. N'hésitez pas, il est très réactif !",
+            ]
+        },
+        alternance: {
+            keys: ['alternance', 'stage', 'recherche', 'disponib', 'recrut', 'embauche', 'travail', 'poste', 'candidat', 'cv', 'hiring', 'hire'],
+            answers: [
+                "Rémi est actuellement à la recherche d'une alternance ou d'un stage ! Si son profil vous intéresse, contactez-le à remi.bastide29@gmail.com.",
+                "Bonne nouvelle, Rémi cherche une alternance ou un stage en ce moment. Vous pouvez le contacter via le formulaire en bas de page ou par email : remi.bastide29@gmail.com.",
+            ]
+        },
+        competences: {
+            keys: ['compétence', 'competence', 'skill', 'sait faire', 'capable', 'niveau', 'maîtrise', 'maitrise', 'expertise', 'fort'],
+            answers: [
+                "Rémi a 6 compétences clés du BUT Informatique : Réaliser (Expert), Optimiser (Maîtrisé), Administrer (Maîtrisé), Gérer (Maîtrisé), Conduire (Expert) et Collaborer (Expert). Ses points forts sont le développement, la gestion de projet et la collaboration.",
+                "Côté compétences, Rémi excelle en développement logiciel (Réaliser — Niv.4), gestion de projet agile (Conduire — Niv.4) et travail d'équipe (Collaborer — Niv.4). Il maîtrise aussi l'administration système, l'optimisation et la gestion de données (Niv.3 chacun).",
+            ]
+        },
+        realiser: {
+            keys: ['réaliser', 'realiser', 'coder', 'développ', 'developp', 'programm', 'code', 'logiciel', 'application'],
+            answers: [
+                "La compétence 'Réaliser' est au niveau Expert (4/4). Rémi sait concevoir, coder, tester et intégrer des applications. Il maîtrise les design patterns, les tests unitaires et le code propre. Technologies : Java, JavaFX, Vue.js, SpringBoot.",
+            ]
+        },
+        optimiser: {
+            keys: ['optimi', 'algo', 'performance', 'complexité', 'complexite', 'structure de données', 'structure de donnees'],
+            answers: [
+                "La compétence 'Optimiser' est au niveau Maîtrisé (3/4). Rémi sait analyser des problèmes, comparer des algorithmes et comprend la complexité algorithmique temporelle et spatiale. Il travaille sur l'optimisation de requêtes SQL et le choix de structures de données.",
+            ]
+        },
+        administrer: {
+            keys: ['administr', 'système', 'systeme', 'réseau', 'reseau', 'linux', 'serveur', 'ssh', 'bash', 'iptable', 'pare-feu', 'firewall', 'routage'],
+            answers: [
+                "La compétence 'Administrer' est au niveau Maîtrisé (3/4). Rémi gère systèmes et réseaux : configuration de machines virtuelles, routage, règles iptables, automatisation Bash et sécurisation SSH.",
+            ]
+        },
+        gerer: {
+            keys: ['gérer', 'gerer', 'base de données', 'base de donnees', 'sql', 'bdd', 'sgbd', 'requête', 'requete', 'donnée', 'donnee', 'business intelligence'],
+            answers: [
+                "La compétence 'Gérer' est au niveau Maîtrisé (3/4). Rémi exploite les données d'entreprise : SQL, normalisation de bases de données, optimisation de requêtes via l'indexation et administration SGBD.",
+            ]
+        },
+        conduire: {
+            keys: ['conduire', 'projet', 'agile', 'scrum', 'sprint', 'jira', 'trello', 'gestion de projet', 'planif'],
+            answers: [
+                "La compétence 'Conduire' est au niveau Expert (4/4). Rémi gère des projets en méthode Scrum, utilise Jira et Trello, découpe en user stories et anime les rituels agiles. Il a été Scrum Master sur un projet complet.",
+            ]
+        },
+        collaborer: {
+            keys: ['collabor', 'équipe', 'equipe', 'communic', 'travail d\'équipe', 'travail d\'equipe', 'anglais', 'oral', 'écoute', 'ecoute'],
+            answers: [
+                "La compétence 'Collaborer' est au niveau Expert (4/4). Rémi excelle en communication écrite et orale, écoute active et communication assertive. Il sait coordonner des équipes et maîtrise l'anglais technique.",
+            ]
+        },
+        projets: {
+            keys: ['projet', 'réalisation', 'realisation', 'travaux', 'portfolio', 'fait quoi', 'créé', 'cree', 'construit'],
+            answers: [
+                "Rémi a réalisé 6 projets majeurs : Jeu Latice (Java/JavaFX), Optimisation SQL (Python/SQL), Réseau Sécurisé (Linux/SSH), Bibliothèque (Bash), ERP Centralisé (Vue.js/Docker/SpringBoot) et Gestion de projet (Méthodes Agiles). Vous pouvez les explorer dans la section Projets !",
+                "Parmi ses projets phares : un jeu de société en Java, une app web fullstack (Vue.js + SpringBoot + Docker), une architecture réseau sécurisée, et de l'automatisation en Bash. Tout est visible dans la section Projets ci-dessus.",
+            ]
+        },
+        latice: {
+            keys: ['latice', 'jeu', 'javafx', 'java'],
+            answers: [
+                "Le Jeu Latice est un jeu de société complet développé en Java avec JavaFX. Rémi était Développeur Lead : il a conçu l'algorithme de validation des coups et créé l'interface utilisateur. Le code est dispo sur GitHub !",
+            ]
+        },
+        erp: {
+            keys: ['erp', 'vue.js', 'vuejs', 'springboot', 'spring boot', 'docker', 'fullstack', 'full stack', 'api rest'],
+            answers: [
+                "L'ERP Centralisé est une application web de gestion des fiches ressources pour les professeurs. Rémi a développé l'API REST avec SpringBoot et le front-end en Vue.js, le tout conteneurisé avec Docker. Un vrai projet fullstack !",
+            ]
+        },
+        reseau: {
+            keys: ['réseau sécurisé', 'reseau securise', 'architecture réseau', 'architecture reseau', 'machine virtuelle', 'iptables'],
+            answers: [
+                "Le projet Réseau Sécurisé consiste en la mise en place d'une architecture réseau virtuelle complète et sécurisée. Rémi a configuré les machines virtuelles, le routage interne et les règles iptables en tant qu'Administrateur Système.",
+            ]
+        },
+        bibliotheque: {
+            keys: ['bibliothèque', 'bibliotheque', 'script', 'automatisation', 'sauvegarde', 'log'],
+            answers: [
+                "Le projet Bibliothèque porte sur la création de scripts Bash d'automatisation pour gérer une bibliothèque : sauvegarde automatique des bases de données et gestion des logs applicatifs.",
+            ]
+        },
+        tech: {
+            keys: ['technologie', 'langage', 'outil', 'tech', 'stack', 'framework', 'python', 'docker', 'vue'],
+            answers: [
+                "Rémi maîtrise plusieurs technologies : Java, JavaFX, Python, SQL, Vue.js, SpringBoot, Docker, Linux, Bash, SSH. Côté méthodologie : Scrum, Jira, Trello. Un profil polyvalent entre dev et admin système !",
+            ]
+        },
+        bonjour: {
+            keys: ['bonjour', 'salut', 'hello', 'hey', 'coucou', 'yo', 'bonsoir', 'wesh', 'slt', 'bjr'],
+            answers: [
+                "Hey ! Bienvenue sur le portfolio de Rémi. Je suis ReyMysterio, son assistant. Posez-moi vos questions sur ses compétences, projets ou parcours !",
+                "Salut ! ReyMysterio à votre service. Que voulez-vous savoir sur Rémi ? Ses projets, compétences, ou comment le contacter ?",
+                "Yo ! Je suis ReyMysterio, l'assistant de Rémi. Demandez-moi ce que vous voulez savoir !",
+            ]
+        },
+        merci: {
+            keys: ['merci', 'thanks', 'thx', 'cool', 'super', 'parfait', 'genial', 'génial', 'top'],
+            answers: [
+                "Avec plaisir ! N'hésitez pas si vous avez d'autres questions sur Rémi.",
+                "De rien ! Si le profil de Rémi vous intéresse, pensez à le contacter via le formulaire en bas de page.",
+            ]
+        },
+        aide: {
+            keys: ['aide', 'help', 'quoi demander', 'tu fais quoi', 'tu sers à quoi', 'comment', 'fonctionn'],
+            answers: [
+                "Je peux répondre à vos questions sur Rémi ! Par exemple : ses compétences, ses projets, ses technologies, comment le contacter, s'il cherche un stage/alternance... Demandez-moi ce qui vous intéresse !",
+            ]
+        }
+    },
+
+    fallbacks: [
+        "Hmm, je ne suis pas sûr de comprendre. Essayez de me demander quelque chose sur les compétences, projets ou le parcours de Rémi !",
+        "Je suis spécialisé sur le profil de Rémi. Essayez : 'Quelles sont ses compétences ?' ou 'Parle-moi de ses projets'.",
+        "Bonne question, mais ça sort un peu de mon domaine. Je connais surtout le parcours, les compétences et les projets de Rémi. Tentez autre chose !",
+        "Je n'ai pas la réponse à ça, mais demandez-moi des infos sur Rémi et je serai incollable !",
+    ],
+
+    init() {
+        this.toggleBtn = document.getElementById('chatbot-toggle');
+        this.chatbot = document.getElementById('chatbot');
+        this.messagesEl = document.getElementById('chatbot-messages');
+        this.input = document.getElementById('chatbot-input');
+        this.sendBtn = document.getElementById('chatbot-send');
+        this.closeBtn = document.getElementById('chatbot-close');
+
+        this.toggleBtn.addEventListener('click', () => this.open());
+        this.closeBtn.addEventListener('click', () => this.close());
+        this.sendBtn.addEventListener('click', () => this.send());
+        this.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); }
+        });
+
+        this.addBotMessage("Salut ! Je suis ReyMysterio, l'assistant de Rémi. Posez-moi une question sur ses compétences, ses projets ou son parcours !");
+    },
+
+    open() {
+        this.isOpen = true;
+        this.chatbot.classList.remove('chatbot-closed');
+        this.chatbot.classList.add('chatbot-open');
+        this.toggleBtn.classList.add('hidden');
+        setTimeout(() => this.input.focus(), 300);
+    },
+
+    close() {
+        this.isOpen = false;
+        this.chatbot.classList.remove('chatbot-open');
+        this.chatbot.classList.add('chatbot-closed');
+        this.toggleBtn.classList.remove('hidden');
+    },
+
+    addBotMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        div.innerHTML = `<span class="bot-prefix">${this.botName}</span>${this.escapeHtml(text)}`;
+        this.messagesEl.appendChild(div);
+        this.scrollToBottom();
+    },
+
+    addUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = `<span class="user-prefix">VOUS</span>${this.escapeHtml(text)}`;
+        this.messagesEl.appendChild(div);
+        this.scrollToBottom();
+    },
+
+    showTyping() {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot typing';
+        div.id = 'typing-indicator';
+        div.innerHTML = `<span class="bot-prefix">${this.botName}</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+        this.messagesEl.appendChild(div);
+        this.scrollToBottom();
+    },
+
+    removeTyping() {
+        const el = document.getElementById('typing-indicator');
+        if (el) el.remove();
+    },
+
+    scrollToBottom() {
+        this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    normalize(str) {
+        return str.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9\s']/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    },
+
+    findBestMatch(input) {
+        const norm = this.normalize(input);
+        let bestTopic = null;
+        let bestScore = 0;
+
+        for (const [topic, data] of Object.entries(this.kb)) {
+            let score = 0;
+            for (const key of data.keys) {
+                const normKey = this.normalize(key);
+                if (norm.includes(normKey)) {
+                    // Longer keyword matches = higher score
+                    score += normKey.length;
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestTopic = topic;
+            }
+        }
+
+        if (bestTopic && bestScore > 0) {
+            const answers = this.kb[bestTopic].answers;
+            return answers[Math.floor(Math.random() * answers.length)];
+        }
+
+        return this.fallbacks[Math.floor(Math.random() * this.fallbacks.length)];
+    },
+
+    async send() {
+        const text = this.input.value.trim();
+        if (!text) return;
+
+        this.input.value = '';
+        this.addUserMessage(text);
+        this.showTyping();
+
+        // Simulate slight delay for natural feel
+        const delay = 400 + Math.random() * 600;
+        await new Promise(r => setTimeout(r, delay));
+
+        this.removeTyping();
+        const reply = this.findBestMatch(text);
+        this.addBotMessage(reply);
+        this.input.focus();
+    }
+};
+
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    Controller.init();
+    Chatbot.init();
+});

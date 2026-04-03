@@ -296,6 +296,8 @@ const View = {
         <section id="contact">
             <div class="section-header reveal">
                 <span class="section-tag">&gt; ssh contact@bastide</span>
+                <h2 class="section-title">Me <span class="highlight">Contacter</span></h2>
+                <p class="section-desc">Envie de collaborer ou de discuter d'une opportunité ? N'hésitez pas à me joindre.</p>
             </div>
             <div class="contact-wrapper reveal delay-1">
                 <div class="contact-inner">

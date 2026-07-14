@@ -12,7 +12,7 @@ const Model = {
         profile: {
             name: "Bastide Rémi",
             role: "Développeur Junior // Administrateur Système",
-            bio: "Étudiant en 2ème année de BUT Informatique. Je conçois des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.",
+            bio: "Étudiant en 3ème année de BUT Informatique. Je conçois des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.",
             stats: { projects: 6, years: 2, level: "N2" }
         },
         competences: [

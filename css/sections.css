@@ -130,6 +130,92 @@
     transform: translateY(3px);
 }
 
+/* ---------- À propos ---------- */
+.about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+}
+
+.about-text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.about-facts {
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+}
+
+.about-fact {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.about-fact-key {
+    color: var(--text-accent);
+    font-weight: 600;
+}
+
+.about-fact-key::before {
+    content: '$ ';
+    color: var(--text-success);
+}
+
+.about-fact-value {
+    color: var(--text-primary);
+}
+
+.about-skills {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px 28px;
+}
+
+.about-skills-header {
+    padding-bottom: 14px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.about-skills-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.stack-group {
+    padding-top: 18px;
+}
+
+.stack-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.stack-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.about-skills .tag-tech {
+    color: var(--text-primary);
+}
+
 /* ---------- Cartes (compétences + projets) ---------- */
 .skill-card,
 .project-card {
@@ -785,6 +871,19 @@
 @media (max-width: 768px) {
     .hero-stats {
         gap: 24px;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-skills {
+        padding: 20px 22px 22px;
+    }
+
+    .about-fact {
+        grid-template-columns: 1fr;
+        gap: 2px;
     }
 
     .project-card,

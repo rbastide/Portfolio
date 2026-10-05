@@ -16,9 +16,8 @@ function profileTopics(profile, projects) {
 
     return {
         profil: {
-            keys: ['qui', 'rémi', 'remi', 'profil', 'présent', 'present', 'parcours', 'formation', 'étud', 'etud', 'but', 'informatique', 'toi', 'about', 'à propos', 'c\'est qui'],
-            answers: [
-                `Rémi Bastide est étudiant en ${profile.year}. Il est Développeur Junior & Administrateur Système. Il conçoit des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.`,
+            keys: ['qui', 'rémi', 'remi', 'profil', 'présent', 'present', 'parcours', 'formation', 'étud', 'etud', 'but', 'informatique', 'toi', 'about', 'à propos', 'a propos', 'whoami', 'c\'est qui'],
+            answers: [                `Rémi Bastide est étudiant en ${profile.year}. Il est Développeur Junior & Administrateur Système. Il conçoit des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.`,
                 `Bastide Rémi — ${profile.year}. Développeur Junior et Admin Système, il a déjà ${projects.length} projets à son actif et ${profile.yearsOfExperience} ans d'expérience dans le domaine.`,
             ]
         },
@@ -27,6 +26,24 @@ function profileTopics(profile, projects) {
             answers: [
                 `Vous pouvez contacter Rémi par email : ${email}. Il est aussi sur GitHub (${gh}) et LinkedIn (${li}).`,
                 `Pour joindre Rémi → email : ${email} | GitHub : ${gh} | LinkedIn : ${li}. N'hésitez pas, il est très réactif !`,
+            ]
+        },
+        tech: {
+            keys: ['technologie', 'langage', 'outil', 'tech', 'stack', 'framework'],
+            answers: [
+                `Côté technique, Rémi travaille avec : ${profile.about.stack.map(s => `${s.group.toLowerCase()} (${s.items.join(', ')})`).join(' ; ')}. Un profil polyvalent entre dev et admin système !`,
+            ]
+        },
+        ia: {
+            keys: ['ia', 'ai', 'intelligence artificielle', 'master', 'orientation', 'objectif', 'avenir', 'projet pro', 'machine learning'],
+            answers: [
+                `Rémi souhaite s'orienter vers l'Intelligence Artificielle. Il recherche actuellement ${profile.lookingFor} : contactez-le à ${email} si vous avez une opportunité !`,
+            ]
+        },
+        savoirEtre: {
+            keys: ['savoir-etre', 'savoir etre', 'soft skill', 'qualite', 'qualité', 'personnalite', 'personnalité'],
+            answers: [
+                `Côté savoir-être, Rémi met en avant : ${listFr(profile.about.softSkills.map(s => s.toLowerCase()))}.`,
             ]
         },
         alternance: {
@@ -88,12 +105,6 @@ function projectTopics(projects) {
                 `Ses projets les plus récents : ${listFr(projects.filter(p => p.featured).map(p => p.title))}. Ils sont mis en avant en tête de la section Projets.`,
             ]
         },
-        tech: {
-            keys: ['technologie', 'langage', 'outil', 'tech', 'stack', 'framework'],
-            answers: [
-                `Rémi a travaillé avec : ${listFr([...new Set(projects.flatMap(p => p.tech))])}. Un profil polyvalent entre dev et admin système !`,
-            ]
-        }
     };
 
     projects.forEach(p => {

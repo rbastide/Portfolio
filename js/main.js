@@ -10,6 +10,7 @@ import { competences } from './data/competences.js';
 import { projects } from './data/projects.js';
 
 import { heroHTML } from './views/hero.js';
+import { aboutHTML } from './views/about.js';
 import { skillsHTML } from './views/skills.js';
 import { projectsHTML } from './views/projects.js';
 import { contactHTML } from './views/contact.js';
@@ -23,7 +24,7 @@ const data = { profile, competences, projects };
 
 function render() {
     document.getElementById('app').innerHTML = [
-        heroHTML, skillsHTML, projectsHTML, contactHTML
+        heroHTML, aboutHTML, skillsHTML, projectsHTML, contactHTML
     ].map(view => view(data)).join('');
 }
 

@@ -96,7 +96,8 @@ export class Chatbot {
             for (const key of entry.keys) {
                 // Les mots-clés courts (yo, cv, but...) doivent être des mots entiers,
                 // sinon "yo" matcherait "voyons" et "but" matcherait "début".
-                const hit = key.length <= 3 ? norm.includes(` ${key} `) : norm.includes(key);
+                // L'apostrophe compte aussi comme séparateur : "l'ia" doit matcher "ia".
+                const hit = key.length <= 3 ? norm.replace(/'/g, ' ').includes(` ${key} `) : norm.includes(key);
                 if (hit) score += key.length;
             }
             score *= entry.weight;

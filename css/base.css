@@ -1,0 +1,206 @@
+/* ============================================
+   BASE — variables, reset, effets globaux
+   ============================================ */
+
+:root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #0d1220;
+    --bg-card: #111827;
+    --bg-card-hover: #151d2e;
+    --bg-input: #0d1220;
+
+    --border: #1e293b;
+    --border-hover: #334155;
+    --border-accent: #22d3ee;
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-dim: #64748b;
+    --text-accent: #22d3ee;
+    --text-accent-2: #a78bfa;
+    --text-success: #4ade80;
+    --text-warning: #facc15;
+
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.15);
+    --accent-2: #a78bfa;
+    --accent-2-glow: rgba(167, 139, 250, 0.15);
+
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --font-display: 'Space Grotesk', sans-serif;
+
+    --radius: 4px;
+    --nav-height: 56px;
+    --gutter: 24px;
+    --max-width: 1200px;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    /* Les ancres (#skills, #projects...) s'arrêtent sous la barre de navigation fixe
+       au lieu d'être masquées par elle. */
+    scroll-padding-top: var(--nav-height);
+    scrollbar-width: thin;
+    scrollbar-color: #334155 #0a0e17;
+    /* Réserve la place de la scrollbar : pas de décalage horizontal quand elle apparaît. */
+    scrollbar-gutter: stable;
+}
+
+body {
+    font-family: var(--font-mono);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+}
+
+[hidden] { display: none !important; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+::selection {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   SÉQUENCE DE DÉMARRAGE
+   ============================================ */
+#boot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    padding: 40px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-accent);
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#boot-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#boot-log {
+    white-space: pre-wrap;
+    line-height: 1.8;
+}
+
+#boot-log .line-ok { color: var(--text-success); }
+#boot-log .line-info { color: var(--text-accent); }
+#boot-log .line-warn { color: var(--text-warning); }
+#boot-log .line-module { color: var(--text-accent-2); }
+
+#boot-cursor {
+    display: inline-block;
+    color: var(--text-accent);
+    animation: blink-cursor 0.7s step-end infinite;
+}
+
+.boot-skip {
+    position: absolute;
+    bottom: 24px;
+    right: 40px;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.blink {
+    animation: blink-cursor 0.7s step-end infinite;
+}
+
+/* ============================================
+   SCANLINES
+   ============================================ */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+    opacity: 0.5;
+}
+
+/* ============================================
+   STATUT
+   ============================================ */
+.status-dot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--text-success);
+    box-shadow: 0 0 8px var(--text-success);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--text-success); }
+    50% { opacity: 0.5; box-shadow: 0 0 4px var(--text-success); }
+}
+
+/* ============================================
+   APPARITION AU SCROLL
+   ============================================
+   Utilise une animation plutôt qu'une transition : l'ancienne règle
+   `transition` de .reveal écrasait celles des cartes (survol instantané,
+   et retardé par les delay-*). Le fill-mode "backwards" rend la main aux
+   styles normaux à la fin, donc les transform au survol fonctionnent. */
+.reveal {
+    opacity: 0;
+}
+
+.reveal.visible {
+    opacity: 1;
+    animation: reveal-in 0.6s ease backwards;
+    animation-delay: var(--reveal-delay, 0s);
+}
+
+.reveal.delay-1 { --reveal-delay: 0.1s; }
+.reveal.delay-2 { --reveal-delay: 0.2s; }
+.reveal.delay-3 { --reveal-delay: 0.3s; }
+.reveal.delay-4 { --reveal-delay: 0.4s; }
+
+@keyframes reveal-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal, .reveal.visible { opacity: 1; animation: none; }
+    #boot-overlay { display: none; }
+    .scanlines { display: none; }
+}

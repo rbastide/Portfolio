@@ -4,20 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Bastide Rémi</title>
+    <meta name="description" content="Portfolio de Rémi Bastide — étudiant en BUT Informatique, développeur junior et administrateur système.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/chatbot.css">
+    <script type="module" src="js/main.js"></script>
 </head>
 <body>
-    <!-- Boot Sequence Overlay -->
-    <div id="boot-overlay">
-        <div id="boot-log"></div>
-        <div id="boot-cursor">█</div>
+    <!-- Séquence de démarrage -->
+    <div id="boot-overlay" aria-hidden="true">
+        <div id="boot-log"><span id="boot-cursor">█</span></div>
+        <div class="boot-skip">[ clic ou touche pour passer ]</div>
     </div>
 
-    <!-- Scanline effect -->
-    <div class="scanlines"></div>
+    <!-- Effet scanlines -->
+    <div class="scanlines" aria-hidden="true"></div>
 
     <!-- Navigation -->
     <nav id="main-nav">
@@ -25,7 +30,10 @@
             <a href="#home" class="nav-logo">
                 <span class="prompt">&gt;</span> bastide_remi<span class="blink">_</span>
             </a>
-            <div class="nav-links">
+            <button id="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links" id="nav-links">
                 <a href="#home" class="nav-link active" data-section="home">[accueil]</a>
                 <a href="#skills" class="nav-link" data-section="skills">[compétences]</a>
                 <a href="#projects" class="nav-link" data-section="projects">[projets]</a>
@@ -38,30 +46,30 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Contenu (généré par js/views) -->
     <main id="app"></main>
 
     <!-- Chatbot -->
-    <button id="chatbot-toggle" aria-label="Ouvrir le chatbot">
+    <button id="chatbot-toggle" type="button" aria-label="Ouvrir le chatbot">
         <span class="chatbot-toggle-icon">&gt;_</span>
     </button>
-    <div id="chatbot" class="chatbot-closed">
+    <div id="chatbot" class="chatbot-closed" role="dialog" aria-label="Assistant ReyMysterio" aria-hidden="true">
         <div class="chatbot-header">
             <div class="chatbot-header-left">
                 <span class="status-dot"></span>
                 <span class="chatbot-title">&gt; ReyMysterio_</span>
             </div>
-            <button id="chatbot-close" aria-label="Fermer le chatbot">✕</button>
+            <button id="chatbot-close" type="button" aria-label="Fermer le chatbot">✕</button>
         </div>
-        <div id="chatbot-messages"></div>
+        <div id="chatbot-messages" aria-live="polite"></div>
         <div class="chatbot-input-wrap">
             <span class="chatbot-prompt">&gt;</span>
-            <input type="text" id="chatbot-input" placeholder="Posez une question sur Rémi..." autocomplete="off">
-            <button id="chatbot-send" aria-label="Envoyer">↵</button>
+            <input type="text" id="chatbot-input" placeholder="Posez une question sur Rémi..." autocomplete="off" aria-label="Votre question">
+            <button id="chatbot-send" type="button" aria-label="Envoyer">↵</button>
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Pied de page -->
     <footer id="footer">
         <div class="footer-inner">
             <div class="footer-line">© 2026 Bastide Rémi — @rbastide</div>
@@ -72,7 +80,5 @@
             </div>
         </div>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>

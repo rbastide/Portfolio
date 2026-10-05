@@ -661,6 +661,19 @@
     color: var(--text-primary);
 }
 
+.livrable-link.is-private {
+    color: var(--text-dim);
+    border-style: dashed;
+    border-color: var(--border-hover);
+    cursor: default;
+}
+
+.livrable-link.is-private:hover {
+    background: none;
+    color: var(--text-dim);
+    border-color: var(--border-hover);
+}
+
 .project-tags {
     display: flex;
     flex-wrap: wrap;

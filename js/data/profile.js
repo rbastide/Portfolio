@@ -29,9 +29,9 @@ export const profile = {
             { key: "expérience", value: "Projets pour le Grand Périgueux (2026)" }
         ],
         stack: [
-            { group: "Langages", items: ["Java", "JavaScript", "TypeScript", "Python", "SQL", "Bash", "Kotlin"] },
+            { group: "Langages", items: ["Java", "JavaScript", "TypeScript", "Python", "PHP", "SQL", "Bash", "Kotlin"] },
             { group: "Front-end", items: ["React", "Vue.js", "JavaFX", "HTML / CSS"] },
-            { group: "Back-end", items: ["NestJS", "Node.js / Express", "SpringBoot", "Prisma", ".NET MAUI"] },
+            { group: "Back-end", items: ["NestJS", "Laravel", "Node.js / Express", "SpringBoot", "Prisma", ".NET MAUI"] },
             { group: "Bases de données", items: ["PostgreSQL", "MySQL"] },
             { group: "Système & DevOps", items: ["Linux", "Docker", "Git", "SSH", "iptables"] },
             { group: "Méthodes", items: ["Scrum", "Jira", "Trello"] }

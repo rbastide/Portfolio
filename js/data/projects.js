@@ -50,14 +50,14 @@ export const projects = [
     {
         id: "unilim-edt",
         title: "Unilim EDT",
-        category: "Réaliser", level: 3, context: "Personnel", period: "2026",
-        // TODO : dépôt privé — compléter la description, le rôle et les technologies.
-        desc: "Application de consultation de l'emploi du temps de l'Université de Limoges.",
-        role: "Développeur — Conception et développement de l'application.",
-        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/unilim-edt` }],
-        tech: [],
-        tags: ["AC 12.03"],
-        keywords: ["unilim", "edt", "emploi du temps", "limoges", "universite", "université", "planning"]
+        category: "Fullstack", level: 3, context: "Personnel", period: "2026",
+        desc: "Application web de génération d'emplois du temps pour l'Université de Limoges.",
+        role: "Développeur Fullstack — Développement de l'application avec Laravel (PHP) et une interface Vue.js / TypeScript, le tout conteneurisé avec Docker.",
+        // Dépôt privé pour l'instant : retirer `private: true` une fois le dépôt public.
+        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/unilim-edt`, private: true }],
+        tech: ["Laravel", "PHP", "Vue.js", "TypeScript", "Python", "Docker"],
+        tags: ["AC 12.02", "AC 12.04"],
+        keywords: ["unilim", "edt", "emploi du temps", "emplois du temps", "limoges", "universite", "université", "planning", "laravel", "php", "generation", "génération"]
     },
     {
         id: "erp",

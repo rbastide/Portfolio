@@ -108,7 +108,8 @@ function projectTopics(projects) {
     };
 
     projects.forEach(p => {
-        const link = p.livrables[0] ? ` Lien : ${p.livrables[0].url}` : '';
+        const first = p.livrables[0];
+        const link = !first ? '' : first.private ? ' Le dépôt sera bientôt public.' : ` Lien : ${first.url}`;
         topics[`projet-${p.id}`] = {
             // Bonus de score : un projet nommé explicitement doit l'emporter sur les thèmes génériques.
             weight: 2,

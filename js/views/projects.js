@@ -25,7 +25,9 @@ function projectCardHTML(p, i) {
             <div class="project-livrables">
                 <div class="project-livrables-label">Livrables :</div>
                 <div class="project-livrables-list">
-                    ${p.livrables.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="livrable-link">↗ ${l.nom}</a>`).join('')}
+                    ${p.livrables.map(l => l.private
+                        ? `<span class="livrable-link is-private" title="Dépôt privé — bientôt public">🔒 ${l.nom} (bientôt public)</span>`
+                        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="livrable-link">↗ ${l.nom}</a>`).join('')}
                 </div>
             </div>
             <div class="project-tags">

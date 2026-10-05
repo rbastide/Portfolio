@@ -7,12 +7,13 @@
 //   context   "Personnel", "Académique", "Professionnel"...
 //   period    période de réalisation (optionnel)
 //   featured  mis en avant en tête de liste
+//   icon      icône Material Symbols affichée sur la carte
 //   keywords  mots-clés supplémentaires pour le chatbot
 const GITHUB = "https://github.com/rbastide";
 
 export const projects = [
     {
-        id: "overloady",
+        id: "overloady", icon: "fitness_center",
         title: "Overloady",
         category: "Fullstack", level: 4, context: "Personnel", period: "2026", featured: true,
         desc: "Application web de suivi d'entraînement basée sur la surcharge progressive : séances en direct, recommandations automatiques de charge, programmes, calculatrices (1RM, disques, échauffement), records et statistiques.",
@@ -26,7 +27,7 @@ export const projects = [
         keywords: ["overloady", "overload", "muscu", "musculation", "sport", "entrainement", "entraînement", "react", "nestjs", "prisma", "postgres", "typescript"]
     },
     {
-        id: "horaires",
+        id: "horaires", icon: "directions_transit",
         title: "Horaires Train & Bus",
         category: "Fullstack", level: 3, context: "Grand Périgueux", period: "Avr. – Juin 2026", featured: true,
         desc: "Écran d'affichage dynamique des prochains départs de trains depuis la gare de Périgueux et des bus du réseau PériMouv, avec rotation automatique des sections.",
@@ -37,7 +38,7 @@ export const projects = [
         keywords: ["horaire", "train", "bus", "sncf", "navitia", "perimouv", "périmouv", "perigueux", "périgueux", "gare", "express", "node"]
     },
     {
-        id: "portail",
+        id: "portail", icon: "apps",
         title: "Portail des applications internes",
         category: "Réaliser", level: 3, context: "Grand Périgueux", period: "Avr. – Juin 2026", featured: true,
         desc: "Intranet regroupant les applications internes du Grand Périgueux, avec un affichage adapté à chaque structure, des catégories, des groupes d'applications, des favoris et un thème clair / sombre.",
@@ -48,7 +49,7 @@ export const projects = [
         keywords: ["portail", "intranet", "application interne", "applications internes", "grand perigueux", "grand périgueux", "favori"]
     },
     {
-        id: "unilim-edt",
+        id: "unilim-edt", icon: "calendar_month",
         title: "Unilim EDT",
         category: "Fullstack", level: 3, context: "Personnel", period: "2026",
         desc: "Application web de génération d'emplois du temps pour l'Université de Limoges.",
@@ -60,7 +61,7 @@ export const projects = [
         keywords: ["unilim", "edt", "emploi du temps", "emplois du temps", "limoges", "universite", "université", "planning", "laravel", "php", "generation", "génération"]
     },
     {
-        id: "erp",
+        id: "erp", icon: "inventory_2",
         title: "ERP Centralisé",
         category: "Fullstack", level: 4, context: "Académique",
         desc: "Application web de gestion centralisée des fiches ressources à destination des professeurs.",
@@ -71,7 +72,7 @@ export const projects = [
         keywords: ["erp", "vue.js", "vuejs", "springboot", "spring boot", "cas", "fiche ressource"]
     },
     {
-        id: "latice",
+        id: "latice", icon: "grid_view",
         title: "Jeu Latice",
         category: "Réaliser", level: 3, context: "Académique",
         desc: "Jeu de société complet développé en Java.",
@@ -82,7 +83,7 @@ export const projects = [
         keywords: ["latice", "jeu", "javafx", "java"]
     },
     {
-        id: "sql",
+        id: "sql", icon: "query_stats",
         title: "Optimisation SQL",
         category: "Optimiser", level: 3, context: "Académique",
         desc: "Amélioration des requêtes SQL et refonte partielle d'une base de données existante.",
@@ -93,7 +94,7 @@ export const projects = [
         keywords: ["optimisation sql", "index", "requete", "requête"]
     },
     {
-        id: "reseau",
+        id: "reseau", icon: "lan",
         title: "Réseau Sécurisé",
         category: "Administrer", level: 4, context: "Académique",
         desc: "Mise en place d'une architecture réseau virtuelle complète et sécurisée.",
@@ -104,7 +105,7 @@ export const projects = [
         keywords: ["réseau sécurisé", "reseau securise", "architecture réseau", "architecture reseau", "machine virtuelle", "iptables", "kathara"]
     },
     {
-        id: "bibliotheque",
+        id: "bibliotheque", icon: "local_library",
         title: "Bibliothèque",
         category: "Gérer", level: 4, context: "Académique",
         desc: "Création de scripts d'automatisation pour la gestion d'une bibliothèque.",
@@ -115,7 +116,7 @@ export const projects = [
         keywords: ["bibliothèque", "bibliotheque", "script", "automatisation", "sauvegarde", "log"]
     },
     {
-        id: "gestion-projet",
+        id: "gestion-projet", icon: "view_kanban",
         title: "Gestion de projet",
         category: "Conduire", level: 4, context: "Académique",
         desc: "Création complète d'un plan de projet pour une entreprise fictive dans le cadre d'un module d'études.",

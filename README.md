@@ -6,15 +6,15 @@ Voici mon portfolio en ligne : https://rbastide.github.io/Portfolio/#home
 ```text
 index.html              squelette de la page
 css/
-  base.css              variables, reset, boot, animations d'apparition
-  layout.css            navigation, sections, pied de page
+  base.css              design tokens (Dark Aurora), reset, boot, animations
+  layout.css            en-tête, sections, boutons, pied de page
   sections.css          accueil, compétences, projets, contact
-  chatbot.css           assistant ReyMysterio
+  chatbot.css           assistant ReyMysterio (intégré à l'accueil)
 js/
   main.js               point d'entrée
   data/                 contenu : profil, compétences, projets
   views/                génération du HTML de chaque section
-  controllers/          boot, navigation, filtres, formulaire...
+  controllers/          boot, navigation, filtres, mini-terminal...
   chatbot/              assistant local (base de connaissances générée depuis data/)
   utils/                fonctions utilitaires
 ```

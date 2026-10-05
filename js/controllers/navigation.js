@@ -1,7 +1,7 @@
 // ============================================
 // CONTRÔLEUR — Navigation
 // ============================================
-const SECTIONS = ['home', 'about', 'skills', 'projects', 'contact'];
+const SECTIONS = ['home', 'about', 'projects', 'skills', 'contact'];
 
 // Surligne le lien de la section qui croise le milieu de l'écran.
 // (L'ancien seuil de 30 % ne se déclenchait jamais sur les sections plus
@@ -30,14 +30,17 @@ function initMobileMenu() {
     const toggle = document.getElementById('nav-toggle');
     if (!toggle) return;
 
+    const icon = toggle.querySelector('.icon');
     const setOpen = open => {
         nav.classList.toggle('menu-open', open);
         toggle.setAttribute('aria-expanded', String(open));
+        icon.textContent = open ? 'close' : 'menu';
     };
 
     toggle.addEventListener('click', () => setOpen(!nav.classList.contains('menu-open')));
     nav.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    document.addEventListener('click', e => { if (!nav.contains(e.target)) setOpen(false); });
 }
 
 // Le contenu étant injecté après la séquence de démarrage, le navigateur

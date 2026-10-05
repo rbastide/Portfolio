@@ -1,38 +1,64 @@
 /* ============================================
-   BASE — variables, reset, effets globaux
+   BASE — design tokens (AI Native Dark Aurora), reset, effets globaux
    ============================================ */
 
 :root {
-    --bg-primary: #0a0e17;
-    --bg-secondary: #0d1220;
-    --bg-card: #111827;
-    --bg-card-hover: #151d2e;
-    --bg-input: #0d1220;
+    /* Surfaces */
+    --surface: #121318;
+    --surface-bright: #38393f;
+    --surface-lowest: #0d0e13;
+    --surface-low: #1a1b21;
+    --surface-container: #1e1f25;
+    --surface-high: #292a2f;
+    --surface-highest: #34343a;
 
-    --border: #1e293b;
-    --border-hover: #334155;
-    --border-accent: #22d3ee;
+    /* Texte & contours */
+    --on-surface: #e3e1e9;
+    --on-surface-variant: #cbc3d7;
+    --outline: #958ea0;
+    --outline-variant: #494454;
 
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-dim: #64748b;
-    --text-accent: #22d3ee;
-    --text-accent-2: #a78bfa;
-    --text-success: #4ade80;
-    --text-warning: #facc15;
+    /* Accents */
+    --primary: #d0bcff;
+    --on-primary: #3c0091;
+    --primary-container: #a078ff;
+    --on-primary-container: #340080;
+    --secondary: #4cd7f6;
+    --secondary-container: #03b5d3;
+    --on-secondary-container: #00424e;
+    --tertiary: #4edea3;
+    --tertiary-container: #00a572;
+    --error: #ffb4ab;
 
-    --accent: #22d3ee;
-    --accent-glow: rgba(34, 211, 238, 0.15);
-    --accent-2: #a78bfa;
-    --accent-2-glow: rgba(167, 139, 250, 0.15);
+    /* Verre & halos */
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --primary-soft: rgba(160, 120, 255, 0.18);
+    --secondary-soft: rgba(76, 215, 246, 0.14);
+    --tertiary-soft: rgba(78, 222, 163, 0.14);
 
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-    --font-display: 'Space Grotesk', sans-serif;
+    /* Typographie */
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
 
-    --radius: 4px;
-    --nav-height: 56px;
-    --gutter: 24px;
-    --max-width: 1200px;
+    /* Espacements */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 4rem;
+    --margin: 1rem;
+
+    /* Rayons */
+    --radius-sm: 0.25rem;
+    --radius: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    --nav-height: 64px;
+    --max-width: 80rem;
 }
 
 *, *::before, *::after {
@@ -43,39 +69,113 @@
 
 html {
     scroll-behavior: smooth;
-    /* Les ancres (#skills, #projects...) s'arrêtent sous la barre de navigation fixe
-       au lieu d'être masquées par elle. */
+    /* Les ancres s'arrêtent sous l'en-tête fixe au lieu d'être masquées par lui. */
     scroll-padding-top: var(--nav-height);
     scrollbar-width: thin;
-    scrollbar-color: #334155 #0a0e17;
-    /* Réserve la place de la scrollbar : pas de décalage horizontal quand elle apparaît. */
+    scrollbar-color: var(--surface-highest) var(--surface);
     scrollbar-gutter: stable;
 }
 
 body {
-    font-family: var(--font-mono);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.6;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 22px;
+    background: var(--surface);
+    color: var(--on-surface);
+    min-height: 100vh;
     overflow-x: clip;
     -webkit-font-smoothing: antialiased;
 }
 
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+
 [hidden] { display: none !important; }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #475569; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--surface-highest); border-radius: 3px; }
 
 ::selection {
-    background: var(--accent);
-    color: var(--bg-primary);
+    background: var(--primary);
+    color: var(--on-primary);
 }
 
 :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* ============================================
+   UTILITAIRES
+   ============================================ */
+.icon {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    direction: ltr;
+    display: inline-block;
+    flex-shrink: 0;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'liga';
+    user-select: none;
+}
+
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.text-tertiary { color: var(--tertiary); }
+.text-outline { color: var(--outline); }
+
+.mono { font-family: var(--font-mono); }
+
+.label-sm {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.label-md {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--tertiary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tertiary);
+    flex-shrink: 0;
+}
+
+.dot-sm { width: 6px; height: 6px; }
+.dot-secondary { background: var(--secondary); }
+
+.dot-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.dot-ping { animation: ping-glow 1.6s ease-out infinite; }
+
+@keyframes pulse {
+    50% { opacity: 0.4; }
+}
+
+@keyframes ping-glow {
+    0% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0.6); }
+    100% { box-shadow: 0 0 0 8px rgba(76, 215, 246, 0); }
 }
 
 /* ============================================
@@ -85,14 +185,27 @@ body {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #000;
+    background: var(--surface-lowest);
     padding: 40px;
     font-family: var(--font-mono);
     font-size: 13px;
-    color: var(--text-accent);
+    color: var(--secondary);
     overflow: hidden;
     cursor: pointer;
     transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#boot-overlay::before {
+    content: '';
+    position: absolute;
+    top: -10rem;
+    left: 20%;
+    width: 28rem;
+    height: 28rem;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    filter: blur(120px);
+    pointer-events: none;
 }
 
 #boot-overlay.hidden {
@@ -102,18 +215,19 @@ body {
 }
 
 #boot-log {
+    position: relative;
     white-space: pre-wrap;
     line-height: 1.8;
 }
 
-#boot-log .line-ok { color: var(--text-success); }
-#boot-log .line-info { color: var(--text-accent); }
-#boot-log .line-warn { color: var(--text-warning); }
-#boot-log .line-module { color: var(--text-accent-2); }
+#boot-log .line-ok { color: var(--tertiary); }
+#boot-log .line-info { color: var(--secondary); }
+#boot-log .line-warn { color: #facc15; }
+#boot-log .line-module { color: var(--primary); }
 
 #boot-cursor {
     display: inline-block;
-    color: var(--text-accent);
+    color: var(--secondary);
     animation: blink-cursor 0.7s step-end infinite;
 }
 
@@ -122,65 +236,21 @@ body {
     bottom: 24px;
     right: 40px;
     font-size: 11px;
-    color: var(--text-dim);
+    color: var(--outline);
     letter-spacing: 1px;
 }
 
 @keyframes blink-cursor {
-    0%, 100% { opacity: 1; }
     50% { opacity: 0; }
-}
-
-.blink {
-    animation: blink-cursor 0.7s step-end infinite;
-}
-
-/* ============================================
-   SCANLINES
-   ============================================ */
-.scanlines {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.03) 2px,
-        rgba(0, 0, 0, 0.03) 4px
-    );
-    opacity: 0.5;
-}
-
-/* ============================================
-   STATUT
-   ============================================ */
-.status-dot {
-    width: 6px;
-    height: 6px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--text-success);
-    box-shadow: 0 0 8px var(--text-success);
-    animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--text-success); }
-    50% { opacity: 0.5; box-shadow: 0 0 4px var(--text-success); }
 }
 
 /* ============================================
    APPARITION AU SCROLL
    ============================================
-   Utilise une animation plutôt qu'une transition : l'ancienne règle
-   `transition` de .reveal écrasait celles des cartes (survol instantané,
-   et retardé par les delay-*). Le fill-mode "backwards" rend la main aux
-   styles normaux à la fin, donc les transform au survol fonctionnent. */
-.reveal {
-    opacity: 0;
-}
+   Animation plutôt que transition : une transition sur .reveal écraserait
+   celles des cartes au survol. Le fill-mode "backwards" rend la main aux
+   styles normaux à la fin. */
+.reveal { opacity: 0; }
 
 .reveal.visible {
     opacity: 1;
@@ -191,7 +261,6 @@ body {
 .reveal.delay-1 { --reveal-delay: 0.1s; }
 .reveal.delay-2 { --reveal-delay: 0.2s; }
 .reveal.delay-3 { --reveal-delay: 0.3s; }
-.reveal.delay-4 { --reveal-delay: 0.4s; }
 
 @keyframes reveal-in {
     from { opacity: 0; transform: translateY(20px); }
@@ -201,6 +270,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .reveal, .reveal.visible { opacity: 1; animation: none; }
+    .dot-pulse, .dot-ping { animation: none; }
     #boot-overlay { display: none; }
-    .scanlines { display: none; }
 }

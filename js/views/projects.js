@@ -3,46 +3,53 @@
 // ============================================
 import { getCategories } from '../data/projects.js';
 
+// Les cartes alternent les trois accents de la palette.
+const ACCENTS = ['accent-primary', 'accent-secondary', 'accent-tertiary'];
+
+function livrableHTML(l) {
+    return l.private
+        ? `<span class="project-link is-private" title="Dépôt privé — bientôt public"><span class="icon">lock</span>${l.nom} (bientôt public)</span>`
+        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="project-link">${l.nom}<span class="icon">arrow_forward</span></a>`;
+}
+
 function projectCardHTML(p, i) {
     return `
-    <article class="project-card reveal delay-${(i % 2) + 1}${p.featured ? ' is-featured' : ''}" data-category="${p.category}">
-        <div class="project-meta">
-            <span class="project-category">${p.category}</span>
-            <span class="project-badges">
-                ${p.featured ? '<span class="project-new">NEW</span>' : ''}
-                <span class="project-level">N${p.level}</span>
-            </span>
-        </div>
-        <h3 class="project-title">${p.title}</h3>
-        <div class="project-context">
-            <span>// ${p.context}</span>${p.period ? `<span>${p.period}</span>` : ''}
-        </div>
-        <div class="project-info">
-            <p><strong>Description :</strong> ${p.desc}</p>
-            <p><strong>Mon rôle :</strong> ${p.role}</p>
-        </div>
-        <div class="project-footer">
-            <div class="project-livrables">
-                <div class="project-livrables-label">Livrables :</div>
-                <div class="project-livrables-list">
-                    ${p.livrables.map(l => l.private
-                        ? `<span class="livrable-link is-private" title="Dépôt privé — bientôt public">🔒 ${l.nom} (bientôt public)</span>`
-                        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="livrable-link">↗ ${l.nom}</a>`).join('')}
+    <article class="project-card card-glow ${ACCENTS[i % ACCENTS.length]} reveal delay-${(i % 3) + 1}" data-category="${p.category}">
+        <div class="project-body">
+            <div class="project-meta">
+                <span class="project-category">${p.category} • ${p.context}</span>
+                ${p.featured
+                    ? '<span class="project-status"><span class="dot dot-sm"></span>Récent</span>'
+                    : `<span class="project-level">NIV.${p.level}</span>`}
+            </div>
+            <div class="project-heading">
+                <span class="project-icon"><span class="icon">${p.icon || 'folder'}</span></span>
+                <div>
+                    <h3 class="project-title">${p.title}</h3>
+                    ${p.period ? `<span class="project-period">${p.period}</span>` : ''}
                 </div>
             </div>
-            <div class="project-tags">
-                ${p.tech.map(t => `<span class="tag-tech">${t}</span>`).join('')}
-                ${(p.tags || []).map(t => `<span class="tag-ac">${t}</span>`).join('')}
+            <p class="project-desc">${p.desc}</p>
+            <details class="project-role">
+                <summary>Mon rôle<span class="icon">expand_more</span></summary>
+                <p>${p.role}</p>
+            </details>
+            <div class="chip-row">
+                ${p.tech.map((t, j) => `<span class="chip${j === 0 ? ' accent' : ''}">${t}</span>`).join('')}
+                ${(p.tags || []).map(t => `<span class="chip ac">${t}</span>`).join('')}
             </div>
+        </div>
+        <div class="project-footer">
+            ${p.livrables.map(livrableHTML).join('')}
         </div>
     </article>`;
 }
 
 function filtersHTML(projects) {
-    const filters = [{ value: 'all', label: 'tous', count: projects.length }]
+    const filters = [{ value: 'all', label: 'Tous', count: projects.length }]
         .concat(getCategories().map(c => ({
             value: c,
-            label: c.toLowerCase(),
+            label: c,
             count: projects.filter(p => p.category === c).length
         })));
 
@@ -55,23 +62,22 @@ function filtersHTML(projects) {
     </div>`;
 }
 
-export function projectsHTML({ projects, profile }) {
+export function projectsHTML({ projects }) {
     // Les projets mis en avant passent en tête, l'ordre d'origine est conservé sinon.
     const sorted = [...projects].sort((a, b) => (b.featured === true) - (a.featured === true));
 
     return `
-    <section id="projects">
-        <div class="projects-header reveal">
-            <div class="section-header">
-                <span class="section-tag">&gt; ls ~/projects</span>
-                <h2 class="section-title">Projets <span class="highlight">Récents</span></h2>
-                <p class="section-desc">Sélection de réalisations concrètes en développement et administration.</p>
+    <section id="projects" class="section">
+        <div class="container">
+            <div class="section-head split reveal">
+                <div class="section-head">
+                    <span class="section-tag text-secondary"><span class="icon">folder_special</span>INDEX // RÉALISATIONS LOGICIELLES</span>
+                    <h2 class="section-title">Projets &amp; Travaux Collaboratifs</h2>
+                </div>
+                <p class="section-aside">Applications web fullstack, outils déployés pour le Grand Périgueux, infrastructures Linux et projets académiques du BUT.</p>
             </div>
-            <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="github-link">
-                Voir GitHub →
-            </a>
+            ${filtersHTML(projects)}
+            <div class="projects-grid">${sorted.map(projectCardHTML).join('')}</div>
         </div>
-        ${filtersHTML(projects)}
-        <div class="projects-grid">${sorted.map(projectCardHTML).join('')}</div>
     </section>`;
 }

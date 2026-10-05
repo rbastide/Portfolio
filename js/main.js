@@ -3,7 +3,7 @@
 // ============================================
 //   data/         contenu du portfolio (profil, compétences, projets)
 //   views/        génération du HTML de chaque section
-//   controllers/  comportements (boot, navigation, filtres, formulaire...)
+//   controllers/  comportements (boot, navigation, filtres, console...)
 //   chatbot/      assistant local ReyMysterio
 import { profile } from './data/profile.js';
 import { competences } from './data/competences.js';
@@ -17,25 +17,26 @@ import { contactHTML } from './views/contact.js';
 
 import { runBootSequence } from './controllers/boot.js';
 import { initNavigation } from './controllers/navigation.js';
-import { initReveal, initSkillDetails, initProjectFilters, initContactForm } from './controllers/interactions.js';
+import { initReveal, initSkillDetails, initProjectFilters, initConsole } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
 
 const data = { profile, competences, projects };
 
 function render() {
     document.getElementById('app').innerHTML = [
-        heroHTML, aboutHTML, skillsHTML, projectsHTML, contactHTML
+        heroHTML, aboutHTML, projectsHTML, skillsHTML, contactHTML
     ].map(view => view(data)).join('');
 }
 
 async function init() {
-    new Chatbot(data).init();
     await runBootSequence();
     render();
+    // Le panneau du chatbot fait partie de l'accueil : il s'initialise après le rendu.
+    new Chatbot(data).init();
     initReveal();
     initSkillDetails();
     initProjectFilters();
-    initContactForm();
+    initConsole();
     initNavigation();
 }
 

@@ -50,7 +50,7 @@ function profileTopics(profile, projects) {
             keys: ['alternance', 'stage', 'recherche', 'disponib', 'recrut', 'embauche', 'travail', 'poste', 'candidat', 'cv', 'hiring', 'hire'],
             answers: [
                 `Rémi est actuellement à la recherche d'${profile.lookingFor} ! Si son profil vous intéresse, contactez-le à ${email}.`,
-                `Bonne nouvelle, Rémi cherche ${profile.lookingFor} en ce moment. Vous pouvez le contacter via le formulaire en bas de page ou par email : ${email}.`,
+                `Bonne nouvelle, Rémi cherche ${profile.lookingFor} en ce moment. Vous pouvez le contacter via la section Contact ou par email : ${email}.`,
             ]
         }
     };
@@ -134,7 +134,7 @@ const smallTalk = {
         keys: ['merci', 'thanks', 'thx', 'cool', 'super', 'parfait', 'genial', 'génial', 'top'],
         answers: [
             "Avec plaisir ! N'hésitez pas si vous avez d'autres questions sur Rémi.",
-            "De rien ! Si le profil de Rémi vous intéresse, pensez à le contacter via le formulaire en bas de page.",
+            "De rien ! Si le profil de Rémi vous intéresse, pensez à le contacter via la section Contact.",
         ]
     },
     aide: {

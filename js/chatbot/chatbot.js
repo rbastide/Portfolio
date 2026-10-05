@@ -4,7 +4,8 @@
 import { buildKnowledgeBase, fallbacks } from './knowledge.js';
 import { escapeHtml, pickRandom, sleep } from '../utils/dom.js';
 
-const BOT_NAME = 'REYMYSTERIO';
+const BOT_NAME = 'ReyMysterio';
+const GREETING = "Salut ! Je suis ReyMysterio, l'assistant de Rémi. Posez-moi une question sur ses compétences, ses projets ou son parcours !";
 
 function normalize(str) {
     return str.toLowerCase()
@@ -23,57 +24,56 @@ export class Chatbot {
             answers: t.answers,
             keys: t.keys.map(normalize)
         }));
-
-        this.toggleBtn = document.getElementById('chatbot-toggle');
-        this.panel = document.getElementById('chatbot');
-        this.messagesEl = document.getElementById('chatbot-messages');
-        this.input = document.getElementById('chatbot-input');
-        this.sendBtn = document.getElementById('chatbot-send');
-        this.closeBtn = document.getElementById('chatbot-close');
+        this.busy = false;
     }
 
+    // Le panneau est rendu par la vue d'accueil : init() doit être appelé après le rendu.
     init() {
-        this.toggleBtn.addEventListener('click', () => this.open());
-        this.closeBtn.addEventListener('click', () => this.close());
-        this.sendBtn.addEventListener('click', () => this.send());
-        this.input.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); }
-            if (e.key === 'Escape') this.close();
-        });
+        this.panel = document.getElementById('chatbot');
+        if (!this.panel) return;
+        this.messagesEl = document.getElementById('chatbot-messages');
+        this.form = document.getElementById('chatbot-form');
+        this.input = document.getElementById('chatbot-input');
+        this.counter = document.getElementById('chatbot-count');
 
-        this.addMessage('bot', "Salut ! Je suis ReyMysterio, l'assistant de Rémi. Posez-moi une question sur ses compétences, ses projets ou son parcours !");
+        this.form.addEventListener('submit', e => { e.preventDefault(); this.send(); });
+        this.input.addEventListener('input', () => this.updateCounter());
+        document.getElementById('chatbot-reset').addEventListener('click', () => this.reset());
+        this.panel.querySelectorAll('.chat-preset[data-query]').forEach(btn =>
+            btn.addEventListener('click', () => this.send(btn.dataset.query)));
+
+        this.addMessage('bot', GREETING, 'System Ready');
     }
 
-    open() {
-        this.panel.classList.replace('chatbot-closed', 'chatbot-open');
-        this.panel.setAttribute('aria-hidden', 'false');
-        this.toggleBtn.classList.add('hidden');
-        setTimeout(() => this.input.focus(), 300);
+    reset() {
+        this.messagesEl.innerHTML = '';
+        this.addMessage('bot', 'Session réinitialisée. Posez une question sur le parcours ou les projets de Rémi !', 'System Ready');
     }
 
-    close() {
-        this.panel.classList.replace('chatbot-open', 'chatbot-closed');
-        this.panel.setAttribute('aria-hidden', 'true');
-        this.toggleBtn.classList.remove('hidden');
-        this.toggleBtn.focus();
+    updateCounter() {
+        this.counter.textContent = `${this.input.value.length} / ${this.input.maxLength}`;
     }
 
-    addMessage(from, text) {
+    addMessage(from, text, meta = "à l'instant") {
         const div = document.createElement('div');
         div.className = `chat-msg ${from}`;
-        const prefix = from === 'bot'
-            ? `<span class="bot-prefix">${BOT_NAME}</span>`
-            : `<span class="user-prefix">VOUS</span>`;
-        div.innerHTML = prefix + escapeHtml(text);
+        div.innerHTML = from === 'bot'
+            ? `<span class="chat-msg-avatar"><span class="icon">smart_toy</span></span>
+               <div class="chat-msg-col">
+                   <div class="chat-bubble">${escapeHtml(text)}</div>
+                   <span class="chat-msg-meta">${BOT_NAME} • ${meta}</span>
+               </div>`
+            : `<div class="chat-bubble">${escapeHtml(text)}</div>`;
         this.messagesEl.appendChild(div);
         this.scrollToBottom();
     }
 
     showTyping() {
         const div = document.createElement('div');
-        div.className = 'chat-msg bot typing';
+        div.className = 'chat-msg bot';
         div.id = 'typing-indicator';
-        div.innerHTML = `<span class="bot-prefix">${BOT_NAME}</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+        div.innerHTML = `<span class="chat-msg-avatar"><span class="icon">smart_toy</span></span>
+            <div class="chat-msg-col"><div class="chat-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
         this.messagesEl.appendChild(div);
         this.scrollToBottom();
     }
@@ -82,6 +82,7 @@ export class Chatbot {
         document.getElementById('typing-indicator')?.remove();
     }
 
+    // Défile uniquement la zone de messages, jamais la page entière.
     scrollToBottom() {
         this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
     }
@@ -110,11 +111,13 @@ export class Chatbot {
         return best ? pickRandom(best.answers) : pickRandom(fallbacks);
     }
 
-    async send() {
-        const text = this.input.value.trim();
-        if (!text) return;
+    async send(preset) {
+        const text = (preset ?? this.input.value).trim();
+        if (!text || this.busy) return;
 
+        this.busy = true;
         this.input.value = '';
+        this.updateCounter();
         this.addMessage('user', text);
         this.showTyping();
 
@@ -122,6 +125,8 @@ export class Chatbot {
 
         this.removeTyping();
         this.addMessage('bot', this.findBestMatch(text));
-        this.input.focus();
+        this.busy = false;
+        // Pas de focus automatique après un bouton : sur mobile, cela ouvrirait le clavier.
+        if (!preset) this.input.focus({ preventScroll: true });
     }
 }

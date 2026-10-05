@@ -3,7 +3,7 @@
 // ============================================
 export const competences = [
     {
-        id: 1, title: "Réaliser", icon: "&lt;/&gt;", level: 4, description: "Concevoir, coder, tester et intégrer.",
+        id: 1, title: "Réaliser", icon: "code", level: 4, description: "Concevoir, coder, tester et intégrer.",
         acs: [
             { code: "AC 11.01", label: "Implémenter des conceptions simples" },
             { code: "AC 11.02", label: "Élaborer des conceptions simples" },
@@ -19,7 +19,7 @@ export const competences = [
         }
     },
     {
-        id: 2, title: "Optimiser", icon: "⚡", level: 3, description: "Améliorer performances et algorithmes.",
+        id: 2, title: "Optimiser", icon: "bolt", level: 3, description: "Améliorer performances et algorithmes.",
         acs: [
             { code: "AC 21.01", label: "Analyser un problème" },
             { code: "AC 21.02", label: "Comparer des algorithmes" },
@@ -33,7 +33,7 @@ export const competences = [
         }
     },
     {
-        id: 3, title: "Administrer", icon: "◈", level: 3, description: "Gérer systèmes et réseaux.",
+        id: 3, title: "Administrer", icon: "dns", level: 3, description: "Gérer systèmes et réseaux.",
         acs: [
             { code: "AC 31.01", label: "Installer poste de travail" },
             { code: "AC 31.02", label: "Réseau local simple" },
@@ -49,7 +49,7 @@ export const competences = [
         }
     },
     {
-        id: 4, title: "Gérer", icon: "⬡", level: 3, description: "Exploiter les données d'entreprise.",
+        id: 4, title: "Gérer", icon: "database", level: 3, description: "Exploiter les données d'entreprise.",
         acs: [
             { code: "AC 41.01", label: "SQL et Mises à jour" },
             { code: "AC 41.02", label: "Reporting simple" },
@@ -65,7 +65,7 @@ export const competences = [
         }
     },
     {
-        id: 5, title: "Conduire", icon: "▦", level: 4, description: "Gestion de projet et besoins.",
+        id: 5, title: "Conduire", icon: "view_kanban", level: 4, description: "Gestion de projet et besoins.",
         acs: [
             { code: "AC 51.01", label: "Identifier besoins métiers" },
             { code: "AC 51.02", label: "Cycle de développement" },
@@ -80,7 +80,7 @@ export const competences = [
         }
     },
     {
-        id: 6, title: "Collaborer", icon: "◎", level: 4, description: "Travail d'équipe et communication.",
+        id: 6, title: "Collaborer", icon: "groups", level: 4, description: "Travail d'équipe et communication.",
         acs: [
             { code: "AC 61.01", label: "Communication écrite/orale" },
             { code: "AC 61.02", label: "Droit et éthique" },

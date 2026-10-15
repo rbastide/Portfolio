@@ -9,7 +9,12 @@ const PRESETS = [
 
 function chatPanelHTML({ profile }) {
     return `
-    <div class="chat-panel" id="chatbot">
+    <div class="chat-placeholder" id="chatbot-placeholder" hidden>
+        <span class="chat-avatar"><span class="icon">picture_in_picture_alt</span></span>
+        <p>ReyMysterio est ouvert en fenêtre flottante.</p>
+        <button type="button" class="btn btn-tonal" id="chatbot-return"><span class="icon">move_down</span>Ramener ici</button>
+    </div>
+    <div class="chat-panel" id="chatbot" tabindex="-1">
         <div class="chat-header">
             <div class="chat-header-id">
                 <span class="chat-avatar"><span class="icon">neurology</span></span>
@@ -27,6 +32,9 @@ function chatPanelHTML({ profile }) {
                     <span class="icon">restart_alt</span>
                 </button>
                 <span class="chat-node">AI_NODE</span>
+                <button type="button" id="chatbot-dock-close" class="chat-icon-btn" aria-label="Fermer la fenêtre de l'assistant" title="Fermer" hidden>
+                    <span class="icon">close</span>
+                </button>
             </div>
         </div>
 
@@ -139,7 +147,7 @@ export function heroHTML(data) {
                     </div>
                 </div>
 
-                <div class="hero-side reveal delay-2">${chatPanelHTML(data)}</div>
+                <div class="hero-side reveal delay-2" id="chatbot-home">${chatPanelHTML(data)}</div>
             </div>
         </div>
     </section>

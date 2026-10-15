@@ -19,6 +19,7 @@ import { runBootSequence } from './controllers/boot.js';
 import { initNavigation } from './controllers/navigation.js';
 import { initReveal, initSkillDetails, initProjectFilters, initConsole } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
+import { initChatDock } from './chatbot/dock.js';
 
 const data = { profile, competences, projects };
 
@@ -31,8 +32,11 @@ function render() {
 async function init() {
     await runBootSequence();
     render();
-    // Le panneau du chatbot fait partie de l'accueil : il s'initialise après le rendu.
-    new Chatbot(data).init();
+    // Le panneau du chatbot fait partie de l'accueil : il s'initialise après le rendu,
+    // puis le dock le rend accessible depuis n'importe quelle section.
+    const chatbot = new Chatbot(data);
+    chatbot.init();
+    initChatDock(chatbot);
     initReveal();
     initSkillDetails();
     initProjectFilters();

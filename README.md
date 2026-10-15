@@ -9,7 +9,7 @@ css/
   base.css              design tokens (Dark Aurora), reset, boot, animations
   layout.css            en-tête, sections, boutons, pied de page
   sections.css          accueil, compétences, projets, contact
-  chatbot.css           assistant ReyMysterio (intégré à l'accueil)
+  chatbot.css           assistant ReyMysterio (accueil + fenêtre flottante)
 js/
   main.js               point d'entrée
   data/                 contenu : profil, compétences, projets

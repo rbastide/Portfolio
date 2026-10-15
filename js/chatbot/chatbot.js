@@ -4,7 +4,7 @@
 import { buildKnowledgeBase, fallbacks } from './knowledge.js';
 import { escapeHtml, pickRandom, sleep } from '../utils/dom.js';
 
-const BOT_NAME = 'ReyMysterio';
+export const BOT_NAME = 'ReyMysterio';
 const GREETING = "Salut ! Je suis ReyMysterio, l'assistant de Rémi. Posez-moi une question sur ses compétences, ses projets ou son parcours !";
 
 function normalize(str) {

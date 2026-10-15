@@ -1,5 +1,5 @@
 /* ============================================
-   CHATBOT — ReyMysterio (panneau intégré à l'accueil)
+   CHATBOT — ReyMysterio (panneau de l'accueil + dock flottant)
    ============================================ */
 .chat-panel {
     position: relative;
@@ -325,4 +325,208 @@
     align-items: center;
     gap: 4px;
     text-align: right;
+}
+
+/* ============================================
+   ACCÈS DEPUIS TOUTE LA PAGE
+   Lanceur flottant → le même panneau est déplacé dans .chat-dock
+   ============================================ */
+.chat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    border: 1px dashed var(--outline-variant);
+    background: rgba(26, 27, 33, 0.5);
+    color: var(--on-surface-variant);
+    text-align: center;
+}
+
+.chat-placeholder .chat-avatar { width: 40px; height: 40px; }
+.chat-placeholder .chat-avatar .icon { font-size: 22px; }
+.chat-placeholder p { max-width: 22ch; }
+
+/* ---------- Lanceur ---------- */
+.chat-launcher {
+    position: fixed;
+    right: max(var(--space-lg), env(safe-area-inset-right));
+    bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 18px 6px 6px;
+    border-radius: 999px;
+    background: var(--surface-container);
+    border: 1px solid rgba(160, 120, 255, 0.35);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+    font-family: var(--font-display);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--on-surface);
+    white-space: nowrap;
+    /* Masqué tant que le panneau de l'accueil est à l'écran. */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.94);
+    transition:
+        opacity 0.25s ease,
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s linear 0.5s,
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.chat-launcher.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+}
+
+.chat-launcher:hover {
+    border-color: rgba(160, 120, 255, 0.75);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 6px 22px rgba(160, 120, 255, 0.25);
+}
+
+.chat-launcher:active { transform: scale(0.97); }
+.chat-launcher:focus-visible { border-radius: 999px; outline-offset: 3px; }
+
+.chat-launcher-avatar {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-launcher-avatar .icon { font-size: 22px; }
+
+/* Pastille « en ligne », reprise de l'en-tête du panneau. */
+.chat-launcher-avatar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tertiary);
+    box-shadow: 0 0 0 2px var(--surface-container);
+}
+
+.chat-launcher-verb { color: var(--on-surface-variant); font-weight: 500; }
+
+/* ---------- Fenêtre flottante ---------- */
+.chat-dock {
+    position: fixed;
+    right: max(var(--space-lg), env(safe-area-inset-right));
+    bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    width: min(400px, calc(100vw - 2 * var(--space-md)));
+    height: min(640px, calc(100dvh - var(--nav-height) - 2 * var(--space-lg)));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.96);
+    transform-origin: bottom right;
+    transition:
+        opacity 0.2s ease,
+        transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s linear 0.45s;
+}
+
+.chat-dock.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+}
+
+.chat-dock .chat-panel {
+    flex: 1;
+    min-height: 0;
+    border-color: rgba(160, 120, 255, 0.3);
+    box-shadow: 0 28px 64px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.chat-dock .chat-messages {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+}
+
+.chat-dock .chat-panel:focus { outline: none; }
+
+/* La fenêtre est plus étroite que l'accueil : le badge décoratif cède sa place au bouton Fermer. */
+.chat-dock .chat-node { display: none; }
+
+/* Le voile n'existe que sur mobile, où la fenêtre devient un panneau plein écran. */
+.chat-scrim { display: none; }
+
+@media (max-width: 639px) {
+    .chat-launcher {
+        right: max(var(--space-md), env(safe-area-inset-right));
+        bottom: max(var(--space-md), env(safe-area-inset-bottom));
+        padding-right: 16px;
+    }
+
+    .chat-launcher-verb { display: none; }
+
+    .chat-dock {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: min(88dvh, calc(100dvh - var(--nav-height)));
+        transform: translateY(100%);
+        transform-origin: bottom center;
+        transition:
+            opacity 0.2s ease,
+            transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+            visibility 0s linear 0.45s;
+    }
+
+    .chat-dock .chat-panel {
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        border-bottom: 0;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .chat-scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 58;
+        background: rgba(13, 14, 19, 0.7);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    }
+
+    .chat-scrim.is-open {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+
+    /* La page ne défile plus derrière le panneau ouvert. */
+    html.chat-dock-open { overflow: hidden; }
+
+    /* Le lanceur ne doit pas masquer la dernière ligne du pied de page. */
+    #footer { padding-bottom: calc(var(--space-xl) + 56px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chat-launcher, .chat-dock, .chat-scrim { transition-duration: 0s; transition-delay: 0s; }
+    .chat-launcher, .chat-dock { transform: none; }
 }

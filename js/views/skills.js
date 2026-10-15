@@ -16,7 +16,7 @@ const GROUP_ICONS = {
 
 function stackCardHTML(s, i) {
     return `
-    <div class="stack-card card ${ACCENTS[i % ACCENTS.length]} reveal delay-${(i % 3) + 1}">
+    <div class="stack-card card ${ACCENTS[i % ACCENTS.length]} reveal">
         <div class="stack-card-head">
             <span class="stack-card-title"><span class="icon">${GROUP_ICONS[s.group] || 'layers'}</span>${s.group}</span>
             <span class="label-sm text-outline">${s.items.length} outils</span>
@@ -30,7 +30,7 @@ function stackCardHTML(s, i) {
 function skillCardHTML(c, i) {
     const info = getLevelInfo(c.level);
     return `
-    <article class="skill-card card ${ACCENTS[i % ACCENTS.length]} reveal delay-${(i % 3) + 1}">
+    <article class="skill-card card ${ACCENTS[i % ACCENTS.length]} reveal">
         <div class="skill-head">
             <span class="skill-icon"><span class="icon">${c.icon}</span></span>
             <span class="skill-level">NIV.${c.level} // ${info.label.toUpperCase()}</span>
@@ -60,7 +60,7 @@ function skillCardHTML(c, i) {
 
 export function skillsHTML({ profile, competences }) {
     return `
-    <section id="skills" class="section alt">
+    <section id="skills" class="section">
         <div class="container">
             <div class="section-head reveal">
                 <span class="section-tag text-primary"><span class="icon">memory</span>COMPUTATIONAL TOOLSET // TECH STACK</span>

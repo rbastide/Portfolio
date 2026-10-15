@@ -206,8 +206,17 @@ main { padding-top: var(--nav-height); }
     padding: var(--space-2xl) var(--margin);
 }
 
-.section.alt { background: var(--surface-lowest); }
-.section.low { background: var(--surface-low); }
+/* Teinte de fond de chaque section. Les sections ne peignent pas leur fond :
+   initBackdrop() relie toutes ces teintes en un seul dégradé sur la page, si bien
+   que chaque passage d'une section à la suivante est un long fondu. Deux sections
+   voisines n'ont jamais la même teinte, sinon le fondu disparaîtrait. */
+#home { --tone: var(--surface); }
+#about { --tone: var(--surface-lowest); }
+#projects { --tone: color-mix(in srgb, var(--surface-low) 93%, var(--primary-container)); }
+#skills { --tone: var(--surface-lowest); }
+.callout-section { --tone: var(--surface); }
+#contact { --tone: color-mix(in srgb, var(--surface-low) 94%, var(--secondary-container)); }
+#footer { --tone: var(--surface-lowest); }
 
 .container {
     max-width: var(--max-width);
@@ -362,9 +371,7 @@ main { padding-top: var(--nav-height); }
 
 /* ---------- Pied de page ---------- */
 #footer {
-    background: var(--surface-lowest);
-    padding: var(--space-xl) var(--margin);
-    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.2);
+    padding: var(--space-2xl) var(--margin) var(--space-xl);
 }
 
 .footer-inner {

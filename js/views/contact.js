@@ -34,7 +34,7 @@ export function contactHTML(data) {
 
     return `
     ${calloutHTML(data)}
-    <section id="contact" class="section low">
+    <section id="contact" class="section">
         <div class="container">
             <div class="section-head split reveal">
                 <div class="section-head">
@@ -46,8 +46,8 @@ export function contactHTML(data) {
             </div>
 
             <div class="contact-grid">
-                ${channels.map((c, i) => `
-                <a href="${c.href}" class="contact-card ${c.accent} reveal delay-${i + 1}"${c.external ? ' target="_blank" rel="noopener noreferrer"' : ''}>
+                ${channels.map(c => `
+                <a href="${c.href}" class="contact-card ${c.accent} reveal"${c.external ? ' target="_blank" rel="noopener noreferrer"' : ''}>
                     <span class="contact-icon"><span class="icon">${c.icon}</span></span>
                     <span class="label-sm text-outline">${c.key}</span>
                     <span class="contact-value">${c.value}</span>

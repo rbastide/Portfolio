@@ -249,27 +249,33 @@ button { cursor: pointer; background: none; border: 0; }
    ============================================
    Animation plutôt que transition : une transition sur .reveal écraserait
    celles des cartes au survol. Le fill-mode "backwards" rend la main aux
-   styles normaux à la fin. */
+   styles normaux à la fin. Le délai de cascade est posé par initReveal().
+   Courbe exponentielle : l'élément arrive vite puis se pose, sans traîner. */
 .reveal { opacity: 0; }
 
 .reveal.visible {
     opacity: 1;
-    animation: reveal-in 0.6s ease backwards;
+    animation: reveal-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     animation-delay: var(--reveal-delay, 0s);
 }
 
-.reveal.delay-1 { --reveal-delay: 0.1s; }
-.reveal.delay-2 { --reveal-delay: 0.2s; }
-.reveal.delay-3 { --reveal-delay: 0.3s; }
+/* Passé sans être vu (saut d'ancre) : affiché tel quel. */
+.reveal.visible.instant { animation: none; }
 
 @keyframes reveal-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); }
+    55% { filter: blur(0); }
+    to { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes reveal-fade {
+    from { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .reveal, .reveal.visible { opacity: 1; animation: none; }
+    /* Sans déplacement ni flou : un simple fondu garde le repère d'arrivée. */
+    .reveal.visible { animation: reveal-fade 0.4s ease backwards; }
     .dot-pulse, .dot-ping { animation: none; }
     #boot-overlay { display: none; }
 }

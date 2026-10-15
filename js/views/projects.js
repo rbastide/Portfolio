@@ -14,7 +14,7 @@ function livrableHTML(l) {
 
 function projectCardHTML(p, i) {
     return `
-    <article class="project-card card-glow ${ACCENTS[i % ACCENTS.length]} reveal delay-${(i % 3) + 1}" data-category="${p.category}">
+    <article class="project-card card-glow ${ACCENTS[i % ACCENTS.length]} reveal" data-category="${p.category}">
         <div class="project-body">
             <div class="project-meta">
                 <span class="project-category">${p.category} • ${p.context}</span>

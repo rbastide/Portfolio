@@ -193,9 +193,9 @@
 }
 
 /* ---------- Bandeau de métriques ---------- */
+/* Pas de fond propre : le bandeau flotte dans le fondu entre l'accueil et « À propos ». */
 .metrics {
-    background: var(--surface-lowest);
-    padding: var(--space-md) var(--margin);
+    padding: var(--space-xl) var(--margin);
 }
 
 .metrics-grid {

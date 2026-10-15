@@ -17,6 +17,7 @@ import { contactHTML } from './views/contact.js';
 
 import { runBootSequence } from './controllers/boot.js';
 import { initNavigation } from './controllers/navigation.js';
+import { initBackdrop } from './controllers/backdrop.js';
 import { initReveal, initSkillDetails, initProjectFilters, initConsole } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
 import { initChatDock } from './chatbot/dock.js';
@@ -37,6 +38,7 @@ async function init() {
     const chatbot = new Chatbot(data);
     chatbot.init();
     initChatDock(chatbot);
+    initBackdrop();
     initReveal();
     initSkillDetails();
     initProjectFilters();

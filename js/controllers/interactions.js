@@ -3,19 +3,46 @@
 // ============================================
 
 // Apparition progressive des éléments .reveal + animation des barres de compétences.
-export function initReveal() {
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add('visible');
-            entry.target.querySelectorAll('.skill-bar-fill').forEach((bar, i) => {
-                setTimeout(() => bar.classList.add('active'), 200 + i * 100);
-            });
-            obs.unobserve(entry.target);
-        });
-    }, { threshold: 0.1 });
+// Les éléments qui entrent à l'écran ensemble apparaissent en cascade, dans l'ordre
+// de lecture ; ceux qu'un saut d'ancre a fait passer sans les montrer s'affichent
+// directement, pour ne jamais laisser de zone vide en remontant.
+const STAGGER = 80;     // ms entre deux éléments d'un même groupe
+const MAX_STAGGER = 6;  // au-delà, le reste du groupe arrive ensemble
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+function showReveal(el, delay = 0, instant = false) {
+    el.style.setProperty('--reveal-delay', `${delay}ms`);
+    el.classList.toggle('instant', instant);
+    el.classList.add('visible');
+    el.querySelectorAll('.skill-bar-fill').forEach((bar, i) => {
+        setTimeout(() => bar.classList.add('active'), (instant ? 0 : delay + 250) + i * 90);
+    });
+}
+
+export function initReveal() {
+    const pending = new Set(document.querySelectorAll('.reveal'));
+    const byDocumentOrder = (a, b) =>
+        a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+
+    const observer = new IntersectionObserver(entries => {
+        entries
+            .filter(e => e.isIntersecting)
+            .map(e => e.target)
+            .sort(byDocumentOrder)
+            .forEach((el, i) => {
+                showReveal(el, Math.min(i, MAX_STAGGER) * STAGGER);
+                pending.delete(el);
+                observer.unobserve(el);
+            });
+
+        pending.forEach(el => {
+            if (el.getBoundingClientRect().bottom > 0) return;
+            showReveal(el, 0, true);
+            pending.delete(el);
+            observer.unobserve(el);
+        });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+
+    pending.forEach(el => observer.observe(el));
 }
 
 // Ouverture / fermeture des détails d'une compétence (délégation d'événement).

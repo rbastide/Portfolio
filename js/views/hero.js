@@ -122,19 +122,19 @@ export function heroHTML(data) {
                         <span class="icon">code_blocks</span>
                         ${profile.year.toUpperCase()}
                     </span>
-                    <h1 class="hero-title reveal delay-1">
+                    <h1 class="hero-title reveal">
                         Développement Logiciel &amp;
                         <span class="gradient-text">Administration Système</span>
                     </h1>
-                    <p class="hero-bio reveal delay-1">${profile.bio}</p>
+                    <p class="hero-bio reveal">${profile.bio}</p>
 
-                    <div class="hero-ctas reveal delay-2">
+                    <div class="hero-ctas reveal">
                         <a href="#projects" class="btn btn-primary"><span class="icon">rocket_launch</span>Explorer les projets</a>
                         <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="btn btn-tonal"><span class="icon text-secondary">terminal</span>Profil GitHub</a>
                         <a href="#contact" class="btn btn-ghost"><span class="icon">alternate_email</span>Me contacter</a>
                     </div>
 
-                    <div class="hero-metas reveal delay-3">
+                    <div class="hero-metas reveal">
                         ${metas.map(m => `
                         <div class="hero-meta">
                             <span class="hero-meta-key">${m.key}</span>
@@ -144,7 +144,7 @@ export function heroHTML(data) {
                     </div>
                 </div>
 
-                <div class="hero-side reveal delay-2" id="chatbot-home">${chatPanelHTML()}</div>
+                <div class="hero-side reveal" id="chatbot-home">${chatPanelHTML()}</div>
             </div>
         </div>
     </section>

@@ -21,7 +21,7 @@ export function aboutHTML({ profile }) {
             </div>
 
             <div class="about-grid">
-                <div class="about-text card reveal delay-1">
+                <div class="about-text card reveal">
                     ${paragraphs.map(p => `<p>${p}</p>`).join('')}
                     <div class="about-soft">
                         <span class="label-sm text-outline">SAVOIR-ÊTRE</span>
@@ -31,7 +31,7 @@ export function aboutHTML({ profile }) {
                     </div>
                 </div>
 
-                <div class="about-facts reveal delay-2">
+                <div class="about-facts reveal">
                     ${facts.map(f => `
                     <div class="about-fact">
                         <span class="about-fact-icon"><span class="icon">${FACT_ICONS[f.key] || 'chevron_right'}</span></span>

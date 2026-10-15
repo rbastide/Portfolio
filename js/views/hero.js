@@ -7,7 +7,7 @@ const PRESETS = [
     { emoji: '🛠️', label: 'Stack technique', query: 'Quelle est sa stack technique ?', accent: 'text-primary' }
 ];
 
-function chatPanelHTML({ profile }) {
+function chatPanelHTML() {
     return `
     <div class="chat-placeholder" id="chatbot-placeholder" hidden>
         <span class="chat-avatar"><span class="icon">picture_in_picture_alt</span></span>
@@ -47,9 +47,6 @@ function chatPanelHTML({ profile }) {
                 <button type="button" class="chat-preset ${p.accent}" data-query="${p.query}">
                     <span aria-hidden="true">${p.emoji}</span>${p.label}
                 </button>`).join('')}
-                <a class="chat-preset" href="mailto:${profile.contact.email}?subject=${encodeURIComponent('Demande de CV')}">
-                    <span aria-hidden="true">📄</span>Demander le CV
-                </a>
             </div>
         </div>
 
@@ -147,7 +144,7 @@ export function heroHTML(data) {
                     </div>
                 </div>
 
-                <div class="hero-side reveal delay-2" id="chatbot-home">${chatPanelHTML(data)}</div>
+                <div class="hero-side reveal delay-2" id="chatbot-home">${chatPanelHTML()}</div>
             </div>
         </div>
     </section>

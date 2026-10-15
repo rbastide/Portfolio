@@ -57,7 +57,7 @@ export function contactHTML(data) {
 
             <div class="console reveal" data-email="${email}" data-github="${github}">
                 <label class="console-prompt" for="console-input">&gt; contact_shell</label>
-                <input id="console-input" class="console-input" type="text" placeholder="Taper 'status', 'cv' ou 'help'..." autocomplete="off" spellcheck="false">
+                <input id="console-input" class="console-input" type="text" placeholder="Taper 'status', 'mail' ou 'help'..." autocomplete="off" spellcheck="false">
                 <span class="console-out">
                     <span id="console-response" class="text-tertiary" aria-live="polite">[OK: READY FOR QUERY]</span>
                     <span class="text-outline">• ENTRÉE pour exécuter</span>

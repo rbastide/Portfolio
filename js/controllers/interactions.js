@@ -74,12 +74,8 @@ export function initConsole() {
     };
 
     const commands = {
-        help: () => print('[COMMANDES : status, cv, github, mail, clear]', 'text-primary'),
+        help: () => print('[COMMANDES : status, github, mail, clear]', 'text-primary'),
         status: () => print('[SYSTEM: OPTIMAL // BUT INFO // RECHERCHE ALTERNANCE MASTER IA]'),
-        cv: () => {
-            print(`[CV : ouverture d'un mail vers ${email}...]`, 'text-secondary');
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent('Demande de CV')}`;
-        },
         mail: () => {
             print(`[MAIL : ${email}]`, 'text-secondary');
             window.location.href = `mailto:${email}`;

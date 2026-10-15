@@ -81,50 +81,6 @@ export const projects = [
         tech: ["Java", "JavaFX"],
         tags: ["AC 11.01", "AC 12.03"],
         keywords: ["latice", "jeu", "javafx", "java"]
-    },
-    {
-        id: "sql", icon: "query_stats",
-        title: "Optimisation SQL",
-        category: "Optimiser", level: 3, context: "Académique",
-        desc: "Amélioration des requêtes SQL et refonte partielle d'une base de données existante.",
-        role: "Administrateur de la Base — Analyse des goulets d'étranglement, restructuration du schéma et ajout d'index.",
-        livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/1MkoOj10LHxPi9Ie-tQKfuMqT1fgx-wu88fBNFWs4SAw/edit?usp=sharing" }],
-        tech: ["Python", "SQL"],
-        tags: ["AC 21.01", "AC 42.01"],
-        keywords: ["optimisation sql", "index", "requete", "requête"]
-    },
-    {
-        id: "reseau", icon: "lan",
-        title: "Réseau Sécurisé",
-        category: "Administrer", level: 4, context: "Académique",
-        desc: "Mise en place d'une architecture réseau virtuelle complète et sécurisée.",
-        role: "Administrateur Système — Configuration des machines virtuelles, du routage interne et des règles iptables.",
-        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/Reseau` }],
-        tech: ["Linux", "SSH"],
-        tags: ["AC 31.03", "AC 32.04"],
-        keywords: ["réseau sécurisé", "reseau securise", "architecture réseau", "architecture reseau", "machine virtuelle", "iptables", "kathara"]
-    },
-    {
-        id: "bibliotheque", icon: "local_library",
-        title: "Bibliothèque",
-        category: "Gérer", level: 4, context: "Académique",
-        desc: "Création de scripts d'automatisation pour la gestion d'une bibliothèque.",
-        role: "Développeur de Scripts — Automatisation du processus de sauvegarde des bases et gestion des logs applicatifs.",
-        livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/1L1QfFlK6oreZq4vJf2hF_2ptG4T0Kd8z_afSNKuYrWo/edit?tab=t.0" }],
-        tech: ["Bash"],
-        tags: ["AC 41.01"],
-        keywords: ["bibliothèque", "bibliotheque", "script", "automatisation", "sauvegarde", "log"]
-    },
-    {
-        id: "gestion-projet", icon: "view_kanban",
-        title: "Gestion de projet",
-        category: "Conduire", level: 4, context: "Académique",
-        desc: "Création complète d'un plan de projet pour une entreprise fictive dans le cadre d'un module d'études.",
-        role: "Scrum Master — Découpage du projet en user stories, animation des rituels agiles et suivi de l'avancement global.",
-        livrables: [{ nom: "Compte-Rendu", url: "https://docs.google.com/document/d/104-1ie-kug6LXTbefCX5LY-iyqoJ5MWg1y1rLxulLbw/edit?usp=sharing" }],
-        tech: ["Méthodes Agiles", "PowerPoint"],
-        tags: ["AC 51.03", "AC 52.02"],
-        keywords: ["gestion de projet", "plan de projet", "scrum master", "user stories"]
     }
 ];
 

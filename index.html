@@ -10,33 +10,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/sections.css">
-    <link rel="stylesheet" href="css/chatbot.css">
-    <script type="module" src="js/main.js"></script>
+    <link rel="stylesheet" href="css/base.css?v=2">
+    <link rel="stylesheet" href="css/layout.css?v=2">
+    <link rel="stylesheet" href="css/sections.css?v=2">
+    <link rel="stylesheet" href="css/chatbot.css?v=2">
+    <script type="module" src="js/main.js?v=2"></script>
 </head>
 <body>
-    <!-- Séquence de démarrage -->
-    <div id="boot-overlay" aria-hidden="true">
-        <div id="boot-log"><span id="boot-cursor">█</span></div>
-        <div class="boot-skip">[ clic ou touche pour passer ]</div>
-    </div>
 
     <!-- En-tête -->
     <header id="main-nav">
         <div class="nav-inner">
             <div class="nav-brand">
                 <a href="#home" class="nav-logo">
-                    <span class="nav-logo-icon"><span class="icon">terminal</span></span>
+                    <span class="nav-logo-mark" aria-hidden="true">RB</span>
                     <span class="nav-logo-text">
-                        <span class="nav-logo-name">RB <span class="text-primary">//</span> BASTIDE_RÉMI</span>
-                        <span class="nav-logo-sub">@RBASTIDE • DEV FULLSTACK → IA</span>
+                        <span class="nav-logo-name">Rémi Bastide</span>
+                        <span class="nav-logo-sub">Développeur fullstack · cap sur l'IA</span>
                     </span>
                 </a>
                 <span class="nav-status">
                     <span class="dot dot-pulse"></span>
-                    SYSTEM READY // ALTERNANCE MASTER IA
+                    Ouvert à l'alternance
                 </span>
             </div>
 
@@ -49,7 +44,7 @@
 
             <div class="nav-actions">
                 <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="nav-gh">
-                    <span class="icon text-secondary">code</span>gh/rbastide
+                    <span class="icon text-secondary">code</span>GitHub
                 </a>
                 <button id="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
                     <span class="icon">menu</span>
@@ -65,15 +60,15 @@
     <footer id="footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <span class="footer-title">RÉMI BASTIDE // BUT INFORMATIQUE</span>
-                <span class="footer-sub">Développement logiciel • Administration système • Cap sur l'IA</span>
+                <span class="footer-title">Rémi Bastide</span>
+                <span class="footer-sub">Développeur fullstack · BUT Informatique · cap sur l'IA</span>
             </div>
             <div class="footer-links">
-                <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="hover-secondary"><span class="icon">terminal</span>GitHub</a>
+                <a href="https://github.com/rbastide" target="_blank" rel="noopener noreferrer" class="hover-secondary"><span class="icon">code</span>GitHub</a>
                 <a href="https://www.linkedin.com/in/bremi/" target="_blank" rel="noopener noreferrer" class="hover-primary"><span class="icon">link</span>LinkedIn</a>
                 <a href="mailto:remi.bastide29@gmail.com" class="hover-tertiary"><span class="icon">alternate_email</span>remi.bastide29@gmail.com</a>
             </div>
-            <div class="footer-copy">© 2026 Rémi Bastide — HTML / CSS / JS</div>
+            <div class="footer-copy">© 2026 Rémi Bastide</div>
         </div>
     </footer>
 </body>

@@ -42,12 +42,12 @@ export class Chatbot {
         this.panel.querySelectorAll('.chat-preset[data-query]').forEach(btn =>
             btn.addEventListener('click', () => this.send(btn.dataset.query)));
 
-        this.addMessage('bot', GREETING, 'System Ready');
+        this.addMessage('bot', GREETING, "à l'instant");
     }
 
     reset() {
         this.messagesEl.innerHTML = '';
-        this.addMessage('bot', 'Session réinitialisée. Posez une question sur le parcours ou les projets de Rémi !', 'System Ready');
+        this.addMessage('bot', 'Session réinitialisée. Posez une question sur le parcours ou les projets de Rémi !', "à l'instant");
     }
 
     updateCounter() {

@@ -20,7 +20,7 @@ function projectCardHTML(p, i) {
                 <span class="project-category">${p.category} • ${p.context}</span>
                 ${p.featured
                     ? '<span class="project-status"><span class="dot dot-sm"></span>Récent</span>'
-                    : `<span class="project-level">NIV.${p.level}</span>`}
+                    : `<span class="project-level">Niveau ${p.level}</span>`}
             </div>
             <div class="project-heading">
                 <span class="project-icon"><span class="icon">${p.icon || 'folder'}</span></span>
@@ -71,7 +71,6 @@ export function projectsHTML({ projects }) {
         <div class="container">
             <div class="section-head split reveal">
                 <div class="section-head">
-                    <span class="section-tag text-secondary"><span class="icon">folder_special</span>INDEX // RÉALISATIONS LOGICIELLES</span>
                     <h2 class="section-title">Projets &amp; Travaux Collaboratifs</h2>
                 </div>
                 <p class="section-aside">Applications web fullstack, outils déployés pour le Grand Périgueux, infrastructures Linux et projets académiques du BUT.</p>

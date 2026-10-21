@@ -54,23 +54,12 @@
     font-weight: 600;
 }
 
-.chat-version {
-    padding: 1px 6px;
-    border-radius: var(--radius-sm);
-    background: rgba(208, 188, 255, 0.2);
-    color: var(--primary);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    line-height: 14px;
-    font-weight: 500;
-}
-
 .chat-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0 var(--space-sm);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 16px;
     color: var(--outline);
@@ -104,16 +93,6 @@
 
 .chat-icon-btn .icon { font-size: 16px; }
 .chat-icon-btn:hover { background: var(--surface-highest); color: var(--on-surface); }
-
-.chat-node {
-    padding: 1px 6px;
-    border-radius: var(--radius-sm);
-    background: var(--surface-container);
-    color: var(--secondary);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    line-height: 14px;
-}
 
 /* ---------- Messages ---------- */
 .chat-messages {
@@ -183,7 +162,7 @@
 
 .chat-msg-meta {
     padding-left: 4px;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 10px;
     line-height: 14px;
     color: var(--outline);
@@ -225,7 +204,7 @@
 }
 
 .chat-presets-label {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -244,7 +223,7 @@
     padding: 4px 10px;
     border-radius: 999px;
     background: var(--surface-high);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     line-height: 16px;
     transition: background-color 0.2s, color 0.2s;
@@ -314,7 +293,7 @@
     justify-content: space-between;
     gap: var(--space-sm);
     padding: 0 4px;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 10px;
     line-height: 14px;
     color: var(--outline);
@@ -468,7 +447,6 @@
 .chat-dock .chat-panel:focus { outline: none; }
 
 /* La fenêtre est plus étroite que l'accueil : le badge décoratif cède sa place au bouton Fermer. */
-.chat-dock .chat-node { display: none; }
 
 /* Le voile n'existe que sur mobile, où la fenêtre devient un panneau plein écran. */
 .chat-scrim { display: none; }

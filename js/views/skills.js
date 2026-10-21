@@ -10,7 +10,7 @@ const GROUP_ICONS = {
     'Front-end': 'web',
     'Back-end': 'dns',
     'Bases de données': 'database',
-    'Système & DevOps': 'terminal',
+    'Système & DevOps': 'dns',
     'Méthodes': 'architecture'
 };
 
@@ -33,7 +33,7 @@ function skillCardHTML(c, i) {
     <article class="skill-card card ${ACCENTS[i % ACCENTS.length]} reveal">
         <div class="skill-head">
             <span class="skill-icon"><span class="icon">${c.icon}</span></span>
-            <span class="skill-level">NIV.${c.level} // ${info.label.toUpperCase()}</span>
+            <span class="skill-level">Niveau ${c.level} · ${info.label}</span>
         </div>
         <h3 class="skill-title">${c.title}</h3>
         <p class="skill-desc">${c.description}</p>
@@ -63,7 +63,6 @@ export function skillsHTML({ profile, competences }) {
     <section id="skills" class="section">
         <div class="container">
             <div class="section-head reveal">
-                <span class="section-tag text-primary"><span class="icon">memory</span>COMPUTATIONAL TOOLSET // TECH STACK</span>
                 <h2 class="section-title">Langages, Frameworks &amp; Environnements</h2>
                 <p class="section-desc">Compétences acquises à travers les SAÉ du BUT Informatique, les projets pour le Grand Périgueux et des développements personnels.</p>
             </div>
@@ -71,7 +70,6 @@ export function skillsHTML({ profile, competences }) {
             <div class="stack-grid">${profile.about.stack.map(stackCardHTML).join('')}</div>
 
             <div class="section-head reveal">
-                <span class="section-tag text-secondary"><span class="icon">verified</span>RÉFÉRENTIEL NATIONAL // BUT INFORMATIQUE</span>
                 <h3 class="section-subtitle">Les 6 compétences du BUT</h3>
             </div>
 

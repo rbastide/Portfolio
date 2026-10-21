@@ -71,49 +71,6 @@
 
 .hero-container { position: relative; z-index: 1; }
 
-.telemetry {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-    background: var(--surface-low);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-}
-
-.telemetry-left, .telemetry-right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm) var(--space-md);
-    flex-wrap: wrap;
-}
-
-.telemetry-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) var(--space-sm);
-    border-radius: var(--radius);
-    background: var(--surface-container);
-    color: var(--secondary);
-}
-
-.telemetry-ok { color: var(--tertiary); display: none; }
-
-.telemetry-right { color: var(--outline); }
-
-.telemetry-right > span {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-}
-
-.telemetry-right .icon { font-size: 14px; }
-
 .hero-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -167,7 +124,7 @@
 }
 
 .hero-meta-key, .hero-meta-sub {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -181,10 +138,6 @@
     line-height: 24px;
     font-weight: 600;
     overflow-wrap: anywhere;
-}
-
-@media (min-width: 640px) {
-    .telemetry-ok { display: inline; }
 }
 
 @media (min-width: 1024px) {
@@ -244,7 +197,7 @@
 }
 
 .metric-label {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -320,11 +273,10 @@
 }
 
 .about-fact-key {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
-    text-transform: uppercase;
 }
 
 .about-fact-value {
@@ -354,7 +306,7 @@
     border-radius: 999px;
     background: var(--surface-container);
     color: var(--on-surface-variant);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     transition: background-color 0.2s, color 0.2s;
@@ -433,7 +385,7 @@
     border-radius: var(--radius-sm);
     background: var(--accent-strong);
     color: var(--on-accent-strong);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
 }
@@ -442,7 +394,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -484,7 +436,7 @@
 
 .project-period {
     display: block;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -498,7 +450,7 @@
     gap: 2px;
     list-style: none;
     cursor: pointer;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     color: var(--accent);
@@ -537,7 +489,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     color: var(--accent);
@@ -606,7 +558,7 @@
     padding: 6px 10px;
     border-radius: var(--radius);
     background: var(--surface-low);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     color: var(--on-surface);
@@ -639,7 +591,7 @@
 }
 
 .skill-level {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--accent);
@@ -681,7 +633,7 @@
     margin-top: var(--space-xs);
     border-radius: var(--radius);
     background: var(--surface-low);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     color: var(--on-surface-variant);
@@ -792,7 +744,6 @@
     gap: var(--space-sm);
 }
 
-.callout-text .pill { background: var(--surface-container); }
 
 .callout-text p {
     max-width: 42rem;
@@ -826,7 +777,7 @@
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius-md);
     background: var(--surface-container);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -878,46 +829,7 @@
 
 .contact-card:hover .contact-value { color: var(--accent); }
 
-.console {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-md);
-    background: var(--surface-lowest);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-}
-
-.console-prompt { color: var(--secondary); white-space: nowrap; }
-
-.console-input {
-    flex: 1;
-    min-width: 0;
-    padding: var(--space-xs) 0;
-    background: transparent;
-    border: 0;
-    outline: none;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--on-surface);
-}
-
-.console-input::placeholder { color: var(--outline); }
-
-.console-out {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    justify-content: flex-end;
-}
-
-#console-response.is-error { color: var(--error); }
-
 @media (min-width: 640px) {
-    .console { flex-direction: row; align-items: center; gap: var(--space-md); }
     .contact-status { align-self: auto; }
 }
 

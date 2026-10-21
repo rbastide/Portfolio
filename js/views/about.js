@@ -16,7 +16,6 @@ export function aboutHTML({ profile }) {
     <section id="about" class="section">
         <div class="container">
             <div class="section-head reveal">
-                <span class="section-tag text-tertiary"><span class="icon">person</span>WHOAMI // PROFIL</span>
                 <h2 class="section-title">À propos de moi</h2>
             </div>
 
@@ -24,7 +23,7 @@ export function aboutHTML({ profile }) {
                 <div class="about-text card reveal">
                     ${paragraphs.map(p => `<p>${p}</p>`).join('')}
                     <div class="about-soft">
-                        <span class="label-sm text-outline">SAVOIR-ÊTRE</span>
+                        <span class="label-sm text-outline">Savoir-être</span>
                         <div class="chip-row">
                             ${softSkills.map(s => `<span class="chip">${s}</span>`).join('')}
                         </div>

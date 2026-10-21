@@ -38,21 +38,26 @@
     min-width: 0;
 }
 
-.nav-logo-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius);
-    background: var(--surface-high);
-    color: var(--primary);
+.nav-logo-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--outline);
+    color: var(--on-surface);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+    transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nav-logo:hover .nav-logo-icon {
-    background: var(--primary-container);
-    color: var(--on-primary-container);
+.nav-logo:hover .nav-logo-mark {
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .nav-logo-text {
@@ -63,19 +68,18 @@
 
 .nav-logo-name {
     font-family: var(--font-display);
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 17px;
+    line-height: 22px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     white-space: nowrap;
 }
 
 .nav-logo-sub {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-    color: var(--outline);
-    letter-spacing: 0.05em;
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--on-surface-variant);
     white-space: nowrap;
 }
 
@@ -85,11 +89,11 @@
     gap: var(--space-xs);
     padding: var(--space-xs) var(--space-sm);
     border-radius: 999px;
-    background: rgba(41, 42, 47, 0.8);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-    color: var(--tertiary);
+    border: 1px solid rgba(149, 142, 160, 0.35);
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--on-surface-variant);
     white-space: nowrap;
 }
 
@@ -137,7 +141,7 @@
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius);
     background: var(--surface-high);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     transition: background-color 0.2s;
@@ -236,18 +240,6 @@ main { padding-top: var(--nav-height); }
     gap: var(--space-sm);
 }
 
-.section-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-    text-transform: uppercase;
-}
-
-.section-tag .icon { font-size: 16px; }
-
 .section-title {
     font-family: var(--font-display);
     font-size: 26px;
@@ -263,7 +255,7 @@ main { padding-top: var(--nav-height); }
 
 .section-aside {
     max-width: 28rem;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     line-height: 18px;
     color: var(--outline);
@@ -329,7 +321,7 @@ main { padding-top: var(--nav-height); }
 .btn-ghost {
     background: var(--surface-low);
     color: var(--outline);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
 }
@@ -345,7 +337,7 @@ main { padding-top: var(--nav-height); }
     border-radius: var(--radius-sm);
     background: var(--surface-lowest);
     color: var(--outline);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     white-space: nowrap;
@@ -353,21 +345,6 @@ main { padding-top: var(--nav-height); }
 
 .chip.accent { color: var(--accent, var(--primary)); }
 .chip.ac { background: transparent; border: 1px dashed var(--outline-variant); }
-
-.pill {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    align-self: flex-start;
-    padding: var(--space-xs) var(--space-sm);
-    border-radius: 999px;
-    background: var(--surface-high);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 14px;
-}
-
-.pill .icon { font-size: 15px; }
 
 /* ---------- Pied de page ---------- */
 #footer {
@@ -397,7 +374,7 @@ main { padding-top: var(--nav-height); }
 }
 
 .footer-sub, .footer-copy {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 11px;
     line-height: 14px;
     color: var(--outline);
@@ -414,7 +391,7 @@ main { padding-top: var(--nav-height); }
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     font-weight: 500;
     color: var(--on-surface-variant);

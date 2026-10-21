@@ -87,39 +87,3 @@ export function initProjectFilters() {
     });
 }
 
-// Mini-terminal de la section contact.
-export function initConsole() {
-    const root = document.querySelector('.console');
-    if (!root) return;
-    const input = root.querySelector('#console-input');
-    const out = root.querySelector('#console-response');
-    const { email, github } = root.dataset;
-
-    const print = (text, cls = 'text-tertiary') => {
-        out.textContent = text;
-        out.className = cls;
-    };
-
-    const commands = {
-        help: () => print('[COMMANDES : status, github, mail, clear]', 'text-primary'),
-        status: () => print('[SYSTEM: OPTIMAL // BUT INFO // RECHERCHE ALTERNANCE MASTER IA]'),
-        mail: () => {
-            print(`[MAIL : ${email}]`, 'text-secondary');
-            window.location.href = `mailto:${email}`;
-        },
-        github: () => {
-            print(`[REDIRECTION : ${github.replace('https://', '')}...]`, 'text-secondary');
-            window.open(github, '_blank', 'noopener');
-        },
-        clear: () => print('[OK: READY FOR QUERY]')
-    };
-
-    input.addEventListener('keydown', e => {
-        if (e.key !== 'Enter') return;
-        const cmd = input.value.trim().toLowerCase();
-        input.value = '';
-        if (!cmd) return;
-        if (commands[cmd]) commands[cmd]();
-        else print(`[COMMANDE INTROUVABLE : ${cmd}] — essayez 'help'`, 'is-error');
-    });
-}

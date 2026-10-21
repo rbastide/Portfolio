@@ -2,9 +2,9 @@
 // VUE — Accueil (hero + assistant + bandeau de métriques)
 // ============================================
 const PRESETS = [
-    { emoji: '🚀', label: 'Projets clés', query: 'Quels sont ses projets récents ?', accent: 'text-secondary' },
-    { emoji: '💼', label: 'Alternance', query: 'Est-ce que Rémi recherche une alternance ?', accent: 'text-tertiary' },
-    { emoji: '🛠️', label: 'Stack technique', query: 'Quelle est sa stack technique ?', accent: 'text-primary' }
+    { icon: 'folder_special', label: 'Projets clés', query: 'Quels sont ses projets récents ?', accent: 'text-secondary' },
+    { icon: 'work', label: 'Alternance', query: 'Est-ce que Rémi recherche une alternance ?', accent: 'text-tertiary' },
+    { icon: 'build', label: 'Stack technique', query: 'Quelle est sa stack technique ?', accent: 'text-primary' }
 ];
 
 function chatPanelHTML() {
@@ -19,11 +19,11 @@ function chatPanelHTML() {
             <div class="chat-header-id">
                 <span class="chat-avatar"><span class="icon">neurology</span></span>
                 <div class="chat-header-text">
-                    <div class="chat-title">ReyMysterio // Assistant <span class="chat-version">local</span></div>
+                    <div class="chat-title">ReyMysterio</div>
                     <div class="chat-meta">
-                        <span class="text-tertiary"><span class="dot dot-sm dot-pulse"></span>ONLINE</span>
-                        <span>•</span>
-                        <span>Moteur à mots-clés · sans API</span>
+                        <span class="text-tertiary"><span class="dot dot-sm dot-pulse"></span>Disponible</span>
+                        <span>·</span>
+                        <span>Répond à partir du contenu du portfolio</span>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,6 @@ function chatPanelHTML() {
                 <button type="button" id="chatbot-reset" class="chat-icon-btn" aria-label="Réinitialiser la discussion" title="Nettoyer le chat">
                     <span class="icon">restart_alt</span>
                 </button>
-                <span class="chat-node">AI_NODE</span>
                 <button type="button" id="chatbot-dock-close" class="chat-icon-btn" aria-label="Fermer la fenêtre de l'assistant" title="Fermer" hidden>
                     <span class="icon">close</span>
                 </button>
@@ -41,11 +40,11 @@ function chatPanelHTML() {
         <div class="chat-messages" id="chatbot-messages" aria-live="polite"></div>
 
         <div class="chat-presets">
-            <span class="chat-presets-label">Questions rapides :</span>
+            <span class="chat-presets-label">Questions rapides</span>
             <div class="chat-presets-list">
                 ${PRESETS.map(p => `
                 <button type="button" class="chat-preset ${p.accent}" data-query="${p.query}">
-                    <span aria-hidden="true">${p.emoji}</span>${p.label}
+                    <span class="icon" aria-hidden="true">${p.icon}</span>${p.label}
                 </button>`).join('')}
             </div>
         </div>
@@ -59,7 +58,7 @@ function chatPanelHTML() {
             </div>
             <div class="chat-form-meta">
                 <span id="chatbot-count">0 / 280</span>
-                <span class="text-tertiary"><span class="dot dot-sm"></span>Base générée depuis le portfolio</span>
+                <span>Entrée pour envoyer</span>
             </div>
         </form>
     </div>`;
@@ -70,7 +69,7 @@ function metricsHTML({ profile, projects }) {
         { icon: 'school', accent: 'accent-primary', value: 'BUT Informatique', label: profile.year },
         { icon: 'hub', accent: 'accent-tertiary', value: `${projects.length} Projets`, label: 'Fullstack, systèmes & données' },
         { icon: 'apartment', accent: 'accent-secondary', value: 'Grand Périgueux', label: 'Projets en conditions réelles (2026)' },
-        { icon: 'terminal', accent: 'accent-primary', value: 'Sys & Network', label: 'Linux, Docker, SSH, iptables' }
+        { icon: 'dns', accent: 'accent-primary', value: 'Systèmes & réseaux', label: 'Linux, Docker, SSH, iptables' }
     ];
 
     return `
@@ -91,9 +90,9 @@ function metricsHTML({ profile, projects }) {
 export function heroHTML(data) {
     const { profile, projects } = data;
     const metas = [
-        { key: 'STATUT', value: 'DISPONIBLE', sub: 'Alternance', cls: 'text-tertiary' },
-        { key: 'DOMAINES', value: 'FULLSTACK', sub: 'Web & déploiement', cls: 'text-primary' },
-        { key: 'CAP', value: 'IA // MASTER', sub: 'Prochaine étape', cls: 'text-secondary' }
+        { key: 'Statut', value: 'Disponible', sub: 'Alternance', cls: 'text-tertiary' },
+        { key: 'Domaine', value: 'Fullstack', sub: 'Web & déploiement', cls: 'text-primary' },
+        { key: 'Objectif', value: 'Master IA', sub: 'Prochaine étape', cls: 'text-secondary' }
     ];
 
     return `
@@ -102,26 +101,8 @@ export function heroHTML(data) {
         <div class="glow glow-secondary" aria-hidden="true"></div>
 
         <div class="container hero-container">
-            <div class="telemetry reveal">
-                <div class="telemetry-left">
-                    <span class="telemetry-badge">
-                        <span class="dot dot-sm dot-secondary dot-ping"></span>
-                        Rémi Bastide · Portfolio
-                    </span>
-                    <span class="telemetry-ok">Disponible pour une alternance</span>
-                </div>
-                <div class="telemetry-right">
-                    <span><span class="icon text-tertiary">memory</span>BUT_INFO // ${projects.length}_PROJETS</span>
-                    <span class="text-primary"><span class="icon">terminal</span>@${profile.handle.toUpperCase()}</span>
-                </div>
-            </div>
-
             <div class="hero-grid">
                 <div class="hero-main">
-                    <span class="pill text-primary reveal">
-                        <span class="icon">code_blocks</span>
-                        ${profile.year.toUpperCase()}
-                    </span>
                     <h1 class="hero-title reveal">
                         Développeur fullstack,
                         <span class="gradient-text">en route vers l'IA</span>
@@ -130,7 +111,7 @@ export function heroHTML(data) {
 
                     <div class="hero-ctas reveal">
                         <a href="#projects" class="btn btn-primary"><span class="icon">rocket_launch</span>Explorer les projets</a>
-                        <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="btn btn-tonal"><span class="icon text-secondary">terminal</span>Profil GitHub</a>
+                        <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="btn btn-tonal"><span class="icon text-secondary">code</span>Profil GitHub</a>
                         <a href="#contact" class="btn btn-ghost"><span class="icon">alternate_email</span>Me contacter</a>
                     </div>
 

@@ -61,29 +61,107 @@ export function initSkillDetails() {
     });
 }
 
-// Filtres de projets par catégorie.
+// Filtres de projets : recherche texte + type, contexte et technologie.
+// Les critères se cumulent ; recliquer sur une option active la désactive.
+// Les technologies de la section Stack et des lignes de projet appliquent
+// aussi le filtre « Technologie » (attribut data-tech / data-filter-tech).
 export function initProjectFilters() {
     const bar = document.querySelector('.project-filters');
     if (!bar) return;
-    const cards = document.querySelectorAll('.project-card');
+
+    const rows = [...document.querySelectorAll('.project-row')];
+    const options = [...bar.querySelectorAll('.filter-btn')];
+    const search = bar.querySelector('#project-search');
+    const results = bar.querySelector('#project-results');
+    const reset = bar.querySelector('#filter-reset');
+    const more = bar.querySelector('#tech-more');
+    const empty = document.getElementById('project-empty');
+
+    const state = { category: null, context: null, tech: null, query: '' };
+    const normalize = text => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+
+    const matches = (row, s) =>
+        (!s.category || row.dataset.category === s.category) &&
+        (!s.context || row.dataset.context === s.context) &&
+        (!s.tech || row.dataset.tech.split('|').includes(s.tech)) &&
+        (!s.query || s.query.split(/\s+/).every(word => row.dataset.search.includes(word)));
+
+    function update() {
+        let shown = 0;
+        rows.forEach(row => {
+            const match = matches(row, state);
+            row.hidden = !match;
+            // Une ligne jamais vue mais révélée par le filtre doit apparaître directement.
+            if (match) { row.classList.add('visible'); shown++; }
+        });
+
+        // Chaque option affiche combien de projets elle donnerait avec les autres critères.
+        options.forEach(btn => {
+            const { group, value } = btn.dataset;
+            const active = state[group] === value;
+            const count = rows.filter(row => matches(row, { ...state, [group]: value })).length;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-pressed', String(active));
+            btn.querySelector('.filter-count').textContent = count;
+            btn.disabled = !active && count === 0;
+        });
+
+        const filtered = Boolean(state.category || state.context || state.tech || state.query);
+        results.textContent = filtered
+            ? `${shown} projet${shown > 1 ? 's' : ''} sur ${rows.length}`
+            : `${rows.length} projets`;
+        reset.hidden = !filtered;
+        empty.hidden = shown > 0;
+    }
+
+    function toggleMore(open = more.getAttribute('aria-expanded') !== 'true') {
+        bar.classList.toggle('show-all-tech', open);
+        more.setAttribute('aria-expanded', String(open));
+        more.textContent = open ? 'Voir moins' : `+ ${options.filter(b => b.classList.contains('is-extra')).length} autres`;
+    }
+
+    function setTech(tech) {
+        state.tech = tech;
+        // Une techno masquée derrière « Voir plus » doit rester visible une fois choisie.
+        if (more && options.some(b => b.dataset.value === tech && b.classList.contains('is-extra'))) toggleMore(true);
+        update();
+    }
+
+    function clear() {
+        Object.assign(state, { category: null, context: null, tech: null, query: '' });
+        search.value = '';
+        update();
+    }
 
     bar.addEventListener('click', e => {
         const btn = e.target.closest('.filter-btn');
         if (!btn) return;
-        const filter = btn.dataset.filter;
-
-        bar.querySelectorAll('.filter-btn').forEach(b => {
-            const active = b === btn;
-            b.classList.toggle('active', active);
-            b.setAttribute('aria-pressed', String(active));
-        });
-
-        cards.forEach(card => {
-            const match = filter === 'all' || card.dataset.category === filter;
-            card.hidden = !match;
-            // Une carte jamais vue mais révélée par le filtre doit apparaître directement.
-            if (match) card.classList.add('visible');
-        });
+        const { group, value } = btn.dataset;
+        state[group] = state[group] === value ? null : value;
+        update();
     });
+
+    search.addEventListener('input', () => {
+        state.query = normalize(search.value);
+        update();
+    });
+
+    reset.addEventListener('click', clear);
+    more?.addEventListener('click', () => toggleMore());
+
+    document.addEventListener('click', e => {
+        if (e.target.closest('[data-reset-filters]')) { clear(); return; }
+
+        const chip = e.target.closest('.chip-tech, [data-filter-tech]');
+        if (!chip) return;
+        const tech = chip.dataset.tech || chip.dataset.filterTech;
+        setTech(state.tech === tech && chip.classList.contains('chip-tech') ? null : tech);
+        // Depuis la section Stack, on emmène le visiteur jusqu'aux projets filtrés.
+        if (chip.dataset.filterTech) {
+            document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    update();
 }
 

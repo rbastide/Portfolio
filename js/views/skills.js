@@ -2,6 +2,7 @@
 // VUE — Stack & Compétences
 // ============================================
 import { getLevelInfo } from '../data/profile.js';
+import { getTechCounts } from '../data/projects.js';
 
 const ACCENTS = ['accent-primary', 'accent-secondary', 'accent-tertiary'];
 
@@ -15,16 +16,29 @@ const GROUP_ICONS = {
     'Méthodes': 'architecture'
 };
 
-function stackCardHTML(s, i) {
+// Une techno de la stack est reliée aux projets si l'un de ses noms
+// (« Node.js / Express » → Node.js, Express) apparaît dans leurs technos.
+function projectTech(item, techCounts) {
+    const names = item.split(' / ').map(n => n.trim().toLowerCase());
+    return [...techCounts].find(([t]) => names.includes(t.toLowerCase()));
+}
+
+function stackItemHTML(item, techCounts) {
+    const linked = projectTech(item, techCounts);
+    if (!linked) return `<li><span class="stack-item">${item}</span></li>`;
+    const [tech, count] = linked;
     return `
-    <div class="stack-card card ${ACCENTS[i % ACCENTS.length]} reveal">
-        <div class="stack-card-head">
-            <span class="stack-card-title"><span class="icon">${GROUP_ICONS[s.group] || 'layers'}</span>${s.group}</span>
-            <span class="label-sm text-outline">${s.items.length} outils</span>
-        </div>
-        <div class="stack-items">
-            ${s.items.map(item => `<span class="stack-item">${item}</span>`).join('')}
-        </div>
+            <li><button type="button" class="stack-item is-linked" data-filter-tech="${tech}"
+                title="Voir ${count > 1 ? `les ${count} projets` : 'le projet'} en ${tech}">
+                ${item}<span class="stack-item-count">${count}</span>
+            </button></li>`;
+}
+
+function stackRowHTML(s, i, techCounts) {
+    return `
+    <div class="stack-row ${ACCENTS[i % ACCENTS.length]}">
+        <h3 class="stack-row-title"><span class="icon">${GROUP_ICONS[s.group] || 'layers'}</span>${s.group}</h3>
+        <ul class="stack-items">${s.items.map(item => stackItemHTML(item, techCounts)).join('')}</ul>
     </div>`;
 }
 
@@ -60,6 +74,7 @@ function skillCardHTML(c, i) {
 }
 
 export function skillsHTML({ profile, competences }) {
+    const techCounts = getTechCounts();
     return `
     <section id="skills" class="section">
         <div class="container">
@@ -68,7 +83,10 @@ export function skillsHTML({ profile, competences }) {
                 <p class="section-desc">Compétences acquises à travers les SAÉ du BUT Informatique, les projets pour le Grand Périgueux et des développements personnels.</p>
             </div>
 
-            <div class="stack-grid">${profile.about.stack.map(stackCardHTML).join('')}</div>
+            <div class="stack-sheet reveal">
+                ${profile.about.stack.map((g, i) => stackRowHTML(g, i, techCounts)).join('')}
+                <p class="stack-legend"><span class="stack-item-count" aria-hidden="true">2</span>Nombre de projets qui l'utilisent : cliquez pour les voir.</p>
+            </div>
 
             <div class="section-head reveal">
                 <h3 class="section-subtitle">Les 6 compétences du BUT</h3>

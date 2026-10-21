@@ -8,7 +8,7 @@
 // demande moins d'animations.
 import { prefersReducedMotion } from '../utils/dom.js';
 
-const INTERACTIVE = 'a, button, label, select, summary, [role="button"], .project-card';
+const INTERACTIVE = 'a, button, label, select, summary, [role="button"]';
 const TEXT_FIELD = 'input, textarea, [contenteditable="true"]';
 const FOLLOW = 0.2; // part de la distance rattrapée par l'anneau à chaque image
 

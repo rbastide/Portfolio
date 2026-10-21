@@ -3,8 +3,8 @@
 // ============================================
 // Champs :
 //   id        identifiant unique (utilisé par le chatbot et les filtres)
-//   category  catégorie affichée + filtre
-//   context   "Personnel", "Académique", "Professionnel"...
+//   category  type de projet (filtre « Type »)
+//   context   "Personnel", "Académique", "Grand Périgueux"... (filtre « Contexte »)
 //   period    période de réalisation (optionnel)
 //   featured  mis en avant en tête de liste
 //   icon      icône Material Symbols affichée sur la carte
@@ -86,4 +86,15 @@ export const projects = [
 
 export function getCategories() {
     return [...new Set(projects.map(p => p.category))];
+}
+
+export function getContexts() {
+    return [...new Set(projects.map(p => p.context))];
+}
+
+// Technologies des projets, de la plus utilisée à la moins utilisée.
+export function getTechCounts() {
+    const counts = new Map();
+    projects.forEach(p => p.tech.forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+    return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'fr'));
 }

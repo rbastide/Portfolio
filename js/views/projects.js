@@ -1,33 +1,42 @@
 // ============================================
 // VUE — Projets
 // ============================================
-import { getCategories } from '../data/projects.js';
+// Une barre de filtres (recherche, type, contexte, technologie) au-dessus
+// d'une liste de projets présentés en lignes. Le filtrage lui-même est géré
+// par initProjectFilters (controllers/interactions.js).
+import { getCategories, getContexts, getTechCounts } from '../data/projects.js';
 
-// Les cartes alternent les trois accents de la palette.
-const ACCENTS = ['accent-primary', 'accent-secondary', 'accent-tertiary'];
+// Nombre de technologies visibles avant « Voir plus ».
+const TECH_PREVIEW = 8;
+
+const normalize = text => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 function livrableHTML(l) {
     return l.private
         ? `<span class="project-link is-private" title="Dépôt privé — bientôt public"><span class="icon">lock</span>${l.nom} (bientôt public)</span>`
-        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="project-link">${l.nom}<span class="icon">arrow_forward</span></a>`;
+        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="project-link">${l.nom}<span class="icon">arrow_outward</span></a>`;
 }
 
-function projectCardHTML(p, i) {
+function projectRowHTML(p) {
+    const search = normalize([p.title, p.desc, p.role, p.context, p.category, ...p.tech, ...(p.keywords || [])].join(' '));
     return `
-    <article class="project-card card-glow ${ACCENTS[i % ACCENTS.length]} reveal" data-category="${p.category}">
-        <div class="project-body">
-            <div class="project-meta">
-                <span class="project-category">${p.category} • ${p.context}</span>
+    <article class="project-row reveal" data-category="${p.category}" data-context="${p.context}"
+        data-tech="${p.tech.join('|')}" data-search="${search.replace(/"/g, '')}">
+        <div class="project-side">
+            <span class="project-icon"><span class="icon">${p.icon || 'folder'}</span></span>
+            <div class="project-side-text">
+                ${p.period ? `<span class="project-period">${p.period}</span>` : ''}
+                <span class="project-context">${p.context}</span>
                 ${p.featured
                     ? '<span class="project-status"><span class="dot dot-sm"></span>Récent</span>'
                     : `<span class="project-level">Niveau ${p.level}</span>`}
             </div>
+        </div>
+
+        <div class="project-main">
             <div class="project-heading">
-                <span class="project-icon"><span class="icon">${p.icon || 'folder'}</span></span>
-                <div>
-                    <h3 class="project-title">${p.title}</h3>
-                    ${p.period ? `<span class="project-period">${p.period}</span>` : ''}
-                </div>
+                <h3 class="project-title">${p.title}</h3>
+                <span class="project-type">${p.category}</span>
             </div>
             <p class="project-desc">${p.desc}</p>
             <details class="project-role">
@@ -35,30 +44,63 @@ function projectCardHTML(p, i) {
                 <p>${p.role}</p>
             </details>
             <div class="chip-row">
-                ${p.tech.map((t, j) => `<span class="chip${j === 0 ? ' accent' : ''}">${t}</span>`).join('')}
+                ${p.tech.map(t => `<button type="button" class="chip chip-tech" data-tech="${t}" title="Voir les projets en ${t}">${t}</button>`).join('')}
                 ${(p.tags || []).map(t => `<span class="chip ac">${t}</span>`).join('')}
             </div>
         </div>
-        <div class="project-footer">
+
+        <div class="project-links">
             ${p.livrables.map(livrableHTML).join('')}
         </div>
     </article>`;
 }
 
+function optionHTML(group, value, label, count, extraClass = '') {
+    return `
+        <button type="button" class="filter-btn${extraClass}" data-group="${group}" data-value="${value}" aria-pressed="false">
+            ${label}<span class="filter-count">${count}</span>
+        </button>`;
+}
+
 function filtersHTML(projects) {
-    const filters = [{ value: 'all', label: 'Tous', count: projects.length }]
-        .concat(getCategories().map(c => ({
-            value: c,
-            label: c,
-            count: projects.filter(p => p.category === c).length
-        })));
+    const count = (key, value) => projects.filter(p => p[key] === value).length;
+    const techs = getTechCounts();
 
     return `
-    <div class="project-filters reveal" role="toolbar" aria-label="Filtrer les projets">
-        ${filters.map((f, i) => `
-        <button type="button" class="filter-btn${i === 0 ? ' active' : ''}" data-filter="${f.value}" aria-pressed="${i === 0}">
-            ${f.label}<span class="filter-count">${f.count}</span>
-        </button>`).join('')}
+    <div class="project-filters reveal">
+        <label class="project-search">
+            <span class="icon" aria-hidden="true">search</span>
+            <input type="search" id="project-search" placeholder="Rechercher un projet, une techno..." autocomplete="off" aria-label="Rechercher un projet">
+        </label>
+
+        <div class="filter-group" role="group" aria-labelledby="filter-type">
+            <span class="filter-label" id="filter-type">Type</span>
+            <div class="filter-options">
+                ${getCategories().map(c => optionHTML('category', c, c, count('category', c))).join('')}
+            </div>
+        </div>
+
+        <div class="filter-group" role="group" aria-labelledby="filter-context">
+            <span class="filter-label" id="filter-context">Contexte</span>
+            <div class="filter-options">
+                ${getContexts().map(c => optionHTML('context', c, c, count('context', c))).join('')}
+            </div>
+        </div>
+
+        <div class="filter-group" role="group" aria-labelledby="filter-tech">
+            <span class="filter-label" id="filter-tech">Technologie</span>
+            <div class="filter-options" id="tech-options">
+                ${techs.map(([t, n], i) => optionHTML('tech', t, t, n, i >= TECH_PREVIEW ? ' is-extra' : '')).join('')}
+                ${techs.length > TECH_PREVIEW
+                    ? `<button type="button" class="filter-more" id="tech-more" aria-expanded="false" aria-controls="tech-options">+ ${techs.length - TECH_PREVIEW} autres</button>`
+                    : ''}
+            </div>
+        </div>
+
+        <div class="filter-summary">
+            <span id="project-results" aria-live="polite">${projects.length} projets</span>
+            <button type="button" class="filter-reset" id="filter-reset" hidden><span class="icon">close</span>Réinitialiser</button>
+        </div>
     </div>`;
 }
 
@@ -76,7 +118,14 @@ export function projectsHTML({ projects }) {
                 <p class="section-aside">Applications web fullstack, outils déployés pour le Grand Périgueux, infrastructures Linux et projets académiques du BUT.</p>
             </div>
             ${filtersHTML(projects)}
-            <div class="projects-grid">${sorted.map(projectCardHTML).join('')}</div>
+            <div class="project-list">
+                ${sorted.map(projectRowHTML).join('')}
+                <div class="project-empty" id="project-empty" hidden>
+                    <span class="icon">search_off</span>
+                    <p>Aucun projet ne correspond à ces filtres.</p>
+                    <button type="button" class="btn btn-tonal" data-reset-filters>Réinitialiser les filtres</button>
+                </div>
+            </div>
         </div>
     </section>`;
 }

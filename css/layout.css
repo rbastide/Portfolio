@@ -31,58 +31,6 @@
     min-width: 0;
 }
 
-.nav-logo {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    min-width: 0;
-}
-
-.nav-logo-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1px solid var(--outline);
-    color: var(--on-surface);
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.nav-logo:hover .nav-logo-mark {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.nav-logo-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.nav-logo-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    line-height: 22px;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    white-space: nowrap;
-}
-
-.nav-logo-sub {
-    font-family: var(--font-body);
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--on-surface-variant);
-    white-space: nowrap;
-}
-
 .nav-status {
     display: none;
     align-items: center;
@@ -198,8 +146,6 @@
 
 @media (max-width: 639px) {
     .nav-gh { display: none; }
-    .nav-logo-sub { display: none; }
-    .nav-logo-name { font-size: 16px; }
 }
 
 /* ---------- Sections ---------- */

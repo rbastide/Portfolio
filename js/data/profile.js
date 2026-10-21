@@ -6,7 +6,7 @@ export const profile = {
     handle: "rbastide",
     role: "Développeur fullstack // En route vers l'IA",
     year: "3ème année de BUT Informatique",
-    bio: "Étudiant en 3ème année de BUT Informatique, je développe des applications web complètes, du back-end au déploiement. Je cherche une alternance en master Intelligence Artificielle pour mettre ces bases au service de projets IA.",
+    bio: "Étudiant en 3ème année de BUT Informatique, je développe des applications web complètes, du back-end au déploiement. Je cherche une <strong>alternance en master Intelligence Artificielle</strong> pour mettre ces bases au service de projets IA.",
     yearsOfExperience: 2,
     level: "N2",
     lookingFor: "une alternance pour un master en Intelligence Artificielle",

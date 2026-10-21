@@ -103,10 +103,11 @@ export function heroHTML(data) {
         <div class="container hero-container">
             <div class="hero-grid">
                 <div class="hero-main">
-                    <h1 class="hero-title reveal">
+                    <h1 class="hero-name reveal">Rémi Bastide</h1>
+                    <p class="hero-title reveal">
                         Développeur fullstack,
                         <span class="gradient-text">en route vers l'IA</span>
-                    </h1>
+                    </p>
                     <p class="hero-bio reveal">${profile.bio}</p>
 
                     <div class="hero-ctas reveal">

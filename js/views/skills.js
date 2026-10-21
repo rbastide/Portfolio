@@ -11,6 +11,7 @@ const GROUP_ICONS = {
     'Back-end': 'dns',
     'Bases de données': 'database',
     'Système & DevOps': 'dns',
+    'Tests & qualité': 'fact_check',
     'Méthodes': 'architecture'
 };
 

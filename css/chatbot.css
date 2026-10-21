@@ -130,7 +130,51 @@
     flex-shrink: 0;
 }
 
-.chat-msg-avatar .icon { font-size: 16px; }
+/* Logo de ReyMysterio (js/chatbot/avatar.js) dans tous les avatars. */
+.chat-avatar,
+.chat-msg-avatar,
+.chat-launcher-avatar { background: var(--surface-lowest); }
+
+.bot-avatar {
+    width: 78%;
+    height: 78%;
+    display: block;
+}
+
+/* Réponses mises en forme : paragraphes, listes, gras. */
+.chat-answer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    line-height: 21px;
+}
+
+.chat-answer ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 1.1em;
+}
+
+.chat-answer li::marker { color: var(--secondary); }
+
+.chat-answer strong { color: var(--on-surface); font-weight: 600; }
+
+/* Curseur d'écriture pendant que la réponse s'affiche. */
+.chat-caret {
+    display: inline-block;
+    width: 7px;
+    height: 14px;
+    margin-left: 2px;
+    vertical-align: -2px;
+    border-radius: 1px;
+    background: var(--secondary);
+    animation: chat-caret 0.8s steps(1) infinite;
+}
+
+@keyframes chat-caret {
+    50% { opacity: 0; }
+}
 
 .chat-msg-col {
     display: flex;
@@ -325,7 +369,6 @@
 }
 
 .chat-placeholder .chat-avatar { width: 40px; height: 40px; }
-.chat-placeholder .chat-avatar .icon { font-size: 22px; }
 .chat-placeholder p { max-width: 22ch; }
 
 /* ---------- Lanceur ---------- */
@@ -387,7 +430,7 @@
     justify-content: center;
 }
 
-.chat-launcher-avatar .icon { font-size: 22px; }
+.chat-launcher-avatar { border: 1px solid rgba(208, 188, 255, 0.35); }
 
 /* Pastille « en ligne », reprise de l'en-tête du panneau. */
 .chat-launcher-avatar::after {

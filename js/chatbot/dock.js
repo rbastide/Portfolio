@@ -5,6 +5,7 @@
 // apparaît : l'ouvrir déplace ce même panneau (et donc la conversation en cours)
 // dans une fenêtre flottante ; la fermer le remet à sa place dans l'accueil.
 import { BOT_NAME } from './chatbot.js';
+import { BOT_AVATAR } from './avatar.js';
 import { prefersReducedMotion } from '../utils/dom.js';
 
 // Durée de la transition de fermeture de .chat-dock (chatbot.css).
@@ -21,7 +22,7 @@ export function initChatDock(chatbot) {
 
     document.body.insertAdjacentHTML('beforeend', `
     <button type="button" class="chat-launcher" id="chat-launcher" aria-controls="chat-dock" aria-expanded="false" aria-label="Ouvrir l'assistant ${BOT_NAME}">
-        <span class="chat-launcher-avatar" aria-hidden="true"><span class="icon">neurology</span></span>
+        <span class="chat-launcher-avatar" aria-hidden="true">${BOT_AVATAR}</span>
         <span class="chat-launcher-label" aria-hidden="true"><span class="chat-launcher-verb">Demander à </span>${BOT_NAME}</span>
     </button>
     <div class="chat-scrim" id="chat-scrim" aria-hidden="true"></div>

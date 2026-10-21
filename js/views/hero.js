@@ -1,6 +1,8 @@
 // ============================================
 // VUE — Accueil (hero + assistant + bandeau de métriques)
 // ============================================
+import { BOT_AVATAR } from '../chatbot/avatar.js';
+
 const PRESETS = [
     { icon: 'folder_special', label: 'Projets clés', query: 'Quels sont ses projets récents ?', accent: 'text-secondary' },
     { icon: 'work', label: 'Alternance', query: 'Est-ce que Rémi recherche une alternance ?', accent: 'text-tertiary' },
@@ -10,14 +12,14 @@ const PRESETS = [
 function chatPanelHTML() {
     return `
     <div class="chat-placeholder" id="chatbot-placeholder" hidden>
-        <span class="chat-avatar"><span class="icon">picture_in_picture_alt</span></span>
+        <span class="chat-avatar">${BOT_AVATAR}</span>
         <p>ReyMysterio est ouvert en fenêtre flottante.</p>
         <button type="button" class="btn btn-tonal" id="chatbot-return"><span class="icon">move_down</span>Ramener ici</button>
     </div>
     <div class="chat-panel" id="chatbot" tabindex="-1">
         <div class="chat-header">
             <div class="chat-header-id">
-                <span class="chat-avatar"><span class="icon">neurology</span></span>
+                <span class="chat-avatar">${BOT_AVATAR}</span>
                 <div class="chat-header-text">
                     <div class="chat-title">ReyMysterio</div>
                     <div class="chat-meta">

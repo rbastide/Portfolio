@@ -37,8 +37,8 @@ function skillCardHTML(c, i) {
         </div>
         <h3 class="skill-title">${c.title}</h3>
         <p class="skill-desc">${c.description}</p>
-        <div class="skill-bar" role="meter" aria-valuemin="0" aria-valuemax="4" aria-valuenow="${c.level}" aria-label="Niveau ${c.level} sur 4">
-            <div class="skill-bar-fill" style="--fill: ${c.level / 4}"></div>
+        <div class="skill-bar" role="meter" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${c.level}" aria-label="Niveau ${c.level} sur 3">
+            <div class="skill-bar-fill" style="--fill: ${c.level / 3}"></div>
         </div>
         <button class="skill-toggle" type="button" data-skill="${c.id}" aria-expanded="false" aria-controls="details-${c.id}">
             <span>Apprentissages critiques &amp; analyse</span>

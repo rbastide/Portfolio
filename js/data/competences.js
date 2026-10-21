@@ -3,7 +3,7 @@
 // ============================================
 export const competences = [
     {
-        id: 1, title: "Réaliser", icon: "code", level: 4, description: "Concevoir, coder, tester et intégrer.",
+        id: 1, title: "Réaliser", icon: "code", level: 3, description: "Concevoir, coder, tester et intégrer.",
         acs: [
             { code: "AC 11.01", label: "Implémenter des conceptions simples" },
             { code: "AC 11.02", label: "Élaborer des conceptions simples" },
@@ -65,7 +65,7 @@ export const competences = [
         }
     },
     {
-        id: 5, title: "Conduire", icon: "view_kanban", level: 4, description: "Gestion de projet et besoins.",
+        id: 5, title: "Conduire", icon: "view_kanban", level: 3, description: "Gestion de projet et besoins.",
         acs: [
             { code: "AC 51.01", label: "Identifier besoins métiers" },
             { code: "AC 51.02", label: "Cycle de développement" },
@@ -80,7 +80,7 @@ export const competences = [
         }
     },
     {
-        id: 6, title: "Collaborer", icon: "groups", level: 4, description: "Travail d'équipe et communication.",
+        id: 6, title: "Collaborer", icon: "groups", level: 3, description: "Travail d'équipe et communication.",
         acs: [
             { code: "AC 61.01", label: "Communication écrite/orale" },
             { code: "AC 61.02", label: "Droit et éthique" },

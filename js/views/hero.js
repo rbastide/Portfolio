@@ -92,7 +92,7 @@ export function heroHTML(data) {
     const { profile, projects } = data;
     const metas = [
         { key: 'STATUT', value: 'DISPONIBLE', sub: 'Alternance', cls: 'text-tertiary' },
-        { key: 'DOMAINES', value: 'FULLSTACK', sub: '& Sys Admin', cls: 'text-primary' },
+        { key: 'DOMAINES', value: 'FULLSTACK', sub: 'Web & déploiement', cls: 'text-primary' },
         { key: 'CAP', value: 'IA // MASTER', sub: 'Prochaine étape', cls: 'text-secondary' }
     ];
 
@@ -106,9 +106,9 @@ export function heroHTML(data) {
                 <div class="telemetry-left">
                     <span class="telemetry-badge">
                         <span class="dot dot-sm dot-secondary dot-ping"></span>
-                        &gt; INIT.FIRMWARE // BASTIDE_RÉMI_
+                        Rémi Bastide · Portfolio
                     </span>
-                    <span class="telemetry-ok">[OK] SYSTEM_ONLINE :: KERNEL_READY</span>
+                    <span class="telemetry-ok">Disponible pour une alternance</span>
                 </div>
                 <div class="telemetry-right">
                     <span><span class="icon text-tertiary">memory</span>BUT_INFO // ${projects.length}_PROJETS</span>
@@ -123,8 +123,8 @@ export function heroHTML(data) {
                         ${profile.year.toUpperCase()}
                     </span>
                     <h1 class="hero-title reveal">
-                        Développement Logiciel &amp;
-                        <span class="gradient-text">Administration Système</span>
+                        Développeur fullstack,
+                        <span class="gradient-text">en route vers l'IA</span>
                     </h1>
                     <p class="hero-bio reveal">${profile.bio}</p>
 

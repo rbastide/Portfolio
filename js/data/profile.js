@@ -4,9 +4,9 @@
 export const profile = {
     name: "Bastide Rémi",
     handle: "rbastide",
-    role: "Développeur Junior // Administrateur Système",
+    role: "Développeur fullstack // En route vers l'IA",
     year: "3ème année de BUT Informatique",
-    bio: "Étudiant en 3ème année de BUT Informatique. Je conçois des solutions logicielles robustes et sécurisées, en alliant rigueur technique et créativité.",
+    bio: "Étudiant en 3ème année de BUT Informatique, je développe des applications web complètes, du back-end au déploiement. Je cherche une alternance en master Intelligence Artificielle pour mettre ces bases au service de projets IA.",
     yearsOfExperience: 2,
     level: "N2",
     lookingFor: "une alternance pour un master en Intelligence Artificielle",
@@ -17,13 +17,13 @@ export const profile = {
     },
     about: {
         paragraphs: [
-            "Je suis Rémi, étudiant en 3ème année de BUT Informatique. Mon profil se situe entre le développement logiciel et l'administration système : j'aime autant concevoir une API ou une interface que configurer un réseau ou automatiser un déploiement.",
+            "Je suis Rémi, étudiant en 3ème année de BUT Informatique. Je développe des applications de bout en bout : conception de la base de données, API, interface, puis déploiement avec Docker sur des serveurs Linux.",
             "Au fil de mes projets, académiques comme personnels, j'ai travaillé sur des applications web fullstack (React, Vue.js, NestJS, SpringBoot), des outils utilisés en conditions réelles pour le Grand Périgueux, et des infrastructures Linux sécurisées.",
-            "Je souhaite désormais m'orienter vers l'Intelligence Artificielle, et je recherche actuellement une alternance pour intégrer un master en IA, afin de mettre mes bases en développement et en données au service de ce domaine."
+            "Mon objectif est maintenant l'Intelligence Artificielle. Je recherche une alternance pour intégrer un master en IA : une IA utile en entreprise a besoin de données propres, d'API fiables et d'un déploiement maîtrisé, et c'est ce que je sais déjà faire."
         ],
         facts: [
             { key: "formation", value: "BUT Informatique — 3ème année" },
-            { key: "profil", value: "Développeur fullstack & admin système" },
+            { key: "profil", value: "Développeur fullstack, bases en admin système" },
             { key: "objectif", value: "M'orienter vers l'Intelligence Artificielle" },
             { key: "recherche", value: "Alternance — master en IA" },
             { key: "expérience", value: "Projets pour le Grand Périgueux (2026)" }
@@ -43,8 +43,7 @@ export const profile = {
 export const levelDefinitions = {
     1: { label: "Basique", color: "level-1" },
     2: { label: "Acquis", color: "level-2" },
-    3: { label: "Maîtrisé", color: "level-3" },
-    4: { label: "Expert", color: "level-4" }
+    3: { label: "Maîtrisé", color: "level-3" }
 };
 
 export function getLevelInfo(n) {

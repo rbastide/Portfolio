@@ -15,7 +15,7 @@ export const projects = [
     {
         id: "overloady", icon: "fitness_center",
         title: "Overloady",
-        category: "Fullstack", level: 4, context: "Personnel", period: "2026", featured: true,
+        category: "Fullstack", level: 3, context: "Personnel", period: "2026", featured: true,
         desc: "Application web de suivi d'entraînement basée sur la surcharge progressive : séances en direct, recommandations automatiques de charge, programmes, calculatrices (1RM, disques, échauffement), records et statistiques.",
         role: "Développeur Fullstack — Conception de l'API REST NestJS (authentification JWT, Prisma ORM, PostgreSQL sous Docker) et de l'interface React 19 / TypeScript, dont l'algorithme de surcharge progressive (+2,5 kg ou +1 rép.).",
         livrables: [
@@ -63,7 +63,7 @@ export const projects = [
     {
         id: "erp", icon: "inventory_2",
         title: "ERP Centralisé",
-        category: "Fullstack", level: 4, context: "Académique",
+        category: "Fullstack", level: 3, context: "Académique",
         desc: "Application web de gestion centralisée des fiches ressources à destination des professeurs.",
         role: "Développeur Fullstack (orienté résolution de problèmes) — Développement de la connexion grâce à un CAS, création de l'API REST avec SpringBoot et du front-end en Vue.js.",
         livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/Erp` }],

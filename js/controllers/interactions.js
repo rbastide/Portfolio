@@ -110,7 +110,7 @@ export function initProjectFilters() {
         results.textContent = filtered
             ? `${shown} projet${shown > 1 ? 's' : ''} sur ${rows.length}`
             : `${rows.length} projets`;
-        reset.hidden = !filtered;
+        reset.disabled = !filtered;
         empty.hidden = shown > 0;
     }
 

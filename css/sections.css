@@ -430,6 +430,24 @@
 
 .filter-reset .icon { font-size: 16px; }
 
+.filter-reset {
+    padding: 6px 12px;
+    border: 1px solid rgba(76, 215, 246, 0.35);
+    border-radius: 999px;
+    transition: border-color 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+.filter-reset:hover:not(:disabled) {
+    border-color: var(--secondary);
+    background: rgba(76, 215, 246, 0.08);
+    text-decoration: none;
+}
+
+.filter-reset:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 .filter-summary {
     display: flex;
     align-items: center;

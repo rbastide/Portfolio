@@ -99,7 +99,7 @@ function filtersHTML(projects) {
 
         <div class="filter-summary">
             <span id="project-results" aria-live="polite">${projects.length} projets</span>
-            <button type="button" class="filter-reset" id="filter-reset" hidden><span class="icon">close</span>Réinitialiser</button>
+            <button type="button" class="filter-reset" id="filter-reset" disabled><span class="icon">filter_alt_off</span>Tout décocher</button>
         </div>
     </div>`;
 }

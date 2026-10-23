@@ -27,7 +27,7 @@ const data = { profile, competences, projects };
 
 function render() {
     document.getElementById('app').innerHTML = [
-        heroHTML, aboutHTML, projectsHTML, skillsHTML, contactHTML
+        heroHTML, projectsHTML, skillsHTML, aboutHTML, contactHTML
     ].map(view => view(data)).join('');
 }
 

@@ -236,7 +236,7 @@ main { padding-top: var(--nav-height); }
    que chaque passage d'une section à la suivante est un long fondu. Deux sections
    voisines n'ont jamais la même teinte, sinon le fondu disparaîtrait. */
 #home { --tone: var(--surface); }
-#about { --tone: var(--surface-lowest); }
+#about { --tone: var(--surface-low); }
 #projects { --tone: color-mix(in srgb, var(--surface-low) 93%, var(--primary-container)); }
 #skills { --tone: var(--surface-lowest); }
 .callout-section { --tone: var(--surface); }

@@ -24,10 +24,15 @@
     --on-accent-strong: var(--tertiary);
 }
 
+/* Bordure aurore : le dégradé est peint sous le fond (border-box) et
+   n'apparaît que dans la bordure transparente. */
 .card {
     padding: var(--space-lg);
+    border: 1px solid transparent;
     border-radius: var(--radius-md);
-    background: var(--surface-container);
+    background:
+        linear-gradient(var(--surface-container), var(--surface-container)) padding-box,
+        var(--aurora-border) border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 

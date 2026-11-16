@@ -36,6 +36,13 @@
     --secondary-soft: rgba(76, 215, 246, 0.14);
     --tertiary-soft: rgba(78, 222, 163, 0.14);
 
+    /* Aurore : dégradés lumineux du thème */
+    --aurora-magenta: #c86bfa;
+    --aurora-gradient: linear-gradient(120deg, var(--primary), var(--secondary), var(--tertiary), var(--secondary), var(--primary));
+    --aurora-button: linear-gradient(120deg, var(--primary-container), #7c8cff, var(--secondary-container), #7c8cff, var(--primary-container));
+    --aurora-border: linear-gradient(135deg, rgba(208, 188, 255, 0.35), rgba(76, 215, 246, 0.12) 50%, rgba(78, 222, 163, 0.3));
+    --aurora-duration: 12s;
+
     /* Typographie */
     --font-display: 'Space Grotesk', system-ui, sans-serif;
     --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -149,11 +156,20 @@ button { cursor: pointer; background: none; border: 0; }
     font-weight: 500;
 }
 
+/* Le dégradé fait l'aller-retour (violet → cyan → vert → cyan → violet) :
+   en glissant, il ondule comme une aurore sans jamais sauter. */
 .gradient-text {
-    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--tertiary));
+    background: var(--aurora-gradient);
+    background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: aurora-shift var(--aurora-duration) ease-in-out infinite alternate;
+}
+
+@keyframes aurora-shift {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
 }
 
 .dot {
@@ -212,4 +228,6 @@ button { cursor: pointer; background: none; border: 0; }
     /* Sans déplacement ni flou : un simple fondu garde le repère d'arrivée. */
     .reveal.visible { animation: reveal-fade 0.4s ease backwards; }
     .dot-pulse, .dot-ping { animation: none; }
+    /* L'aurore reste visible, mais figée. */
+    .gradient-text, .aurora-blob, .btn-primary, .nav-link.active { animation: none; }
 }

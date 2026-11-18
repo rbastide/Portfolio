@@ -8,13 +8,13 @@
 // conversation, jamais d'instructions système.
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
+const DEFAULT_MODEL = 'openai/gpt-oss-120b';
 
 const LIMITS = {
     context: 16000,   // caractères du contexte portfolio
     messages: 10,     // messages d'historique
     message: 1000,    // caractères par message
-    maxTokens: 450,   // longueur maximale d'une réponse
+    maxTokens: 1024,  // réponse + raisonnement interne des modèles gpt-oss
     timeoutMs: 15000
 };
 
@@ -101,6 +101,9 @@ export default {
                     model,
                     temperature: 0.4,
                     max_tokens: LIMITS.maxTokens,
+                    // Les modèles gpt-oss raisonnent avant de répondre : un effort
+                    // faible suffit pour un chatbot et garde la réponse rapide.
+                    ...(model.includes('gpt-oss') && { reasoning_effort: 'low' }),
                     messages: [
                         { role: 'system', content: `${INSTRUCTIONS}\n\nCONTEXTE :\n${input.context}` },
                         ...input.messages

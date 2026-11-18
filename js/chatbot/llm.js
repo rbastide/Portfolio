@@ -6,7 +6,7 @@
 export const CHATBOT_ENDPOINT = 'https://reymysterio.reymysterio.workers.dev/';
 
 // Nom affiché sous les réponses générées par le modèle.
-export const LLM_LABEL = 'Llama 3.3 via Groq';
+export const LLM_LABEL = 'GPT-OSS 120B via Groq';
 
 const TIMEOUT_MS = 12000;
 const HISTORY = 8;  // messages de la conversation envoyés au modèle

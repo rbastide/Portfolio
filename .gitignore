@@ -1,2 +1,6 @@
 # Dossier local de référence design (non versionné)
 _design/
+
+# Cache local et secrets de développement de wrangler (worker/)
+.wrangler/
+.dev.vars*

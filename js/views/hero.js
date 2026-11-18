@@ -39,7 +39,10 @@ function chatPanelHTML() {
             </div>
         </div>
 
-        <div class="chat-messages" id="chatbot-messages" aria-live="polite"></div>
+        <div class="chat-messages" id="chatbot-messages"></div>
+        <!-- Les réponses s'écrivent progressivement à l'écran : elles sont annoncées
+             ici une seule fois, complètes, plutôt que fragment par fragment. -->
+        <div class="sr-only" id="chatbot-announcer" aria-live="polite"></div>
 
         <div class="chat-presets">
             <span class="chat-presets-label">Questions rapides</span>

@@ -10,8 +10,12 @@ const GREETING = `Bonjour ! Je suis ReyMysterio, l'assistant du portfolio de Ré
 
 Posez-moi une question sur ses projets, sa stack ou sa recherche d'alternance.`;
 
-// Vitesse d'écriture des réponses : caractères ajoutés par image.
+// Vitesse d'écriture des réponses : caractères ajoutés par image, au minimum.
+// Une réponse longue accélère pour ne jamais dépasser MAX_TYPE_FRAMES images
+// (environ 1,2 s à 60 i/s) : le bot répond instantanément, l'effet ne doit
+// pas devenir une attente.
 const TYPE_SPEED = 4;
+const MAX_TYPE_FRAMES = 72;
 
 // Transforme le texte d'une réponse en HTML (voir le format dans knowledge.js).
 // Le texte est échappé avant toute mise en forme.
@@ -43,6 +47,7 @@ export class Chatbot {
             keys: t.keys.map(normalize)
         }));
         this.busy = false;
+        this.conversation = 0;
     }
 
     // Le panneau est rendu par la vue d'accueil : init() doit être appelé après le rendu.
@@ -50,6 +55,7 @@ export class Chatbot {
         this.panel = document.getElementById('chatbot');
         if (!this.panel) return;
         this.messagesEl = document.getElementById('chatbot-messages');
+        this.announcer = document.getElementById('chatbot-announcer');
         this.form = document.getElementById('chatbot-form');
         this.input = document.getElementById('chatbot-input');
         this.counter = document.getElementById('chatbot-count');
@@ -64,6 +70,9 @@ export class Chatbot {
     }
 
     reset() {
+        // Change de conversation : une réponse encore en cours d'écriture s'arrête.
+        this.conversation++;
+        this.busy = false;
         this.messagesEl.innerHTML = '';
         this.addMessage('bot', "C'est reparti ! Que voulez-vous savoir sur Rémi ?", "à l'instant");
     }
@@ -92,10 +101,13 @@ export class Chatbot {
     // que l'écriture les atteigne, et un curseur suit le texte en cours.
     async typeOut(bubble) {
         if (prefersReducedMotion()) return;
+        const conversation = this.conversation;
         const walker = document.createTreeWalker(bubble, NodeFilter.SHOW_TEXT);
         const nodes = [];
         while (walker.nextNode()) nodes.push({ node: walker.currentNode, text: walker.currentNode.textContent });
         nodes.forEach(n => { n.node.textContent = ''; });
+        const total = nodes.reduce((sum, n) => sum + n.text.length, 0);
+        const speed = Math.max(TYPE_SPEED, Math.ceil(total / MAX_TYPE_FRAMES));
 
         const blocks = bubble.querySelectorAll('p, ul, li');
         blocks.forEach(el => { el.hidden = true; });
@@ -105,13 +117,21 @@ export class Chatbot {
         for (const n of nodes) {
             for (let el = n.node.parentElement; el && el !== bubble; el = el.parentElement) el.hidden = false;
             n.node.after(caret);
-            for (let i = 0; i < n.text.length; i += TYPE_SPEED) {
-                n.node.textContent = n.text.slice(0, i + TYPE_SPEED);
+            for (let i = 0; i < n.text.length; i += speed) {
+                n.node.textContent = n.text.slice(0, i + speed);
                 this.scrollToBottom();
                 await new Promise(requestAnimationFrame);
+                if (this.conversation !== conversation) return;
             }
         }
         caret.remove();
+    }
+
+    // Annonce la réponse complète aux lecteurs d'écran, une seule fois.
+    announce(text) {
+        if (!this.announcer) return;
+        this.announcer.textContent = '';
+        requestAnimationFrame(() => { this.announcer.textContent = `${BOT_NAME} : ${text}`; });
     }
 
     showTyping() {
@@ -162,15 +182,22 @@ export class Chatbot {
         if (!text || this.busy) return;
 
         this.busy = true;
+        const conversation = this.conversation;
         this.input.value = '';
         this.updateCounter();
         this.addMessage('user', text);
         this.showTyping();
 
         await sleep(400 + Math.random() * 600);
+        if (this.conversation !== conversation) return;  // discussion réinitialisée entre-temps
 
         this.removeTyping();
-        await this.typeOut(this.addMessage('bot', this.findBestMatch(text)));
+        const answer = this.findBestMatch(text);
+        const bubble = this.addMessage('bot', answer);
+        // Texte brut pour le lecteur d'écran : sans le gras ni les puces du format.
+        this.announce(answer.replace(/\*\*/g, '').replace(/^- /gm, '').replace(/\s+/g, ' ').trim());
+        await this.typeOut(bubble);
+        if (this.conversation !== conversation) return;
         this.busy = false;
         // Pas de focus automatique après un bouton : sur mobile, cela ouvrirait le clavier.
         if (!preset) this.input.focus({ preventScroll: true });

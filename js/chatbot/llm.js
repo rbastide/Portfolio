@@ -3,7 +3,7 @@
 // ============================================
 // Adresse du proxy Cloudflare Worker (voir worker/README.md). Vide : le
 // chatbot n'utilise que ses réponses locales (knowledge.js).
-export const CHATBOT_ENDPOINT = '';
+export const CHATBOT_ENDPOINT = 'https://reymysterio.reymysterio.workers.dev/';
 
 // Nom affiché sous les réponses générées par le modèle.
 export const LLM_LABEL = 'Llama 3.3 via Groq';

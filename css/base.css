@@ -3,6 +3,8 @@
    ============================================ */
 
 :root {
+    color-scheme: dark;
+
     /* Surfaces */
     --surface: #121318;
     --surface-bright: #38393f;
@@ -15,7 +17,7 @@
     /* Texte & contours */
     --on-surface: #e3e1e9;
     --on-surface-variant: #cbc3d7;
-    --outline: #958ea0;
+    --outline: #b3adbd;  /* texte secondaire : 4.5:1 même au pic de l'aurore */
     --outline-variant: #494454;
 
     /* Accents */

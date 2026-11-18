@@ -39,7 +39,7 @@
     border-radius: 999px;
     border: 1px solid rgba(149, 142, 160, 0.35);
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 16px;
     color: var(--on-surface-variant);
     white-space: nowrap;
@@ -58,7 +58,7 @@
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius);
     font-family: var(--font-display);
-    font-size: 16px;
+    font-size: var(--text-base);
     line-height: 24px;
     font-weight: 600;
     color: var(--on-surface-variant);
@@ -92,12 +92,12 @@
     border-radius: var(--radius);
     background: var(--surface-high);
     font-family: var(--font-label);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 500;
     transition: background-color 0.2s;
 }
 
-.nav-gh .icon { font-size: 16px; }
+.nav-gh .icon { font-size: var(--text-base); }
 .nav-gh:hover { background: var(--surface-highest); }
 
 #nav-toggle {
@@ -345,7 +345,7 @@ main { padding-top: var(--nav-height); }
 .section-aside {
     max-width: 28rem;
     font-family: var(--font-label);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 18px;
     color: var(--outline);
 }
@@ -413,7 +413,7 @@ main { padding-top: var(--nav-height); }
     background: var(--surface-low);
     color: var(--outline);
     font-family: var(--font-label);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 500;
 }
 
@@ -429,7 +429,7 @@ main { padding-top: var(--nav-height); }
     background: var(--surface-lowest);
     color: var(--outline);
     font-family: var(--font-label);
-    font-size: 11px;
+    font-size: var(--text-xs);
     line-height: 14px;
     white-space: nowrap;
 }
@@ -466,7 +466,7 @@ main { padding-top: var(--nav-height); }
 
 .footer-sub, .footer-copy {
     font-family: var(--font-label);
-    font-size: 11px;
+    font-size: var(--text-xs);
     line-height: 14px;
     color: var(--outline);
 }
@@ -483,13 +483,13 @@ main { padding-top: var(--nav-height); }
     align-items: center;
     gap: var(--space-xs);
     font-family: var(--font-label);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--on-surface-variant);
     transition: color 0.2s;
 }
 
-.footer-links .icon { font-size: 16px; }
+.footer-links .icon { font-size: var(--text-base); }
 .footer-links .hover-primary:hover { color: var(--primary); }
 .footer-links .hover-secondary:hover { color: var(--secondary); }
 .footer-links .hover-tertiary:hover { color: var(--tertiary); }

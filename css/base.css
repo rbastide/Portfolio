@@ -49,6 +49,12 @@
     --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
     --font-label: var(--font-body);
 
+    /* Tailles de texte : en rem pour suivre la taille de police choisie dans le
+       navigateur. 12px est le plancher (badges, labels mono), 16px le corps. */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+
     /* Espacements */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
@@ -86,8 +92,8 @@ html {
 
 body {
     font-family: var(--font-body);
-    font-size: 14px;
-    line-height: 22px;
+    font-size: var(--text-base);
+    line-height: 1.6;
     background: var(--surface);
     color: var(--on-surface);
     min-height: 100vh;
@@ -145,13 +151,13 @@ button { cursor: pointer; background: none; border: 0; }
 
 .label-sm {
     font-family: var(--font-label);
-    font-size: 11px;
+    font-size: var(--text-xs);
     line-height: 14px;
 }
 
 .label-md {
     font-family: var(--font-label);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 16px;
     font-weight: 500;
 }

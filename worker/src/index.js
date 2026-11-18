@@ -29,15 +29,15 @@ Règles :
 - Mise en forme autorisée, et seulement celle-ci : une ligne vide entre deux paragraphes, « - » en début de ligne pour une liste, **texte** pour le gras. Pas de titres, pas de liens Markdown, pas de tableaux : écris les adresses en clair.`;
 
 function corsHeaders(origin, env) {
-    const allowed = (env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
+    const allowed = new Set((env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean));
     const headers = { 'Vary': 'Origin' };
-    if (allowed.includes(origin)) {
+    if (allowed.has(origin)) {
         headers['Access-Control-Allow-Origin'] = origin;
         headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS';
         headers['Access-Control-Allow-Headers'] = 'Content-Type';
         headers['Access-Control-Max-Age'] = '86400';
     }
-    return { headers, allowed: allowed.includes(origin) };
+    return { headers, allowed: allowed.has(origin) };
 }
 
 const json = (body, status, headers) => new Response(JSON.stringify(body), {

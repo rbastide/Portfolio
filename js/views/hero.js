@@ -70,10 +70,12 @@ function chatPanelHTML() {
 }
 
 function metricsHTML({ profile, projects }) {
+    // La première tuile est mise en avant (plus large sur grand écran) :
+    // des projets utilisés en conditions réelles, l'argument le plus parlant.
     const metrics = [
+        { icon: 'apartment', accent: 'accent-secondary', value: 'Grand Périgueux', label: 'Projets en conditions réelles (2026)' },
         { icon: 'school', accent: 'accent-primary', value: 'BUT Informatique', label: profile.year },
         { icon: 'hub', accent: 'accent-tertiary', value: `${projects.length} Projets`, label: 'Fullstack, systèmes & données' },
-        { icon: 'apartment', accent: 'accent-secondary', value: 'Grand Périgueux', label: 'Projets en conditions réelles (2026)' },
         { icon: 'dns', accent: 'accent-primary', value: 'Systèmes & réseaux', label: 'Linux, Docker, SSH, iptables' }
     ];
 

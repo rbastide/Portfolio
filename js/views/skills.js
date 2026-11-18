@@ -34,9 +34,27 @@ function stackItemHTML(item, techCounts) {
             </button></li>`;
 }
 
-function stackRowHTML(s, i, techCounts) {
+// Largeur des tuiles de la grille bento (3 colonnes sur grand écran) : un groupe
+// de 8 technos ou plus prend 2 colonnes, puis les plus gros groupes s'élargissent
+// jusqu'à ce que les lignes soient pleines, sans trou en fin de grille.
+const BENTO_COLUMNS = 3;
+
+function bentoSpans(stack) {
+    const spans = stack.map(g => (g.items.length >= 8 ? 2 : 1));
+    const bySize = stack.map((g, i) => i).sort((a, b) => stack[b].items.length - stack[a].items.length);
+    let total = spans.reduce((a, b) => a + b, 0);
+    for (const i of bySize) {
+        if (total % BENTO_COLUMNS === 0) break;
+        const grow = Math.min(BENTO_COLUMNS - spans[i], BENTO_COLUMNS - (total % BENTO_COLUMNS));
+        spans[i] += grow;
+        total += grow;
+    }
+    return spans;
+}
+
+function stackRowHTML(s, i, techCounts, span = 1) {
     return `
-    <div class="stack-row ${ACCENTS[i % ACCENTS.length]}">
+    <div class="stack-row ${ACCENTS[i % ACCENTS.length]}" style="--span: ${span}">
         <h3 class="stack-row-title"><span class="icon">${GROUP_ICONS[s.group] || 'layers'}</span>${s.group}</h3>
         <ul class="stack-items">${s.items.map(item => stackItemHTML(item, techCounts)).join('')}</ul>
     </div>`;
@@ -75,6 +93,7 @@ function skillCardHTML(c, i) {
 
 export function skillsHTML({ profile, competences }) {
     const techCounts = getTechCounts();
+    const spans = bentoSpans(profile.about.stack);
     return `
     <section id="skills" class="section">
         <div class="container">
@@ -84,7 +103,7 @@ export function skillsHTML({ profile, competences }) {
             </div>
 
             <div class="stack-sheet reveal">
-                ${profile.about.stack.map((g, i) => stackRowHTML(g, i, techCounts)).join('')}
+                ${profile.about.stack.map((g, i) => stackRowHTML(g, i, techCounts, spans[i])).join('')}
                 <p class="stack-legend"><span class="stack-item-count" aria-hidden="true">2</span>Nombre de projets qui l'utilisent : cliquez pour les voir.</p>
             </div>
 

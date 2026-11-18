@@ -1035,3 +1035,52 @@
 @media (min-width: 768px) {
     .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+/* ---------- Grille bento (grand écran) ---------- */
+/* Métriques : la première tuile, mise en avant, prend plus de place.
+   Stack : chaque groupe devient une tuile ; sa largeur (--span) est calculée
+   dans views/skills.js pour que les lignes soient pleines. En dessous de
+   1024px, les deux sections gardent leur disposition en liste. */
+@media (min-width: 1024px) {
+    .metrics-grid { grid-template-columns: 2fr repeat(3, minmax(0, 1fr)); }
+
+    .metric:first-child {
+        padding: var(--space-md) var(--space-lg);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .metric:first-child .metric-value { font-size: 22px; line-height: 28px; }
+    .metric:first-child .metric-label { font-size: var(--text-sm); line-height: 20px; }
+
+    .stack-sheet {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-flow: dense;
+        gap: var(--space-md);
+        overflow: visible;
+        border: 0;
+        background: none;
+        box-shadow: none;
+    }
+
+    .stack-row {
+        grid-column: span var(--span, 1);
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: var(--space-sm);
+        padding: var(--space-lg);
+        border: 1px solid rgba(73, 68, 84, 0.55);
+        border-radius: var(--radius-lg);
+        background: rgba(26, 27, 33, 0.88);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .stack-row + .stack-row { border-top: 1px solid rgba(73, 68, 84, 0.55); }
+    .stack-row-title { padding-top: 0; }
+
+    .stack-legend {
+        grid-column: 1 / -1;
+        padding: 0 var(--space-xs);
+        border-top: 0;
+    }
+}

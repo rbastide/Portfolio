@@ -254,25 +254,44 @@ main, #footer { position: relative; z-index: 2; }
     box-shadow: 0 0 10px 1px rgba(76, 215, 246, 0.6);
 }
 
+/* L'élément ne fait que se déplacer (transform posé par cursor.js) ; le cercle
+   visible est son ::before. Un scale sur l'élément lui-même multiplierait
+   aussi sa translation : l'anneau partirait loin du curseur. */
 .cursor-ring {
     width: 34px;
     height: 34px;
     margin: -17px 0 0 -17px;
+    transition: opacity 0.2s;
+}
+
+.cursor-ring::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
     border: 1.5px solid rgba(208, 188, 255, 0.55);
-    transition: scale 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.2s;
+    transition: scale 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease,
+                background-color 0.25s ease,
+                box-shadow 0.25s ease;
 }
 
-.cursor-ring.is-hovering {
-    scale: 1.6;
-    border-color: rgba(76, 215, 246, 0.7);
-    background-color: rgba(76, 215, 246, 0.06);
+/* Survol d'un élément cliquable : l'anneau s'éclaire, sans changer de taille. */
+.cursor-ring.is-hovering::before {
+    border-color: rgba(76, 215, 246, 0.95);
+    background-color: rgba(76, 215, 246, 0.12);
+    box-shadow: 0 0 14px rgba(76, 215, 246, 0.45);
 }
 
-.cursor-ring.is-pressed { scale: 0.8; }
-.cursor-ring.is-hovering.is-pressed { scale: 1.3; }
+/* Clic : l'anneau se resserre autour du point et s'illumine ; l'onde
+   (.cursor-wave) part du point de clic. */
+.cursor-ring.is-pressed::before {
+    scale: 0.6;
+    border-color: var(--secondary);
+    background-color: rgba(76, 215, 246, 0.25);
+    box-shadow: 0 0 18px rgba(76, 215, 246, 0.6);
+    transition-duration: 0.12s;
+}
 
 .cursor-wave {
     width: 34px;

@@ -1,0 +1,16 @@
+# Proxy ReyMysterio → Groq. Déploiement : voir worker/README.md
+name = "reymysterio"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+# Origines autorisées à appeler le proxy (séparées par des virgules).
+ALLOWED_ORIGINS = "https://rbastide.github.io,http://localhost:3000,http://127.0.0.1:8765"
+# Modèle Groq : vérifier qu'il est toujours proposé sur https://console.groq.com/docs/models
+MODEL = "llama-3.3-70b-versatile"
+
+# 20 questions par minute et par adresse IP, au-delà le site répond en local.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }

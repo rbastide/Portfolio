@@ -4,6 +4,7 @@
 import { buildKnowledgeBase, fallbacks } from './knowledge.js';
 import { escapeHtml, pickRandom, sleep, prefersReducedMotion } from '../utils/dom.js';
 import { BOT_AVATAR } from './avatar.js';
+import { CHATBOT_ENDPOINT, LLM_LABEL, buildContext, askLLM } from './llm.js';
 
 export const BOT_NAME = 'ReyMysterio';
 const GREETING = `Bonjour ! Je suis ReyMysterio, l'assistant du portfolio de Rémi.
@@ -48,6 +49,9 @@ export class Chatbot {
         }));
         this.busy = false;
         this.conversation = 0;
+        // Conversation envoyée au modèle et résumé du portfolio qui l'accompagne.
+        this.history = [];
+        this.context = buildContext(data);
     }
 
     // Le panneau est rendu par la vue d'accueil : init() doit être appelé après le rendu.
@@ -73,6 +77,7 @@ export class Chatbot {
         // Change de conversation : une réponse encore en cours d'écriture s'arrête.
         this.conversation++;
         this.busy = false;
+        this.history = [];
         this.messagesEl.innerHTML = '';
         this.addMessage('bot', "C'est reparti ! Que voulez-vous savoir sur Rémi ?", "à l'instant");
     }
@@ -177,6 +182,20 @@ export class Chatbot {
         return best ? pickRandom(best.answers) : pickRandom(fallbacks);
     }
 
+    // Réponse du modèle (Groq) si le proxy est configuré et répond ; sinon,
+    // réponse locale par mots-clés. La mention sous la bulle indique la source.
+    async answer(text) {
+        if (CHATBOT_ENDPOINT) {
+            try {
+                return { answer: await askLLM(this.context, this.history), meta: LLM_LABEL };
+            } catch (err) {
+                console.warn('[ReyMysterio] LLM indisponible, réponse locale :', err.message);
+            }
+        }
+        await sleep(400 + Math.random() * 600);
+        return { answer: this.findBestMatch(text), meta: CHATBOT_ENDPOINT ? 'réponse locale' : "à l'instant" };
+    }
+
     async send(preset) {
         const text = (preset ?? this.input.value).trim();
         if (!text || this.busy) return;
@@ -186,14 +205,15 @@ export class Chatbot {
         this.input.value = '';
         this.updateCounter();
         this.addMessage('user', text);
+        this.history.push({ role: 'user', content: text });
         this.showTyping();
 
-        await sleep(400 + Math.random() * 600);
+        const { answer, meta } = await this.answer(text);
         if (this.conversation !== conversation) return;  // discussion réinitialisée entre-temps
 
+        this.history.push({ role: 'assistant', content: answer });
         this.removeTyping();
-        const answer = this.findBestMatch(text);
-        const bubble = this.addMessage('bot', answer);
+        const bubble = this.addMessage('bot', answer, meta);
         // Texte brut pour le lecteur d'écran : sans le gras ni les puces du format.
         this.announce(answer.replace(/\*\*/g, '').replace(/^- /gm, '').replace(/\s+/g, ' ').trim());
         await this.typeOut(bubble);

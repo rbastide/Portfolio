@@ -17,13 +17,18 @@ js/
   data/                 contenu : profil, compétences, projets
   views/                génération du HTML de chaque section
   controllers/          boot, navigation, filtres, mini-terminal...
-  chatbot/              assistant local (base de connaissances générée depuis data/)
+  chatbot/              assistant ReyMysterio : LLM Groq via worker/, réponses locales en secours
   utils/                fonctions utilitaires
+worker/                 proxy Cloudflare Worker vers Groq (garde la clé API secrète)
 ```
 
 ## Ajouter un projet
 
 Ajouter une entrée dans `js/data/projects.js`. Le compteur, les filtres et le chatbot se mettent à jour automatiquement.
+
+## Chatbot (Groq)
+
+ReyMysterio répond avec un LLM Groq une fois le proxy déployé (voir [worker/README.md](worker/README.md)) et son adresse renseignée dans `CHATBOT_ENDPOINT` (`js/chatbot/llm.js`). Sans proxy, ou si Groq ne répond pas, il utilise ses réponses locales.
 
 ## Lancer en local
 

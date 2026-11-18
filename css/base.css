@@ -220,8 +220,10 @@ button { cursor: pointer; background: none; border: 0; }
    Animation plutôt que transition : une transition sur .reveal écraserait
    celles des cartes au survol. Le fill-mode "backwards" rend la main aux
    styles normaux à la fin. Le délai de cascade est posé par initReveal().
-   Courbe exponentielle : l'élément arrive vite puis se pose, sans traîner. */
-.reveal { opacity: 0; }
+   Courbe exponentielle : l'élément arrive vite puis se pose, sans traîner.
+   Le contenu n'est masqué qu'une fois initReveal() lancé (classe .reveal-ready) :
+   si un script plante avant, les sections restent visibles. */
+.reveal-ready .reveal { opacity: 0; }
 
 .reveal.visible {
     opacity: 1;

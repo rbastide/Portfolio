@@ -43,6 +43,8 @@ export function initReveal() {
     }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
 
     pending.forEach(el => observer.observe(el));
+    // Masque les éléments à révéler seulement maintenant que l'observateur tourne.
+    document.documentElement.classList.add('reveal-ready');
 }
 
 // Ouverture / fermeture des détails d'une compétence (délégation d'événement).

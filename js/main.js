@@ -33,6 +33,9 @@ function render() {
 
 async function init() {
     render();
+    // Juste après le rendu : une erreur dans un contrôleur suivant (canvas,
+    // chatbot...) ne doit pas empêcher le contenu d'apparaître.
+    initReveal();
     // Le panneau du chatbot fait partie de l'accueil : il s'initialise après le rendu,
     // puis le dock le rend accessible depuis n'importe quelle section.
     const chatbot = new Chatbot(data);
@@ -41,7 +44,6 @@ async function init() {
     initBackdrop();
     initNeuralNetwork();
     initNeuralCursor();
-    initReveal();
     initSkillDetails();
     initProjectFilters();
     initNavigation();

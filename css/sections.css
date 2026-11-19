@@ -395,13 +395,204 @@
 }
 
 /* ---------- Stack & compétences ---------- */
-/* Panneau de la stack : assez opaque pour la lecture, le réseau de fond
-   reste deviné. (Les projets ont leur propre feuille : css/projects.css.) */
-.stack-sheet {
-    border: 1px solid rgba(73, 68, 84, 0.55);
+/* Stack : un fichier stack.ts ouvert dans un éditeur (views/skills.js).
+   Une ligne de code par groupe ; numéros de ligne en compteur CSS. Les
+   technos reliées à des projets sont des boutons qui filtrent les projets.
+   Les lignes s'écrivent une à une quand l'éditeur apparaît. */
+.stack-editor {
+    --gutter: 5ch;
+    overflow: hidden;
+    border: 1px solid rgba(73, 68, 84, 0.6);
     border-radius: var(--radius-lg);
-    background: rgba(26, 27, 33, 0.88);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    background: rgba(13, 14, 19, 0.9);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    font-family: var(--font-mono);
+}
+
+.editor-bar {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-md);
+    height: 38px;
+    padding-left: var(--space-md);
+    border-bottom: 1px solid rgba(73, 68, 84, 0.6);
+    background: rgba(26, 27, 33, 0.9);
+}
+
+.editor-dots { display: flex; align-items: center; gap: 7px; }
+
+.editor-dots span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ff5f57;
+    opacity: 0.75;
+}
+
+.editor-dots span:nth-child(2) { background: #febc2e; }
+.editor-dots span:nth-child(3) { background: #28c840; }
+
+.editor-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+    border-inline: 1px solid rgba(73, 68, 84, 0.6);
+    background: rgba(13, 14, 19, 0.9);
+    box-shadow: inset 0 2px 0 var(--primary);
+    font-size: var(--text-xs);
+    color: var(--on-surface);
+}
+
+.editor-tab-lang {
+    padding: 0 4px;
+    border-radius: 3px;
+    background: var(--secondary);
+    color: #0d0e13;
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 700;
+}
+
+.editor-code {
+    counter-reset: line;
+    padding: var(--space-md) var(--space-md) var(--space-md) 0;
+    font-size: 12px;
+    line-height: 24px;
+    color: var(--on-surface-variant);
+}
+
+.code-line {
+    position: relative;
+    counter-increment: line;
+    padding-left: calc(var(--gutter) + 1.5ch);
+}
+
+/* Numéro de ligne dans la gouttière. */
+.code-line::before {
+    content: counter(line);
+    position: absolute;
+    left: 0;
+    width: var(--gutter);
+    text-align: right;
+    color: rgba(147, 143, 153, 0.45);
+    user-select: none;
+}
+
+/* Lignes de groupe : indentées ; une ligne trop longue repart en retrait. */
+.code-line.is-group {
+    padding-left: calc(var(--gutter) + 1.5ch + 4ch);
+    text-indent: -2ch;
+}
+
+.code-line:hover { background: rgba(255, 255, 255, 0.025); }
+.code-line:hover::before { color: var(--on-surface-variant); }
+
+.is-comment { color: var(--outline); font-style: italic; }
+.tok-kw { color: var(--primary); }
+.tok-var { color: var(--secondary); }
+.tok-key { color: color-mix(in srgb, var(--secondary) 45%, var(--on-surface)); }
+.tok-p { color: var(--outline); }
+.tok-item { white-space: nowrap; }
+
+.tok-str {
+    display: inline-flex;
+    align-items: baseline;
+    text-indent: 0;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--tertiary) 55%, var(--outline));
+}
+
+.tok-str::before,
+.tok-str::after {
+    content: "'" / "";
+    opacity: 0.7;
+}
+
+.tok-str::before { order: -1; }
+.tok-str::after { order: 1; }
+
+/* Techno utilisée dans les projets : chaîne vive, soulignée, cliquable. */
+button.tok-str {
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: none;
+    font: inherit;
+    line-height: inherit;
+    color: var(--tertiary);
+    text-decoration: underline dotted color-mix(in srgb, var(--tertiary) 50%, transparent);
+    text-underline-offset: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+button.tok-str:hover,
+button.tok-str:focus-visible {
+    background: color-mix(in srgb, var(--tertiary) 14%, transparent);
+    text-decoration-color: var(--tertiary);
+}
+
+.tok-count {
+    order: 2;
+    position: relative;
+    top: -0.55em;
+    margin-left: 1px;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.editor-caret {
+    display: inline-block;
+    width: 7px;
+    height: 15px;
+    margin-left: 4px;
+    vertical-align: -2px;
+    background: var(--secondary);
+    animation: caret-blink 1.1s steps(1, end) infinite;
+}
+
+@keyframes caret-blink { 50% { opacity: 0; } }
+
+.editor-status {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 3px var(--space-md);
+    background: color-mix(in srgb, var(--primary) 16%, transparent);
+    border-top: 1px solid rgba(73, 68, 84, 0.6);
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--on-surface-variant);
+}
+
+/* Les lignes s'écrivent une à une. */
+.stack-editor.reveal .code-line {
+    opacity: 0;
+    translate: -8px 0;
+    transition: opacity 0.4s, translate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(0.25s + var(--i, 0) * 70ms);
+}
+
+.stack-editor.visible .code-line { opacity: 1; translate: none; }
+
+@media (min-width: 768px) {
+    .stack-editor { --gutter: 6ch; }
+    .editor-code { font-size: 13px; line-height: 26px; }
+}
+
+@media (max-width: 479px) {
+    .editor-status span:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stack-editor.reveal .code-line { opacity: 1; translate: none; transition: none; }
+    .editor-caret { animation: none; }
 }
 
 .section-subtitle {
@@ -415,93 +606,6 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-md);
-}
-
-.stack-sheet { overflow: hidden; }
-
-.stack-row {
-    display: grid;
-    gap: var(--space-sm);
-    padding: var(--space-md) var(--space-lg);
-}
-
-.stack-row + .stack-row { border-top: 1px solid rgba(73, 68, 84, 0.55); }
-
-.stack-row-title {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-family: var(--font-display);
-    font-size: var(--text-base);
-    line-height: 22px;
-    font-weight: 600;
-}
-
-.stack-row-title .icon { color: var(--accent); font-size: 20px; }
-
-.stack-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    list-style: none;
-}
-
-.stack-item {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 5px 10px;
-    border: 1px solid transparent;
-    border-radius: var(--radius);
-    background: var(--surface-container);
-    font-family: var(--font-label);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--on-surface-variant);
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.stack-item.is-linked {
-    border-color: rgba(76, 215, 246, 0.25);
-    color: var(--on-surface);
-}
-
-.stack-item.is-linked:hover {
-    border-color: var(--secondary);
-    background: var(--surface-high);
-    color: var(--secondary);
-}
-
-.stack-item-count {
-    min-width: 18px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: rgba(76, 215, 246, 0.15);
-    color: var(--secondary);
-    font-size: var(--text-xs);
-    line-height: 16px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-}
-
-.stack-legend {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-md) var(--space-lg);
-    border-top: 1px solid rgba(73, 68, 84, 0.55);
-    font-size: var(--text-xs);
-    color: var(--outline);
-}
-
-@media (min-width: 768px) {
-    .stack-row {
-        grid-template-columns: 13rem minmax(0, 1fr);
-        gap: var(--space-lg);
-        align-items: start;
-    }
-
-    .stack-row-title { padding-top: 4px; }
 }
 
 .skill-card {
@@ -774,10 +878,7 @@
 }
 
 /* ---------- Grille bento (grand écran) ---------- */
-/* Métriques : la première tuile, mise en avant, prend plus de place.
-   Stack : chaque groupe devient une tuile ; sa largeur (--span) est calculée
-   dans views/skills.js pour que les lignes soient pleines. En dessous de
-   1024px, les deux sections gardent leur disposition en liste. */
+/* Métriques : la première tuile, mise en avant, prend plus de place. */
 @media (min-width: 1024px) {
     .metrics-grid { grid-template-columns: 2fr repeat(3, minmax(0, 1fr)); }
 
@@ -788,36 +889,4 @@
 
     .metric:first-child .metric-value { font-size: 22px; line-height: 28px; }
     .metric:first-child .metric-label { font-size: var(--text-sm); line-height: 20px; }
-
-    .stack-sheet {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        grid-auto-flow: dense;
-        gap: var(--space-md);
-        overflow: visible;
-        border: 0;
-        background: none;
-        box-shadow: none;
-    }
-
-    .stack-row {
-        grid-column: span var(--span, 1);
-        grid-template-columns: minmax(0, 1fr);
-        align-content: start;
-        gap: var(--space-sm);
-        padding: var(--space-lg);
-        border: 1px solid rgba(73, 68, 84, 0.55);
-        border-radius: var(--radius-lg);
-        background: rgba(26, 27, 33, 0.88);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    }
-
-    .stack-row + .stack-row { border-top: 1px solid rgba(73, 68, 84, 0.55); }
-    .stack-row-title { padding-top: 0; }
-
-    .stack-legend {
-        grid-column: 1 / -1;
-        padding: 0 var(--space-xs);
-        border-top: 0;
-    }
 }

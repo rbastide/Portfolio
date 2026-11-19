@@ -6,15 +6,22 @@ import { getTechCounts } from '../data/projects.js';
 
 const ACCENTS = ['accent-primary', 'accent-secondary', 'accent-tertiary'];
 
-const GROUP_ICONS = {
-    'Langages': 'code',
-    'Front-end': 'web',
-    'Back-end': 'dns',
-    'Bases de données': 'database',
-    'Système & DevOps': 'dns',
-    'Tests & qualité': 'fact_check',
-    'Méthodes': 'architecture'
+// La stack s'affiche comme un fichier stack.ts ouvert dans un éditeur : une
+// ligne de code par groupe. Chaque groupe y devient une clé.
+const GROUP_KEYS = {
+    'Langages': 'langages',
+    'Front-end': 'front',
+    'Back-end': 'back',
+    'Bases de données': 'données',
+    'Système & DevOps': 'devops',
+    'Tests & qualité': 'qualité',
+    'Méthodes': 'méthodes'
 };
+
+const groupKey = group => GROUP_KEYS[group] || group.toLowerCase().replace(/[^\p{L}]+/gu, '');
+
+// Ponctuation du code : visible, mais pas lue par les lecteurs d'écran.
+const punct = text => `<span class="tok-p" aria-hidden="true">${text}</span>`;
 
 // Une techno de la stack est reliée aux projets si l'un de ses noms
 // (« Node.js / Express » → Node.js, Express) apparaît dans leurs technos.
@@ -23,41 +30,49 @@ function projectTech(item, techCounts) {
     return [...techCounts].find(([t]) => names.includes(t.toLowerCase()));
 }
 
+// Une techno = une chaîne ; reliée à des projets, elle devient un bouton
+// qui filtre la liste des projets (controllers/interactions.js).
 function stackItemHTML(item, techCounts) {
     const linked = projectTech(item, techCounts);
-    if (!linked) return `<li><span class="stack-item">${item}</span></li>`;
+    if (!linked) return `<span class="tok-str">${item}</span>`;
     const [tech, count] = linked;
-    return `
-            <li><button type="button" class="stack-item is-linked" data-filter-tech="${tech}"
-                title="Voir ${count > 1 ? `les ${count} projets` : 'le projet'} en ${tech}">
-                ${item}<span class="stack-item-count">${count}</span>
-            </button></li>`;
+    return `<button type="button" class="tok-str is-linked" data-filter-tech="${tech}"
+        title="Voir ${count > 1 ? `les ${count} projets` : 'le projet'} en ${tech}">${item}<sup class="tok-count">${count}</sup></button>`;
 }
 
-// Largeur des tuiles de la grille bento (3 colonnes sur grand écran) : un groupe
-// de 8 technos ou plus prend 2 colonnes, puis les plus gros groupes s'élargissent
-// jusqu'à ce que les lignes soient pleines, sans trou en fin de grille.
-const BENTO_COLUMNS = 3;
-
-function bentoSpans(stack) {
-    const spans = stack.map(g => (g.items.length >= 8 ? 2 : 1));
-    const bySize = stack.map((g, i) => i).sort((a, b) => stack[b].items.length - stack[a].items.length);
-    let total = spans.reduce((a, b) => a + b, 0);
-    for (const i of bySize) {
-        if (total % BENTO_COLUMNS === 0) break;
-        const grow = Math.min(BENTO_COLUMNS - spans[i], BENTO_COLUMNS - (total % BENTO_COLUMNS));
-        spans[i] += grow;
-        total += grow;
-    }
-    return spans;
+function stackLineHTML(s, i, techCounts) {
+    // Chaque techno garde sa virgule (ou le crochet final) : un retour à la
+    // ligne ne laisse jamais de ponctuation seule en début de ligne.
+    const last = s.items.length - 1;
+    const items = s.items
+        .map((item, j) => `<span class="tok-item">${stackItemHTML(item, techCounts)}${punct(j < last ? ',' : '],')}</span>`)
+        .join(' ');
+    return `
+                <div class="code-line is-group" role="listitem" style="--i: ${i + 2}">
+                    <span class="sr-only">${s.group} : </span><span class="tok-key" aria-hidden="true">${groupKey(s.group)}</span>${punct(': [')}${items}
+                </div>`;
 }
 
-function stackRowHTML(s, i, techCounts, span = 1) {
+function stackEditorHTML(stack, techCounts) {
+    const total = stack.reduce((n, g) => n + g.items.length, 0);
+    const last = stack.length + 2;
     return `
-    <div class="stack-row ${ACCENTS[i % ACCENTS.length]}" style="--span: ${span}">
-        <h3 class="stack-row-title"><span class="icon">${GROUP_ICONS[s.group] || 'layers'}</span>${s.group}</h3>
-        <ul class="stack-items">${s.items.map(item => stackItemHTML(item, techCounts)).join('')}</ul>
-    </div>`;
+            <div class="stack-editor reveal">
+                <div class="editor-bar" aria-hidden="true">
+                    <span class="editor-dots"><span></span><span></span><span></span></span>
+                    <span class="editor-tab"><span class="editor-tab-lang">TS</span>stack.ts</span>
+                </div>
+                <div class="editor-code" role="list" aria-label="Technologies par domaine">
+                    <div class="code-line is-comment" aria-hidden="true" style="--i: 0">// chiffre = projets qui l'utilisent, cliquez pour filtrer</div>
+                    <div class="code-line" aria-hidden="true" style="--i: 1"><span class="tok-kw">export const</span> <span class="tok-var">stack</span> ${punct('= {')}</div>
+                    ${stack.map((g, i) => stackLineHTML(g, i, techCounts)).join('')}
+                    <div class="code-line" aria-hidden="true" style="--i: ${last}">${punct('};')}<span class="editor-caret"></span></div>
+                </div>
+                <div class="editor-status" aria-hidden="true">
+                    <span>${stack.length} groupes · ${total} technos</span>
+                    <span>TypeScript · UTF-8</span>
+                </div>
+            </div>`;
 }
 
 function skillCardHTML(c, i) {
@@ -93,7 +108,6 @@ function skillCardHTML(c, i) {
 
 export function skillsHTML({ profile, competences }) {
     const techCounts = getTechCounts();
-    const spans = bentoSpans(profile.about.stack);
     return `
     <section id="skills" class="section">
         <div class="container">
@@ -102,10 +116,7 @@ export function skillsHTML({ profile, competences }) {
                 <p class="section-desc">Compétences acquises à travers les SAÉ du BUT Informatique, les projets pour le Grand Périgueux et des développements personnels.</p>
             </div>
 
-            <div class="stack-sheet reveal">
-                ${profile.about.stack.map((g, i) => stackRowHTML(g, i, techCounts, spans[i])).join('')}
-                <p class="stack-legend"><span class="stack-item-count" aria-hidden="true">2</span>Nombre de projets qui l'utilisent : cliquez pour les voir.</p>
-            </div>
+            ${stackEditorHTML(profile.about.stack, techCounts)}
 
             <div class="section-head reveal">
                 <h3 class="section-subtitle">Les 6 compétences du BUT</h3>

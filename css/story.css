@@ -27,7 +27,7 @@
     isolation: isolate;
     /* Fond opaque : le réseau de fond de page ne se superpose pas à celui-ci. */
     background:
-        radial-gradient(ellipse 70% 55% at 50% 42%, rgba(160, 120, 255, 0.1), transparent 70%),
+        radial-gradient(ellipse 70% 55% at 50% 42%, rgba(160, 120, 255, 0.03), transparent 70%),
         var(--surface-lowest);
 }
 

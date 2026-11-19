@@ -292,7 +292,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
             const [ox, oy] = toScreen(0, 0);
             const radius = k * mix(0.5, 1.4, intro);
             const halo = ctx.createRadialGradient(ox, oy, 0, ox, oy, radius);
-            halo.addColorStop(0, rgba(VIOLET, 0.22 * (1 - intro)));
+            halo.addColorStop(0, rgba(VIOLET, 0.066 * (1 - intro)));
             halo.addColorStop(1, rgba(VIOLET, 0));
             ctx.fillStyle = halo;
             ctx.fillRect(ox - radius, oy - radius, radius * 2, radius * 2);
@@ -327,7 +327,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
             if (feed.charge > 0) {
                 const radius = k * mix(0.45, 1.1, feed.charge);
                 const glow = ctx.createRadialGradient(ox, oy, 0, ox, oy, radius);
-                glow.addColorStop(0, rgba(CYAN, 0.32 * feed.charge * feedAlpha));
+                glow.addColorStop(0, rgba(CYAN, 0.096 * feed.charge * feedAlpha));
                 glow.addColorStop(1, rgba(CYAN, 0));
                 ctx.fillStyle = glow;
                 ctx.fillRect(ox - radius, oy - radius, radius * 2, radius * 2);

@@ -258,7 +258,7 @@
     font-size: 64px;
     line-height: 1;
     font-weight: 700;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.01em;
     color: transparent;
     -webkit-text-stroke: 1px rgba(208, 188, 255, 0.22);
     pointer-events: none;
@@ -335,10 +335,10 @@
 
 .project-title {
     font-family: var(--font-display);
-    font-size: 24px;
+    font-size: 28px;
     line-height: 30px;
     font-weight: 600;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
 }
 
 .project-type {

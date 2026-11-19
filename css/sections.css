@@ -106,7 +106,7 @@
 }
 
 .about-fact-value {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: 22px;
     font-weight: 600;
@@ -407,7 +407,7 @@ button.tok-str:focus-visible {
 
 .section-subtitle {
     font-family: var(--font-display);
-    font-size: 22px;
+    font-size: 26px;
     line-height: 28px;
     font-weight: 600;
 }
@@ -467,7 +467,7 @@ button.tok-str:focus-visible {
 
 .skill-title {
     font-family: var(--font-display);
-    font-size: 20px;
+    font-size: 24px;
     line-height: 26px;
     font-weight: 600;
 }
@@ -669,7 +669,7 @@ button.tok-str:focus-visible {
 .contact-card:hover .contact-icon { transform: scale(1.1); }
 
 .contact-value {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: 17px;
     line-height: 24px;
     font-weight: 600;

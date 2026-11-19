@@ -48,7 +48,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--text-sm);
     line-height: 20px;
     font-weight: 600;
@@ -385,7 +385,7 @@
     background: var(--surface-container);
     border: 1px solid rgba(160, 120, 255, 0.35);
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--text-sm);
     line-height: 20px;
     font-weight: 600;

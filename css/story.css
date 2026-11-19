@@ -92,10 +92,10 @@
 
 .story-title {
     font-family: var(--font-display);
-    font-size: clamp(30px, 4.2vw, 56px);
+    font-size: clamp(34px, 4.8vw, 64px);
     line-height: 1.06;
     font-weight: 600;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.01em;
     text-wrap: balance;
 }
 
@@ -188,18 +188,21 @@
     font-size: clamp(44px, 7vw, 104px);
     line-height: 1;
     font-weight: 600;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.015em;
     color: var(--on-surface);
 }
 
 .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(20px, 2.2vw, 30px);
+    font-size: clamp(24px, 2.6vw, 36px);
     line-height: 1.2;
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     text-wrap: balance;
 }
+
+/* Comme dans l'intro : la fin de la phrase en italique. */
+.hero-title .gradient-text { font-style: italic; }
 
 .hero-bio {
     max-width: 34rem;

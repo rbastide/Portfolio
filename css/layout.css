@@ -57,7 +57,7 @@
 .nav-link {
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius);
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: 24px;
     font-weight: 600;
@@ -349,10 +349,10 @@ main { padding-top: var(--nav-height); }
 
 .section-title {
     font-family: var(--font-display);
-    font-size: 26px;
+    font-size: 32px;
     line-height: 32px;
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.005em;
 }
 
 .section-desc {
@@ -385,7 +385,7 @@ main { padding-top: var(--nav-height); }
     gap: var(--space-xs);
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius);
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: 17px;
     line-height: 24px;
     font-weight: 600;

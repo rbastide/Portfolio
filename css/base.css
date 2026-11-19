@@ -46,7 +46,9 @@
     --aurora-duration: 12s;
 
     /* Typographie */
-    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    /* Serif éditoriale, comme l'intro. Elle n'existe qu'en graisse normale
+       (et en italique) : pas de faux gras, voir html plus bas. */
+    --font-display: 'Instrument Serif', Georgia, serif;
     --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
     --font-label: var(--font-body);
@@ -84,6 +86,9 @@
 }
 
 html {
+    /* Pas de gras synthétisé pour les polices qui n'ont pas la graisse demandée
+       (Instrument Serif) : le navigateur l'épaissirait et la rendrait floue. */
+    font-synthesis-weight: none;
     scroll-behavior: smooth;
     /* Les ancres s'arrêtent sous l'en-tête fixe au lieu d'être masquées par lui. */
     scroll-padding-top: var(--nav-height);

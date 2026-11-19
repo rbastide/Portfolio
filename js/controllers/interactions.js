@@ -76,7 +76,6 @@ export function initProjectFilters() {
     const search = bar.querySelector('#project-search');
     const results = bar.querySelector('#project-results');
     const reset = bar.querySelector('#filter-reset');
-    const more = bar.querySelector('#tech-more');
     const empty = document.getElementById('project-empty');
 
     const state = { category: null, context: null, tech: null, query: '' };
@@ -108,6 +107,13 @@ export function initProjectFilters() {
             btn.disabled = !active && count === 0;
         });
 
+        // Chaque menu déroulant affiche le choix courant.
+        bar.querySelectorAll('[data-filter-current]').forEach(el => {
+            const value = state[el.dataset.filterCurrent];
+            el.textContent = value ?? 'Tous';
+            el.closest('.filter-drop')?.classList.toggle('is-set', Boolean(value));
+        });
+
         const filtered = Boolean(state.category || state.context || state.tech || state.query);
         results.textContent = filtered
             ? `${shown} projet${shown > 1 ? 's' : ''} sur ${rows.length}`
@@ -116,16 +122,8 @@ export function initProjectFilters() {
         empty.hidden = shown > 0;
     }
 
-    function toggleMore(open = more.getAttribute('aria-expanded') !== 'true') {
-        bar.classList.toggle('show-all-tech', open);
-        more.setAttribute('aria-expanded', String(open));
-        more.textContent = open ? 'Voir moins' : `+ ${options.filter(b => b.classList.contains('is-extra')).length} autres`;
-    }
-
     function setTech(tech) {
         state.tech = tech;
-        // Une techno masquée derrière « Voir plus » doit rester visible une fois choisie.
-        if (more && options.some(b => b.dataset.value === tech && b.classList.contains('is-extra'))) toggleMore(true);
         update();
     }
 
@@ -141,6 +139,20 @@ export function initProjectFilters() {
         const { group, value } = btn.dataset;
         state[group] = state[group] === value ? null : value;
         update();
+        btn.closest('.filter-drop')?.removeAttribute('open');
+    });
+
+    // Menus déroulants : un seul ouvert à la fois, fermés par Échap ou un clic ailleurs.
+    const drops = [...bar.querySelectorAll('.filter-drop')];
+    const closeDrops = (except = null) => drops.forEach(d => { if (d !== except) d.removeAttribute('open'); });
+    drops.forEach(d => d.addEventListener('toggle', () => { if (d.open) closeDrops(d); }));
+    document.addEventListener('click', e => { if (!e.target.closest('.filter-drop')) closeDrops(); });
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        const open = drops.find(d => d.open);
+        if (!open) return;
+        closeDrops();
+        open.querySelector('summary').focus();
     });
 
     search.addEventListener('input', () => {
@@ -149,7 +161,6 @@ export function initProjectFilters() {
     });
 
     reset.addEventListener('click', clear);
-    more?.addEventListener('click', () => toggleMore());
 
     document.addEventListener('click', e => {
         if (e.target.closest('[data-reset-filters]')) { clear(); return; }

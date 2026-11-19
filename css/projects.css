@@ -1,0 +1,520 @@
+/* ============================================
+   PROJETS — piste horizontale (js/views/projects.js,
+   js/controllers/projectsTrack.js)
+   ============================================
+   Par défaut (sans JS ou en mouvement réduit), la piste défile à la main avec
+   un aimant sur chaque carte. Avec .is-pinned, la scène reste collée à
+   l'écran et le scroll vertical fait glisser la piste. */
+
+.projects-pin {
+    /* Marge qui aligne le contenu sur la grille du site (--max-width). */
+    --inline: max(var(--margin), (100% - var(--max-width)) / 2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding-block: var(--space-2xl);
+}
+
+.is-pinned .projects-pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    padding-block: calc(var(--nav-height) + var(--space-lg)) var(--space-lg);
+}
+
+.projects-top {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding-inline: var(--inline);
+}
+
+/* ---------- Barre de filtres compacte ---------- */
+.project-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.project-search {
+    flex: 1 1 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+    border: 1px solid var(--outline-variant);
+    border-radius: 999px;
+    background: rgba(13, 14, 19, 0.7);
+    color: var(--outline);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.project-search:focus-within {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(76, 215, 246, 0.15);
+    color: var(--secondary);
+}
+
+.project-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--on-surface);
+}
+
+.project-search input::placeholder { color: var(--outline); }
+
+.filter-drop { position: relative; }
+
+.filter-drop-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px 8px 14px;
+    border: 1px solid var(--outline-variant);
+    border-radius: 999px;
+    background: rgba(26, 27, 33, 0.7);
+    font-family: var(--font-label);
+    font-size: var(--text-sm);
+    color: var(--outline);
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.filter-drop-btn::-webkit-details-marker { display: none; }
+.filter-drop-btn:hover { border-color: var(--outline); }
+.filter-drop-btn .icon { font-size: 18px; transition: rotate 0.2s; }
+.filter-drop[open] .filter-drop-btn .icon { rotate: 180deg; }
+.filter-drop-value { color: var(--on-surface); font-weight: 600; }
+
+.filter-drop.is-set .filter-drop-btn {
+    border-color: rgba(208, 188, 255, 0.6);
+    background: var(--primary-soft);
+}
+
+.filter-drop.is-set .filter-drop-value { color: var(--primary); }
+
+.filter-drop-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    width: max-content;
+    max-width: min(30rem, calc(100vw - 2 * var(--margin)));
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: var(--space-sm);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    background: var(--surface-container);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Le menu Techno, le plus large, s'ouvre vers la gauche. */
+.filter-drop:last-of-type .filter-drop-panel { left: auto; right: 0; }
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--surface-high);
+    color: var(--on-surface-variant);
+    font-family: var(--font-label);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.filter-btn:hover:not(:disabled) { background: var(--surface-highest); color: var(--on-surface); }
+
+.filter-btn.active {
+    border-color: rgba(208, 188, 255, 0.5);
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+}
+
+.filter-btn:disabled { opacity: 0.35; }
+
+.filter-count {
+    min-width: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: var(--text-xs);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.filter-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-left: auto;
+    font-size: var(--text-sm);
+    color: var(--on-surface-variant);
+    font-variant-numeric: tabular-nums;
+}
+
+.filter-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: 1px solid rgba(76, 215, 246, 0.35);
+    border-radius: 999px;
+    font-family: var(--font-label);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--secondary);
+    transition: border-color 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+.filter-reset .icon { font-size: var(--text-base); }
+
+.filter-reset:hover:not(:disabled) {
+    border-color: var(--secondary);
+    background: rgba(76, 215, 246, 0.08);
+}
+
+.filter-reset:disabled { opacity: 0.4; cursor: default; }
+
+/* ---------- Piste de cartes ---------- */
+.project-viewport {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+}
+
+.is-pinned .project-viewport {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    scroll-snap-type: none;
+}
+
+.project-track {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-lg);
+    width: max-content;
+    max-height: 100%;
+    padding-block: var(--space-sm);
+    padding-inline: var(--inline);
+    will-change: transform;
+}
+
+.project-row {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: min(82vw, 400px);
+    max-height: 100%;
+    padding: var(--space-lg);
+    overflow: hidden;
+    border: 1px solid rgba(73, 68, 84, 0.6);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, rgba(41, 42, 47, 0.62), rgba(26, 27, 33, 0.4));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    scroll-snap-align: start;
+    scroll-margin-inline: var(--margin);
+    transition: border-color 0.3s, translate 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-row[hidden],
+.project-empty[hidden] { display: none; }
+
+.project-row:hover {
+    border-color: rgba(208, 188, 255, 0.45);
+    translate: 0 -4px;
+}
+
+/* Grand numéro en filigrane, en haut à droite. */
+.project-index {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-md);
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(208, 188, 255, 0.22);
+    pointer-events: none;
+    transition: -webkit-text-stroke-color 0.3s;
+}
+
+.project-row:hover .project-index { -webkit-text-stroke-color: rgba(76, 215, 246, 0.5); }
+
+.project-top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding-right: 64px;
+}
+
+.project-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--surface-lowest);
+    color: var(--secondary);
+    transition: color 0.25s;
+}
+
+.project-icon .icon { font-size: 22px; }
+.project-row:hover .project-icon { color: var(--primary); }
+
+.project-side-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: var(--font-label);
+    font-size: var(--text-xs);
+    line-height: 16px;
+    color: var(--outline);
+}
+
+.project-period { color: var(--on-surface-variant); font-weight: 500; }
+
+.project-status,
+.project-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.project-status { color: var(--tertiary); }
+
+/* Le contenu défile dans la carte si l'écran est trop bas pour tout montrer. */
+.project-main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    /* Fondu en bas : signale la suite quand le contenu dépasse. */
+    padding-bottom: var(--space-md);
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--space-md)), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--space-md)), transparent);
+}
+
+.project-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.project-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+}
+
+.project-type {
+    font-family: var(--font-label);
+    font-size: var(--text-xs);
+    color: var(--outline);
+}
+
+.project-desc { color: var(--on-surface-variant); font-size: var(--text-sm); line-height: 22px; }
+
+.project-role summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-label);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.project-role summary::-webkit-details-marker { display: none; }
+.project-role summary .icon { font-size: 18px; transition: transform 0.2s; }
+.project-role[open] summary .icon { transform: rotate(180deg); }
+
+.project-role p {
+    margin-top: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius);
+    background: var(--surface-lowest);
+    font-size: var(--text-sm);
+    line-height: 20px;
+    color: var(--on-surface-variant);
+}
+
+.project-main .chip-row { padding-top: var(--space-xs); }
+
+.chip-tech {
+    color: var(--on-surface-variant);
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.chip-tech:hover { background: var(--surface-high); color: var(--secondary); }
+
+.project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(73, 68, 84, 0.55);
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-label);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--secondary);
+    white-space: nowrap;
+}
+
+.project-link .icon { font-size: var(--text-base); transition: transform 0.2s; }
+.project-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.project-link:hover .icon { transform: translate(2px, -2px); }
+.project-link.is-private { color: var(--outline); cursor: default; }
+.project-link.is-private:hover { text-decoration: none; }
+
+.project-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: min(82vw, 400px);
+    padding: var(--space-2xl) var(--space-lg);
+    border: 1px dashed var(--outline-variant);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    color: var(--on-surface-variant);
+}
+
+.project-empty > .icon { font-size: 32px; color: var(--outline); }
+
+/* ---------- Progression ---------- */
+.project-progress { display: none; }
+
+.is-pinned .project-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding-inline: var(--inline);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--outline);
+}
+
+.project-count [data-project-count] { color: var(--on-surface); }
+
+.project-progress-bar {
+    flex: 1;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.project-progress-fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+/* L'indication suit le compteur, à gauche : à droite, la bulle du chatbot la masquerait. */
+.project-hint {
+    order: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.3s;
+}
+
+.project-progress-bar { order: 2; }
+
+.project-hint .icon {
+    font-size: 16px;
+    color: var(--secondary);
+    animation: project-nudge 1.6s ease-in-out infinite;
+}
+
+.is-end .project-hint { opacity: 0; }
+
+@keyframes project-nudge {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 4px 0; }
+}
+
+/* ---------- Tailles d'écran ---------- */
+@media (max-width: 767px) {
+    /* Sur mobile, la place verticale va aux cartes. */
+    .projects-top .section-aside { display: none; }
+    .filter-summary { margin-left: 0; width: 100%; justify-content: space-between; }
+
+    /* Les trois menus tiennent sur une ligne ; un choix long est tronqué. */
+    .filter-drop { flex: 1 1 0; min-width: 0; }
+
+    .filter-drop-btn {
+        width: 100%;
+        justify-content: space-between;
+        padding: 8px 6px 8px 12px;
+        font-size: var(--text-xs);
+    }
+
+    .filter-drop-value {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-drop-btn .icon { flex-shrink: 0; }
+
+    /* Sans choix, le menu n'affiche que son nom ; avec, que sa valeur. */
+    .filter-drop.is-set .filter-drop-label,
+    .filter-drop:not(.is-set) .filter-drop-value { display: none; }
+}
+
+@media (min-width: 768px) {
+    .project-search { flex: 0 1 320px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .project-hint .icon { animation: none; }
+    .project-row:hover { translate: none; }
+}

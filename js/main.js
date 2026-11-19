@@ -22,6 +22,7 @@ import { initNeuralNetwork } from './controllers/neural.js';
 import { initNeuralCursor } from './controllers/cursor.js';
 import { initStory } from './controllers/story.js';
 import { initSkillsDeck } from './controllers/skillsDeck.js';
+import { initProjectsTrack } from './controllers/projectsTrack.js';
 import { initReveal, initSkillDetails, initProjectFilters } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
 import { initChatDock } from './chatbot/dock.js';
@@ -51,6 +52,7 @@ async function init() {
     initSkillDetails();
     initSkillsDeck();
     initProjectFilters();
+    initProjectsTrack();
     initNavigation();
 }
 

@@ -69,47 +69,40 @@ function chatPanelHTML() {
     </div>`;
 }
 
-function metricsHTML({ profile, projects }) {
-    // La première tuile est mise en avant (plus large sur grand écran) :
-    // des projets utilisés en conditions réelles, l'argument le plus parlant.
-    const metrics = [
-        { icon: 'apartment', accent: 'accent-secondary', value: 'Grand Périgueux', label: 'Projets en conditions réelles (2026)' },
-        { icon: 'school', accent: 'accent-primary', value: 'BUT Informatique', label: profile.year },
-        { icon: 'hub', accent: 'accent-tertiary', value: `${projects.length} Projets`, label: 'Fullstack, systèmes & données' },
-        { icon: 'dns', accent: 'accent-primary', value: 'Systèmes & réseaux', label: 'Linux, Docker, SSH, iptables' }
-    ];
-
-    return `
-    <section class="metrics">
-        <div class="metrics-grid">
-            ${metrics.map(m => `
-            <div class="metric ${m.accent}">
-                <span class="metric-icon"><span class="icon">${m.icon}</span></span>
-                <div class="metric-text">
-                    <span class="metric-value">${m.value}</span>
-                    <span class="metric-label">${m.label}</span>
-                </div>
-            </div>`).join('')}
-        </div>
-    </section>`;
-}
-
-export function heroHTML(data) {
-    const { profile, projects } = data;
-    const metas = [
+// Repères en bas de l'accueil, posés sur une règle graduée comme celle du
+// parcours qui suit : l'essentiel du profil en un coup d'œil.
+function readoutHTML({ profile, projects }) {
+    const items = [
         { key: 'Statut', value: 'Disponible', sub: 'Alternance', cls: 'text-tertiary' },
-        { key: 'Domaine', value: 'Fullstack', sub: 'Web & déploiement', cls: 'text-primary' },
+        { key: 'Terrain', value: 'Grand Périgueux', sub: 'Projets en conditions réelles' },
+        { key: 'Formation', value: 'BUT Informatique', sub: profile.year.split(' de ')[0] },
+        { key: 'Projets', value: `${projects.length} projets`, sub: 'Fullstack, systèmes & données' },
         { key: 'Objectif', value: 'Master IA', sub: 'Prochaine étape', cls: 'text-secondary' }
     ];
 
     return `
-    <section id="home" class="hero">
-        <div class="glow glow-primary" aria-hidden="true"></div>
-        <div class="glow glow-secondary" aria-hidden="true"></div>
+            <dl class="hero-readout reveal">
+                ${items.map((m, i) => `
+                <div class="hero-readout-item">
+                    <dt class="hero-readout-key"><span class="hero-readout-index">${String(i + 1).padStart(2, '0')}</span>${m.key}</dt>
+                    <dd class="hero-readout-value ${m.cls || ''}">${m.value}</dd>
+                    <dd class="hero-readout-sub">${m.sub}</dd>
+                </div>`).join('')}
+            </dl>`;
+}
 
-        <div class="container hero-container">
+// Accueil dans le langage visuel du parcours (css/story.css) : plein écran,
+// fond sombre, sur-titres en mono, nom en très grand ancré en bas, règle de
+// repères, invitation à défiler.
+export function heroHTML(data) {
+    const { profile } = data;
+
+    return `
+    <section id="home" class="hero">
+        <div class="hero-stage">
             <div class="hero-grid">
                 <div class="hero-main">
+                    <span class="hero-kicker reveal">00 — Portfolio · ${new Date().getFullYear()}</span>
                     <h1 class="hero-name reveal">Rémi Bastide</h1>
                     <p class="hero-title reveal">
                         Développeur fullstack,
@@ -122,20 +115,18 @@ export function heroHTML(data) {
                         <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="btn btn-tonal"><span class="icon text-secondary">code</span>Profil GitHub</a>
                         <a href="#contact" class="btn btn-ghost"><span class="icon">alternate_email</span>Me contacter</a>
                     </div>
-
-                    <div class="hero-metas reveal">
-                        ${metas.map(m => `
-                        <div class="hero-meta">
-                            <span class="hero-meta-key">${m.key}</span>
-                            <span class="hero-meta-value ${m.cls}">${m.value}</span>
-                            <span class="hero-meta-sub">${m.sub}</span>
-                        </div>`).join('')}
-                    </div>
                 </div>
 
-                <div class="hero-side reveal" id="chatbot-home">${chatPanelHTML()}</div>
+                <div class="hero-aside reveal">
+                    <span class="hero-kicker">Assistant — une question ?</span>
+                    <div class="hero-side" id="chatbot-home">${chatPanelHTML()}</div>
+                </div>
             </div>
+            ${readoutHTML(data)}
         </div>
-    </section>
-    ${metricsHTML(data)}`;
+        <div class="story-hint hero-hint" aria-hidden="true">
+            <span>Faites défiler</span>
+            <span class="story-hint-line"></span>
+        </div>
+    </section>`;
 }

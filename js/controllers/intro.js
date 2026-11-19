@@ -26,7 +26,11 @@
 
 export const INTRO_KEY = 'intro-seen';
 
-const DURATION = 7.0;     // fin de la séquence, avant le fondu vers le site
+// Les horaires de la séquence (cartons, volet, néon...) sont écrits sur une
+// timeline de 7 s, jouée en DURATION secondes réelles.
+const TIMELINE = 7.0;     // durée de la timeline écrite
+const DURATION = 5.0;     // durée réelle de la séquence, avant le fondu vers le site
+const PACE = TIMELINE / DURATION;
 const FADE_MS = 600;      // fondu de fin
 const SKIP_FADE_MS = 350; // fondu quand on passe l'intro
 const FONT_TIMEOUT = 1200; // attente maximale des polices avant de démarrer
@@ -73,7 +77,7 @@ function buildNetwork(w, h) {
         return { x0: rnd() * w, y0: rnd() * h, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, r: 1.1 + rnd() * 1.4, x: 0, y: 0 };
     });
     const signals = Array.from({ length: AMBIENT_SIGNALS }, () => ({
-        at: rnd() * DURATION, dur: 0.9 + rnd() * 0.6, from: nodes[Math.floor(rnd() * count)]
+        at: rnd() * TIMELINE, dur: 0.9 + rnd() * 0.6, from: nodes[Math.floor(rnd() * count)]
     }));
 
     const band = nodes.filter(n => n.y0 > h * 0.2 && n.y0 < h * 0.8);
@@ -356,12 +360,12 @@ export function initIntro() {
         // Pas de saut si l'onglet passe en arrière-plan.
         t += Math.min(0.05, (now - last) / 1000);
         last = now;
-        renderer.draw(Math.min(t, DURATION));
+        renderer.draw(Math.min(t, DURATION) * PACE);
         if (t >= DURATION) end(FADE_MS);
         else frame = requestAnimationFrame(tick);
     }
 
-    const onResize = () => { renderer.resize(); renderer.draw(Math.min(t, DURATION)); };
+    const onResize = () => { renderer.resize(); renderer.draw(Math.min(t, DURATION) * PACE); };
     const onKey = e => { if (e.key === 'Escape') end(SKIP_FADE_MS); };
     window.addEventListener('resize', onResize);
     document.addEventListener('keydown', onKey);

@@ -10,6 +10,7 @@ import { competences } from './data/competences.js';
 import { projects } from './data/projects.js';
 
 import { heroHTML } from './views/hero.js';
+import { storyHTML } from './views/story.js';
 import { aboutHTML } from './views/about.js';
 import { skillsHTML } from './views/skills.js';
 import { projectsHTML } from './views/projects.js';
@@ -19,6 +20,7 @@ import { initNavigation } from './controllers/navigation.js';
 import { initBackdrop } from './controllers/backdrop.js';
 import { initNeuralNetwork } from './controllers/neural.js';
 import { initNeuralCursor } from './controllers/cursor.js';
+import { initStory } from './controllers/story.js';
 import { initReveal, initSkillDetails, initProjectFilters } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
 import { initChatDock } from './chatbot/dock.js';
@@ -27,7 +29,7 @@ const data = { profile, competences, projects };
 
 function render() {
     document.getElementById('app').innerHTML = [
-        heroHTML, projectsHTML, skillsHTML, aboutHTML, contactHTML
+        heroHTML, storyHTML, projectsHTML, skillsHTML, aboutHTML, contactHTML
     ].map(view => view(data)).join('');
 }
 
@@ -43,6 +45,7 @@ async function init() {
     initChatDock(chatbot);
     initBackdrop();
     initNeuralNetwork();
+    initStory();
     initNeuralCursor();
     initSkillDetails();
     initProjectFilters();

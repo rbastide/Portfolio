@@ -1,0 +1,295 @@
+/* ============================================
+   PARCOURS — scrollytelling (js/views/story.js, js/controllers/story.js)
+   ============================================
+   La section fait plusieurs écrans de haut ; .story-stage y reste collée en
+   haut de l'écran pendant que le scroll fait avancer l'animation. */
+
+#story { --tone: var(--surface-lowest); }
+
+.story {
+    position: relative;
+    /* Un écran pour la scène + ~90 % d'écran de scroll par étape. */
+    height: calc(100svh + var(--story-scenes, 5) * 90svh);
+}
+
+.story-stage {
+    --story-progress: 0%;
+    --story-inline: max(var(--margin), (100% - var(--max-width)) / 2);
+    --story-ruler-space: 56px;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    /* Fond opaque : le réseau de fond de page ne se superpose pas à celui-ci. */
+    background:
+        radial-gradient(ellipse 70% 55% at 50% 42%, rgba(160, 120, 255, 0.1), transparent 70%),
+        var(--surface-lowest);
+}
+
+.story-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Assombrit le bas de l'écran pour que le texte reste lisible sur le réseau. */
+.story-scrim {
+    position: absolute;
+    inset: auto 0 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(13, 14, 19, 0.94), rgba(13, 14, 19, 0.55) 50%, transparent);
+    pointer-events: none;
+}
+
+/* ---------- Scènes de texte ---------- */
+.story-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: calc(var(--nav-height) + var(--space-lg)) calc(var(--story-inline) + var(--story-ruler-space)) 12vh var(--story-inline);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.story-scene.is-active { pointer-events: auto; }
+.story-scene:first-of-type { opacity: 1; }
+
+.story-scene-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 32rem;
+    text-shadow: 0 2px 18px rgba(13, 14, 19, 0.85);
+}
+
+.pos-bottom-right,
+.pos-center-right { align-items: flex-end; text-align: right; }
+.pos-center-left,
+.pos-center-right { justify-content: center; }
+.pos-bottom-center { align-items: center; text-align: center; }
+.pos-bottom-center .story-scene-inner { max-width: 40rem; align-items: center; }
+.pos-bottom-right .story-scene-inner,
+.pos-center-right .story-scene-inner { align-items: flex-end; }
+
+.story-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--secondary);
+}
+
+.story-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4.2vw, 56px);
+    line-height: 1.06;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+}
+
+/* Scène d'ouverture : le nom en grand. */
+.is-intro .story-title {
+    font-size: clamp(44px, 7.5vw, 104px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.is-intro .story-text { font-size: clamp(17px, 1.5vw, 22px); }
+
+.story-text {
+    max-width: 30rem;
+    font-size: clamp(16px, 1.2vw, 18px);
+    color: var(--on-surface-variant);
+}
+
+.story-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    text-shadow: none;
+}
+
+/* ---------- Règle de progression ---------- */
+.story-ruler {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    right: var(--story-inline);
+    translate: 0 -50%;
+    height: 42vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    pointer-events: none;
+}
+
+.story-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--outline);
+}
+
+.story-count [data-story-count] { color: var(--on-surface); }
+
+.story-ruler-bar {
+    flex: 1;
+    width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    filter: drop-shadow(0 1px 2px rgba(13, 14, 19, 0.8));
+    /* La partie déjà parcourue est pleine, le reste s'estompe. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 var(--story-progress), rgba(0, 0, 0, 0.6) calc(var(--story-progress) + 1%), rgba(0, 0, 0, 0.22) calc(var(--story-progress) + 4%));
+    mask-image: linear-gradient(to bottom, #000 var(--story-progress), rgba(0, 0, 0, 0.6) calc(var(--story-progress) + 1%), rgba(0, 0, 0, 0.22) calc(var(--story-progress) + 4%));
+}
+
+.story-ruler-seg {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.story-ruler-minors {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-end;
+}
+
+.story-ruler .mark-major {
+    width: 30px;
+    height: 2px;
+    flex-shrink: 0;
+    background: var(--on-surface);
+}
+
+.story-ruler .mark-minor {
+    width: 12px;
+    height: 1px;
+    background: var(--on-surface);
+}
+
+/* ---------- Passer l'intro & invitation à défiler ---------- */
+.story-skip {
+    position: absolute;
+    z-index: 3;
+    top: calc(var(--nav-height) + var(--space-md));
+    right: var(--story-inline);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border-glass);
+    border-radius: 999px;
+    background: rgba(30, 31, 37, 0.6);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--on-surface-variant);
+    transition: opacity 0.3s, color 0.2s, border-color 0.2s;
+}
+
+.story-skip .icon { font-size: 16px; }
+.story-skip:hover { color: var(--on-surface); border-color: var(--outline-variant); }
+.story-skip.is-hidden { opacity: 0; pointer-events: none; }
+
+.story-hint {
+    position: absolute;
+    z-index: 3;
+    bottom: var(--space-lg);
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--outline);
+    pointer-events: none;
+}
+
+.story-hint-line {
+    position: relative;
+    width: 1px;
+    height: 40px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.story-hint-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--secondary);
+    animation: story-hint 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes story-hint {
+    from { translate: 0 -100%; }
+    to { translate: 0 100%; }
+}
+
+/* ---------- Mobile : textes centrés en bas, réseau en haut ---------- */
+@media (max-width: 820px) {
+    .story-stage { --story-ruler-space: 0px; }
+
+    .story-scene,
+    .story-scene[class*="pos-"] {
+        justify-content: flex-end;
+        align-items: center;
+        text-align: center;
+        padding-bottom: 14vh;
+        /* Marge symétrique qui laisse la place à la règle, à droite. */
+        padding-inline: calc(var(--story-inline) + 14px);
+    }
+
+    .story-scene[class*="pos-"] .story-scene-inner { align-items: center; }
+
+    /* La règle devient une fine barre sur le bord droit. */
+    .story-ruler { right: 6px; height: 30vh; }
+    .story-count { display: none; }
+    .story-ruler-bar { width: 14px; }
+    .story-ruler .mark-major { width: 14px; }
+    .story-ruler .mark-minor { width: 6px; }
+}
+
+/* ---------- Mouvement réduit : scènes empilées, décor figé ---------- */
+.story.is-static { height: auto; }
+
+.story.is-static .story-stage {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-2xl);
+    padding: var(--space-2xl) var(--story-inline);
+}
+
+.story.is-static .story-canvas { opacity: 0.35; }
+
+.story.is-static .story-scene {
+    position: relative;
+    inset: auto;
+    padding: 0;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.story.is-static :is(.story-scrim, .story-ruler, .story-skip, .story-hint) { display: none; }

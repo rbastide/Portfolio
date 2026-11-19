@@ -1,7 +1,7 @@
 // ============================================
 // CONTRÔLEUR — Navigation
 // ============================================
-const SECTIONS = ['home', 'about', 'projects', 'skills', 'contact'];
+const SECTIONS = ['about', 'projects', 'skills', 'contact'];
 
 // Surligne le lien de la section qui croise le milieu de l'écran.
 // (L'ancien seuil de 30 % ne se déclenchait jamais sur les sections plus

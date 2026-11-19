@@ -6,21 +6,32 @@
 // textes, au lieu de faire défiler la page. Le pilotage est dans
 // controllers/story.js.
 import { story } from '../data/story.js';
+import { heroSceneHTML } from './hero.js';
 
 const MINOR_MARKS = 4; // graduations fines entre deux scènes sur la règle
 
 const pad = n => String(n).padStart(2, '0');
 
-function sceneHTML(scene, i) {
+function sceneHTML(scene, i, data) {
+    const classes = `story-scene pos-${scene.position}${scene.intro ? ' is-intro' : ''}${i === 0 ? ' is-active' : ''}`;
+    const kicker = `${pad(i + 1)} — ${scene.kicker}`;
+
+    if (scene.hero) {
+        return `
+        <article class="${classes}" data-scene="${i}">
+            ${heroSceneHTML(data, kicker)}
+        </article>`;
+    }
+
     const ctas = scene.ctas ? `
             <div class="story-ctas">
                 ${scene.ctas.map(c => `<a href="${c.href}" class="btn ${c.cls}"><span class="icon">${c.icon}</span>${c.label}</a>`).join('')}
             </div>` : '';
 
     return `
-        <article class="story-scene pos-${scene.position}${scene.intro ? ' is-intro' : ''}${i === 0 ? ' is-active' : ''}" data-scene="${i}">
+        <article class="${classes}" data-scene="${i}">
             <div class="story-scene-inner">
-                <span class="story-kicker">${pad(i + 1)} — ${scene.kicker}</span>
+                <span class="story-kicker">${kicker}</span>
                 <h3 class="story-title">${scene.title}</h3>
                 <p class="story-text">${scene.text}</p>${ctas}
             </div>
@@ -42,14 +53,14 @@ function rulerHTML(count) {
         </div>`;
 }
 
-export function storyHTML() {
+export function storyHTML(data) {
     return `
     <section id="story" class="story" aria-labelledby="story-heading" style="--story-scenes: ${story.length}">
         <div class="story-stage">
             <canvas class="story-canvas" aria-hidden="true"></canvas>
             <div class="story-scrim" aria-hidden="true"></div>
             <h2 id="story-heading" class="sr-only">Mon parcours</h2>
-            ${story.map(sceneHTML).join('')}
+            ${story.map((scene, i) => sceneHTML(scene, i, data)).join('')}
             ${rulerHTML(story.length)}
             <a href="#projects" class="story-skip">Passer l'intro<span class="icon">south</span></a>
             <div class="story-hint" aria-hidden="true">

@@ -1,7 +1,7 @@
 // ============================================
 // CHATBOT — Accès depuis toute la page
 // ============================================
-// Le panneau vit dans l'accueil. Dès qu'il sort de l'écran, un lanceur flottant
+// Le panneau vit dans l'accueil (première scène du parcours). Dès qu'il sort de l'écran, un lanceur flottant
 // apparaît : l'ouvrir déplace ce même panneau (et donc la conversation en cours)
 // dans une fenêtre flottante ; la fermer le remet à sa place dans l'accueil.
 import { BOT_NAME } from './chatbot.js';
@@ -91,9 +91,20 @@ export function initChatDock(chatbot) {
     document.getElementById('chatbot-return').addEventListener('click', closeDock);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDock(); });
 
-    // Le lanceur n'apparaît que lorsque le panneau de l'accueil est presque sorti de l'écran.
-    new IntersectionObserver(([entry]) => {
-        homeVisible = entry.intersectionRatio >= 0.25;
+    // Le lanceur n'apparaît que lorsque le panneau de l'accueil n'est plus visible :
+    // presque sorti de l'écran, ou dans une scène du parcours qui s'est effacée
+    // (la scène reste collée à l'écran pendant que le scroll avance).
+    const scene = home.closest('.story-scene');
+    let inView = true;
+    const sync = () => {
+        homeVisible = inView && (!scene || scene.classList.contains('is-active'));
         syncLauncher();
+    };
+
+    new IntersectionObserver(([entry]) => {
+        inView = entry.intersectionRatio >= 0.25;
+        sync();
     }, { threshold: [0, 0.25, 0.5] }).observe(home);
+
+    if (scene) new MutationObserver(sync).observe(scene, { attributes: true, attributeFilter: ['class'] });
 }

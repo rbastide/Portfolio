@@ -93,7 +93,7 @@ function buildNetwork() {
 }
 
 // Cadrage de chaque scène : le réseau se décale à l'opposé du texte.
-const SHIFT_X = { 'bottom-left': 0.15, 'center-left': 0.17, 'bottom-right': -0.15, 'center-right': -0.17, 'bottom-center': 0 };
+const SHIFT_X = { 'bottom-left': 0.15, 'center-left': 0.17, 'bottom-right': -0.15, 'center-right': -0.17, 'bottom-center': 0, hero: 0 };
 
 function cameraKeys(positions, mobile) {
     const last = positions.length - 1;

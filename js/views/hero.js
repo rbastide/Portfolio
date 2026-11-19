@@ -1,6 +1,8 @@
 // ============================================
-// VUE — Accueil (hero + assistant + bandeau de métriques)
+// VUE — Accueil (présentation + assistant)
 // ============================================
+// L'accueil n'est plus une section à part : c'est la scène d'ouverture du
+// parcours en scrollytelling (views/story.js), posée sur le réseau animé.
 import { BOT_AVATAR } from '../chatbot/avatar.js';
 
 const PRESETS = [
@@ -69,64 +71,30 @@ function chatPanelHTML() {
     </div>`;
 }
 
-// Repères en bas de l'accueil, posés sur une règle graduée comme celle du
-// parcours qui suit : l'essentiel du profil en un coup d'œil.
-function readoutHTML({ profile, projects }) {
-    const items = [
-        { key: 'Statut', value: 'Disponible', sub: 'Alternance', cls: 'text-tertiary' },
-        { key: 'Terrain', value: 'Grand Périgueux', sub: 'Projets en conditions réelles' },
-        { key: 'Formation', value: 'BUT Informatique', sub: profile.year.split(' de ')[0] },
-        { key: 'Projets', value: `${projects.length} projets`, sub: 'Fullstack, systèmes & données' },
-        { key: 'Objectif', value: 'Master IA', sub: 'Prochaine étape', cls: 'text-secondary' }
-    ];
-
+// Contenu de la scène d'ouverture : présentation à gauche, assistant à droite.
+// `kicker` : sur-titre numéroté fourni par le parcours.
+export function heroSceneHTML({ profile }, kicker) {
     return `
-            <dl class="hero-readout reveal">
-                ${items.map((m, i) => `
-                <div class="hero-readout-item">
-                    <dt class="hero-readout-key"><span class="hero-readout-index">${String(i + 1).padStart(2, '0')}</span>${m.key}</dt>
-                    <dd class="hero-readout-value ${m.cls || ''}">${m.value}</dd>
-                    <dd class="hero-readout-sub">${m.sub}</dd>
-                </div>`).join('')}
-            </dl>`;
-}
-
-// Accueil dans le langage visuel du parcours (css/story.css) : plein écran,
-// fond sombre, sur-titres en mono, nom en très grand ancré en bas, règle de
-// repères, invitation à défiler.
-export function heroHTML(data) {
-    const { profile } = data;
-
-    return `
-    <section id="home" class="hero">
-        <div class="hero-stage">
             <div class="hero-grid">
                 <div class="hero-main">
-                    <span class="hero-kicker reveal">00 — Portfolio · ${new Date().getFullYear()}</span>
-                    <h1 class="hero-name reveal">Rémi Bastide</h1>
-                    <p class="hero-title reveal">
+                    <span class="story-kicker">${kicker}</span>
+                    <h1 class="hero-name">Rémi Bastide</h1>
+                    <p class="hero-title">
                         Développeur fullstack,
                         <span class="gradient-text">en route vers l'IA</span>
                     </p>
-                    <p class="hero-bio reveal">${profile.bio}</p>
+                    <p class="hero-bio">${profile.bio}</p>
 
-                    <div class="hero-ctas reveal">
+                    <div class="hero-ctas">
                         <a href="#projects" class="btn btn-primary"><span class="icon">rocket_launch</span>Explorer les projets</a>
                         <a href="${profile.contact.github}" target="_blank" rel="noopener noreferrer" class="btn btn-tonal"><span class="icon text-secondary">code</span>Profil GitHub</a>
                         <a href="#contact" class="btn btn-ghost"><span class="icon">alternate_email</span>Me contacter</a>
                     </div>
                 </div>
 
-                <div class="hero-aside reveal">
-                    <span class="hero-kicker">Assistant — une question ?</span>
+                <div class="hero-aside">
+                    <span class="story-kicker">Assistant — une question ?</span>
                     <div class="hero-side" id="chatbot-home">${chatPanelHTML()}</div>
                 </div>
-            </div>
-            ${readoutHTML(data)}
-        </div>
-        <div class="story-hint hero-hint" aria-hidden="true">
-            <span>Faites défiler</span>
-            <span class="story-hint-line"></span>
-        </div>
-    </section>`;
+            </div>`;
 }

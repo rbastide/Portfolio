@@ -9,7 +9,6 @@ import { profile } from './data/profile.js';
 import { competences } from './data/competences.js';
 import { projects } from './data/projects.js';
 
-import { heroHTML } from './views/hero.js';
 import { storyHTML } from './views/story.js';
 import { aboutHTML } from './views/about.js';
 import { skillsHTML } from './views/skills.js';
@@ -31,7 +30,7 @@ const data = { profile, competences, projects };
 
 function render() {
     document.getElementById('app').innerHTML = [
-        heroHTML, storyHTML, projectsHTML, skillsHTML, aboutHTML, contactHTML
+        storyHTML, projectsHTML, skillsHTML, aboutHTML, contactHTML
     ].map(view => view(data)).join('');
 }
 
@@ -40,7 +39,7 @@ async function init() {
     // Juste après le rendu : une erreur dans un contrôleur suivant (canvas,
     // chatbot...) ne doit pas empêcher le contenu d'apparaître.
     initReveal();
-    // Le panneau du chatbot fait partie de l'accueil : il s'initialise après le rendu,
+    // Le panneau du chatbot fait partie de l'accueil (première scène du parcours) : il s'initialise après le rendu,
     // puis le dock le rend accessible depuis n'importe quelle section.
     const chatbot = new Chatbot(data);
     chatbot.init();

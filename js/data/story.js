@@ -2,16 +2,18 @@
 // PARCOURS — scènes du scrollytelling (views/story.js)
 // ============================================
 // Une scène par étape, dans l'ordre du scroll. `position` place le texte à
-// l'écran (bottom-left, bottom-right, center-left, center-right, bottom-center) ;
+// l'écran (bottom-left, bottom-right, center-left, center-right, bottom-center,
+// hero) ;
 // le réseau animé se décale du côté opposé pour lui laisser la place.
 // `intro: true` : scène d'ouverture, avant que le réseau ne se forme.
+// `hero: true` : la scène affiche l'accueil complet (présentation + assistant).
 export const story = [
     {
-        kicker: 'Présentation',
-        position: 'bottom-center',
+        // Scène d'accueil : présentation et assistant (views/hero.js).
+        kicker: `Portfolio · ${new Date().getFullYear()}`,
+        position: 'hero',
         intro: true,
-        title: 'Rémi Bastide',
-        text: 'Développeur fullstack en 3ème année de BUT Informatique, <span class="gradient-text">en route vers l\'IA</span>.'
+        hero: true
     },
     {
         kicker: 'Les bases',

@@ -337,6 +337,8 @@ export function initIntro() {
         if (ended) return;
         ended = true;
         cancelAnimationFrame(frame);
+        // Le parcours prend le relais : le néon arrive sur l'accueil (controllers/story.js).
+        window.dispatchEvent(new Event('intro:end'));
         remember();
         root.classList.remove('intro-playing');
         overlay.style.transitionDuration = `${fade}ms`;

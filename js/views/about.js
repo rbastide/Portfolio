@@ -20,7 +20,7 @@ export function aboutHTML({ profile }) {
             </div>
 
             <div class="about-grid">
-                <div class="about-text card reveal">
+                <div class="about-text card neon-frame reveal">
                     ${paragraphs.map(p => `<p>${p}</p>`).join('')}
                     <div class="about-soft">
                         <span class="label-sm text-outline">Savoir-être</span>
@@ -32,8 +32,8 @@ export function aboutHTML({ profile }) {
 
                 <div class="about-facts reveal">
                     ${facts.map(f => `
-                    <div class="about-fact">
-                        <span class="about-fact-icon"><span class="icon">${FACT_ICONS[f.key] || 'chevron_right'}</span></span>
+                    <div class="about-fact neon-frame">
+                        <span class="about-fact-icon neon-icon"><span class="icon">${FACT_ICONS[f.key] || 'chevron_right'}</span></span>
                         <div class="about-fact-text">
                             <span class="about-fact-key">${f.key}</span>
                             <span class="about-fact-value">${f.value}</span>

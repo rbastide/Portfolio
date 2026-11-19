@@ -7,8 +7,7 @@ function calloutHTML({ profile }) {
 
     return `
     <section class="section callout-section">
-        <div class="callout reveal">
-            <div class="glow glow-callout" aria-hidden="true"></div>
+        <div class="callout neon-frame reveal">
             <div class="callout-grid">
                 <div class="callout-text">
                     <h3 class="section-title">Prêt pour de nouveaux défis, cap sur l'IA</h3>
@@ -45,8 +44,8 @@ export function contactHTML(data) {
 
             <div class="contact-grid">
                 ${channels.map(c => `
-                <a href="${c.href}" class="contact-card ${c.accent} reveal"${c.external ? ' target="_blank" rel="noopener noreferrer"' : ''}>
-                    <span class="contact-icon"><span class="icon">${c.icon}</span></span>
+                <a href="${c.href}" class="contact-card neon-frame ${c.accent} reveal"${c.external ? ' target="_blank" rel="noopener noreferrer"' : ''}>
+                    <span class="contact-icon neon-icon"><span class="icon">${c.icon}</span></span>
                     <span class="label-sm text-outline">${c.key}</span>
                     <span class="contact-value">${c.value}</span>
                     <span class="label-sm text-outline">${c.sub}</span>

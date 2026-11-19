@@ -15,6 +15,7 @@ import { skillsHTML } from './views/skills.js';
 import { projectsHTML } from './views/projects.js';
 import { contactHTML } from './views/contact.js';
 
+import { initIntro } from './controllers/intro.js';
 import { initNavigation } from './controllers/navigation.js';
 import { initBackdrop } from './controllers/backdrop.js';
 import { initNeuralNetwork } from './controllers/neural.js';
@@ -35,6 +36,8 @@ function render() {
 }
 
 async function init() {
+    // En premier : l'intro couvre l'écran avant que le contenu n'apparaisse.
+    initIntro();
     render();
     // Juste après le rendu : une erreur dans un contrôleur suivant (canvas,
     // chatbot...) ne doit pas empêcher le contenu d'apparaître.

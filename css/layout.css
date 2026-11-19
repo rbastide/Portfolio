@@ -525,3 +525,59 @@ main { padding-top: var(--nav-height); }
     #main-nav { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
     .nav-links { background: var(--surface-container); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
+
+/* ---------- Intro (js/controllers/intro.js) ---------- */
+/* Avant le premier affichage, la page reste cachée sous le fond. Filet de
+   sécurité : si le script ne se lance pas, elle réapparaît d'elle-même. */
+html.intro-pending { background: var(--surface-lowest); }
+html.intro-pending body {
+    visibility: hidden;
+    animation: intro-failsafe 0s linear 3s forwards;
+}
+
+@keyframes intro-failsafe { to { visibility: visible; } }
+
+html.intro-playing { overflow: hidden; }
+
+.intro {
+    position: fixed;
+    inset: 0;
+    z-index: 90; /* au-dessus de l'en-tête et de l'assistant, sous le curseur */
+    visibility: visible;
+    background: var(--surface-lowest);
+    cursor: pointer;
+    transition: opacity 600ms ease;
+}
+
+.intro.is-leaving { opacity: 0; pointer-events: none; }
+
+.intro-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.intro-skip {
+    position: absolute;
+    z-index: 1;
+    top: calc(6.4vh + var(--space-md));
+    right: max(var(--margin), (100% - var(--max-width)) / 2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 44px;
+    padding: 0 var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(13, 14, 19, 0.6);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--outline);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.intro-skip .icon { font-size: 16px; }
+.intro.is-leaving .intro-skip { opacity: 0; transition: opacity 0.15s; }
+.intro-skip:hover,
+.intro-skip:focus-visible { color: var(--on-surface); border-color: var(--outline-variant); }

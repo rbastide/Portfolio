@@ -570,7 +570,7 @@ html.intro-playing { overflow: hidden; }
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 999px;
     background: rgba(13, 14, 19, 0.6);
-    font-family: var(--font-mono);
+    font-family: 'IBM Plex Mono', var(--font-mono); /* police de l'intro */
     font-size: var(--text-xs);
     color: var(--outline);
     cursor: pointer;

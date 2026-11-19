@@ -104,7 +104,7 @@ export function projectsHTML({ projects }) {
         <div class="projects-pin">
             <div class="projects-top">
                 <div class="section-head split reveal">
-                    <h2 class="section-title">Projets &amp; Travaux Collaboratifs</h2>
+                    <h2 class="section-title">Projets</h2>
                     <p class="section-aside">Applications web fullstack, outils déployés pour le Grand Périgueux, infrastructures Linux et projets académiques du BUT.</p>
                 </div>
                 ${filtersHTML(projects)}

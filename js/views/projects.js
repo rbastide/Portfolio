@@ -19,7 +19,7 @@ function livrableHTML(l) {
 function projectCardHTML(p, i) {
     const search = normalize([p.title, p.desc, p.role, p.context, p.category, ...p.tech, ...(p.keywords || [])].join(' '));
     return `
-    <article class="project-row" data-category="${p.category}" data-context="${p.context}"
+    <article class="project-row" id="project-${p.id}" data-category="${p.category}" data-context="${p.context}"
         data-tech="${p.tech.join('|')}" data-search="${search.replace(/"/g, '')}">
         <div class="project-top">
             <span class="project-index">${pad(i + 1)}</span>

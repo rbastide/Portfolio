@@ -105,16 +105,31 @@ export function initProjectsTrack() {
         apply(current);
     }
 
+    // Position de scroll qui amène une carte à l'écran.
+    function cardScrollTop(card) {
+        if (!travel || card.hidden) return sectionTop();
+        const start = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+        const p = clamp((card.offsetLeft - start) / travel);
+        return sectionTop() + holdStart + p * travel;
+    }
+
     // Un focus clavier sur une carte hors champ amène le scroll jusqu'à elle.
     // La piste n'est déplacée que par transform : le navigateur ne doit pas
     // faire défiler la fenêtre de la piste lui-même.
     track.addEventListener('focusin', e => {
         viewport.scrollLeft = 0;
         const card = e.target.closest('.project-row');
-        if (!card || !travel) return;
-        const start = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-        const p = clamp((card.offsetLeft - start) / travel);
-        window.scrollTo({ top: sectionTop() + holdStart + p * travel, behavior: 'auto' });
+        if (card) window.scrollTo({ top: cardScrollTop(card), behavior: 'auto' });
+    });
+
+    // Liens vers un projet précis (#project-<id>, depuis le parcours) : une
+    // ancre classique ne tiendrait pas compte du glissement de la piste.
+    document.addEventListener('click', e => {
+        const link = e.target.closest('a[href^="#project-"]');
+        const card = link && document.getElementById(link.hash.slice(1));
+        if (!card || !track.contains(card)) return;
+        e.preventDefault();
+        window.scrollTo({ top: cardScrollTop(card), behavior: 'smooth' });
     });
     viewport.addEventListener('scroll', () => { viewport.scrollLeft = 0; });
 

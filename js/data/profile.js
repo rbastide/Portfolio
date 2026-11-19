@@ -31,9 +31,9 @@ export const profile = {
         stack: [
             { group: "Langages", items: ["Java", "JavaScript", "TypeScript", "Python", "PHP", "SQL", "Bash", "Kotlin"] },
             { group: "Front-end", items: ["React", "React Native (Expo)", "Vue.js", "Pinia", "Inertia.js", "Tailwind CSS", "Vite", "JavaFX", "HTML / CSS"] },
-            { group: "Back-end", items: ["NestJS", "Laravel", "Node.js / Express", "SpringBoot", "Spring Security", "Spring Data JPA", "Flask", "Prisma", "OR-Tools", ".NET MAUI"] },
+            { group: "Back-end", items: ["NestJS", "Laravel", "Node.js / Express", "SpringBoot", "Spring Security", "Spring Data JPA", "Flask", "WordPress", "Prisma", "OR-Tools", ".NET MAUI"] },
             { group: "Bases de données", items: ["PostgreSQL", "MySQL", "MariaDB"] },
-            { group: "Système & DevOps", items: ["Linux", "Docker", "Docker Compose", "Git", "SSH", "iptables", "Maven", "Gradle"] },
+            { group: "Système & DevOps", items: ["Linux", "Docker", "Docker Compose", "Kubernetes", "CI/CD", "Git", "SSH", "Maven", "Gradle"] },
             { group: "Tests & qualité", items: ["Jest", "JUnit", "PHPUnit", "ESLint", "Prettier"] },
             { group: "Méthodes", items: ["Scrum", "Jira", "Trello"] }
         ],

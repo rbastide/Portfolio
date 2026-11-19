@@ -93,16 +93,17 @@ function buildNetwork() {
 }
 
 // Cadrage de chaque scène : le réseau se décale à l'opposé du texte.
-const SHIFT_X = { 'bottom-left': 0.15, 'center-left': 0.17, 'bottom-right': -0.15, 'center-right': -0.17, 'bottom-center': 0, hero: 0 };
+const SHIFT_X = { 'bottom-left': 0.19, 'center-left': 0.2, 'bottom-right': -0.19, 'center-right': -0.2, 'bottom-center': 0, hero: 0 };
 
 function cameraKeys(positions, mobile) {
     const last = positions.length - 1;
     return positions.map((pos, i) => ({
         at: (i + 0.5) / positions.length,
         x: mobile ? 0 : SHIFT_X[pos] ?? 0,
-        // La dernière scène a le texte le plus long : le réseau remonte.
-        y: (mobile ? -0.15 : pos.startsWith('center') ? -0.02 : -0.07) - (i === last ? (mobile ? 0.04 : 0.13) : 0),
-        zoom: mix(0.85, 1, i / Math.max(1, last))
+        // Sur mobile, le texte occupe le bas de l'écran : le réseau reste en haut.
+        // La dernière scène a le texte le plus long : le réseau remonte et rétrécit.
+        y: (mobile ? -0.24 : pos.startsWith('center') ? -0.02 : -0.07) - (i === last ? (mobile ? 0.02 : 0.2) : 0),
+        zoom: i === last ? 0.82 : mix(0.85, 1, i / Math.max(1, last))
     }));
 }
 
@@ -159,7 +160,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
         const intro = introEnd ? ease(range(t, introEnd * 0.15, introEnd)) : 1;
 
         const mobile = w <= MOBILE_MAX;
-        const unit = mobile ? Math.min(w * 0.36, h * 0.2) : Math.min(w * 0.2, h * 0.25);
+        const unit = mobile ? Math.min(w * 0.32, h * 0.15) : Math.min(w * 0.2, h * 0.25);
         const cam = cameraAt(mobile ? keys.mobile : keys.desktop, t);
         const cx = w / 2 + cam.x * w;
         const cy = h / 2 + cam.y * h;
@@ -231,7 +232,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
             ctx.font = `500 ${mobile ? 10 : 11}px "JetBrains Mono", monospace`;
             ctx.textAlign = 'left';
             ctx.fillStyle = rgba(GREEN, box * boxFade * 0.9);
-            ctx.fillText('docker · linux · ssh', x1 + 4, y1 - 10);
+            ctx.fillText('docker · kubernetes · ci/cd', x1 + 4, y1 - 10);
         }
 
         // Connexions : elles se tracent couche après couche.

@@ -7,6 +7,7 @@
 // controllers/story.js.
 import { story } from '../data/story.js';
 import { heroSceneHTML } from './hero.js';
+import { projects } from '../data/projects.js';
 
 const MINOR_MARKS = 4; // graduations fines entre deux scènes sur la règle
 
@@ -23,6 +24,15 @@ function sceneHTML(scene, i, data) {
         </article>`;
     }
 
+    const tags = scene.tags ? `
+                <ul class="story-tags" aria-label="Technologies">
+                    ${scene.tags.map(t => `<li>${t}</li>`).join('')}
+                </ul>` : '';
+
+    const project = projects.find(p => p.id === scene.project);
+    const link = project ? `
+                <a href="#project-${project.id}" class="story-project">Voir le projet ${project.title}<span class="icon">arrow_forward</span></a>` : '';
+
     const ctas = scene.ctas ? `
             <div class="story-ctas">
                 ${scene.ctas.map(c => `<a href="${c.href}" class="btn ${c.cls}"><span class="icon">${c.icon}</span>${c.label}</a>`).join('')}
@@ -33,7 +43,7 @@ function sceneHTML(scene, i, data) {
             <div class="story-scene-inner">
                 <span class="story-kicker">${kicker}</span>
                 <h3 class="story-title">${scene.title}</h3>
-                <p class="story-text">${scene.text}</p>${ctas}
+                <p class="story-text">${scene.text}</p>${tags}${link}${ctas}
             </div>
         </article>`;
 }

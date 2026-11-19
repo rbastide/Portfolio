@@ -69,7 +69,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    max-width: 32rem;
+    max-width: 36rem;
     text-shadow: 0 2px 18px rgba(13, 14, 19, 0.85);
 }
 
@@ -109,10 +109,50 @@
 .is-intro .story-text { font-size: clamp(17px, 1.5vw, 22px); }
 
 .story-text {
-    max-width: 30rem;
+    max-width: 34rem;
     font-size: clamp(16px, 1.2vw, 18px);
     color: var(--on-surface-variant);
 }
+
+.story-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: var(--space-xs);
+    padding: 0;
+    list-style: none;
+    text-shadow: none;
+}
+
+.story-tags li {
+    padding: 3px 9px;
+    border: 1px solid var(--border-glass);
+    border-radius: 999px;
+    background: rgba(13, 14, 19, 0.55);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant);
+}
+
+.pos-bottom-right .story-tags,
+.pos-center-right .story-tags { justify-content: flex-end; }
+.pos-bottom-center .story-tags { justify-content: center; }
+
+.story-project {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: var(--secondary);
+    transition: gap 0.2s, color 0.2s;
+}
+
+.story-project .icon { font-size: 16px; }
+.story-project:hover { gap: var(--space-sm); color: var(--on-surface); }
 
 .story-ctas {
     display: flex;
@@ -345,14 +385,23 @@
         justify-content: flex-end;
         align-items: center;
         text-align: center;
-        padding-bottom: 14vh;
+        padding-bottom: 9vh;
         /* Marge symétrique qui laisse la place à la règle, à droite. */
         padding-inline: calc(var(--story-inline) + 14px);
     }
 
+    /* Textes plus longs qu'un écran de téléphone ne le permet à côté du
+       réseau : voile plus haut, texte un peu plus petit. */
+    .story-scrim { height: 78%; }
+    /* L'accueil garde la place de l'invitation à défiler, sous ses boutons. */
+    .story-scene.pos-hero { padding-bottom: 14vh; }
+    .story-text { font-size: 14.5px; line-height: 1.45; }
+    .story-title { font-size: clamp(26px, 7.5vw, 34px); }
+
     .story-scene[class*="pos-"] .story-scene-inner,
     .pos-hero .hero-main { align-items: center; }
-    .pos-hero .hero-ctas { justify-content: center; }
+    .pos-hero .hero-ctas,
+    .story-scene .story-tags { justify-content: center; }
 
     /* La règle devient une fine barre sur le bord droit. */
     .story-ruler { right: 6px; height: 30vh; }

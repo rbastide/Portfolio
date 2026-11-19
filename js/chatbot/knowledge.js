@@ -27,7 +27,7 @@ function profileTopics(profile, projects) {
             answers: [
                 `Rémi Bastide est en **${profile.year}**.
 
-Il développe des applications web complètes : base de données, API, interface, puis déploiement avec Docker. Il a déjà **${projects.length} projets** à son actif, dont deux utilisés au Grand Périgueux.
+Il développe des applications web complètes : base de données, API, interface, puis déploiement avec Docker, Kubernetes et une CI/CD. Il a déjà **${projects.length} projets** à son actif, dont deux utilisés au Grand Périgueux.
 
 Sa prochaine étape : un **master en Intelligence Artificielle** en alternance.
 

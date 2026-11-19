@@ -46,10 +46,11 @@
     --aurora-duration: 12s;
 
     /* Typographie */
-    /* Serif éditoriale, comme l'intro. Elle n'existe qu'en graisse normale
-       (et en italique) : pas de faux gras, voir html plus bas. */
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    /* Unbounded partout (titres, interface, texte) ; la mono reste pour le
+       code et les étiquettes techniques. L'intro garde ses propres polices
+       (Instrument Serif + IBM Plex Mono, controllers/intro.js). */
+    --font-display: 'Unbounded', system-ui, sans-serif;
+    --font-body: 'Unbounded', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
     --font-label: var(--font-body);
 
@@ -86,8 +87,8 @@
 }
 
 html {
-    /* Pas de gras synthétisé pour les polices qui n'ont pas la graisse demandée
-       (Instrument Serif) : le navigateur l'épaissirait et la rendrait floue. */
+    /* Pas de gras synthétisé pour une police qui n'a pas la graisse demandée :
+       le navigateur l'épaissirait et la rendrait floue. */
     font-synthesis-weight: none;
     scroll-behavior: smooth;
     /* Les ancres s'arrêtent sous l'en-tête fixe au lieu d'être masquées par lui. */
@@ -99,6 +100,8 @@ html {
 
 body {
     font-family: var(--font-body);
+    /* Unbounded est large et dense : le texte courant en graisse légère. */
+    font-weight: 300;
     font-size: var(--text-base);
     line-height: 1.6;
     background: var(--surface);

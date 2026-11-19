@@ -9,10 +9,14 @@
 //        « En route vers » l'Intelligence Artificielle
 //   2. le nom en très grand, révélé par un volet vertical, puis le sous-titre
 //   3. tout s'efface, puis l'intro se fond dans l'accueil
+// En fond, le réseau de neurones du site (controllers/neural.js), plus
+// discret : des neurones qui dérivent, reliés quand ils sont proches, et de
+// petits signaux. Une impulsion cyan le traverse de gauche à droite pendant
+// toute l'intro et laisse une trace qui s'estompe. Un voile sombre garde les
+// textes lisibles. À la fin, l'intro s'efface sur le même réseau, celui du site.
 // Typographie : une serif à l'italique marqué (Instrument Serif) pour les
-// noms, une mono discrète (IBM Plex Mono) pour les petites lignes. Pas de
-// halo ni de dégradé : seulement le grain, le vignettage et les bandes noires
-// d'une pellicule.
+// noms, une mono discrète (IBM Plex Mono) pour les petites lignes. Grain,
+// vignettage et bandes noires donnent l'aspect pellicule.
 //
 // Elle n'est jouée qu'une fois par session, jamais avec le mouvement réduit
 // ni quand on arrive sur une ancre (#projects...) : c'est le script en ligne
@@ -27,7 +31,16 @@ const FADE_MS = 600;      // fondu de fin
 const SKIP_FADE_MS = 350; // fondu quand on passe l'intro
 const FONT_TIMEOUT = 1200; // attente maximale des polices avant de démarrer
 
-const BG = [12, 12, 15], CYAN = [76, 215, 246], MUTED = [141, 135, 154], TEXT = [227, 225, 233];
+const BG = [12, 12, 15], VIOLET = [208, 188, 255], CYAN = [76, 215, 246];
+const MUTED = [141, 135, 154], TEXT = [227, 225, 233];
+
+// Réseau de fond, réglé comme celui du site (controllers/neural.js).
+const LINK_DISTANCE = 150;  // au-delà, deux neurones ne sont plus reliés
+const AREA_PER_NODE = 14000; // un neurone pour X px²
+const MAX_NODES = 90;
+const AMBIENT_SIGNALS = 16;  // petits signaux, comme sur le site
+const PATH_LENGTH = 18;      // neurones traversés par l'impulsion principale
+const PATH_FROM = 0.4, PATH_TO = 6.4; // l'impulsion traverse l'écran pendant ce temps
 
 // Cartons de crédits : petite ligne en mono, grande ligne en serif italique.
 const CREDITS = [
@@ -41,11 +54,39 @@ const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const range = (t, a, b) => clamp((t - a) / (b - a));
 const easeOut = t => 1 - Math.pow(1 - t, 3);
 const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const mix = (a, b, t) => a + (b - a) * t;
 const rgba = (c, a) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${clamp(a)})`;
+const wrap = (v, m) => ((v % m) + m) % m;
 
 function seeded(seed) {
     let s = seed;
     return () => (s = (s * 16807) % 2147483647, (s - 1) / 2147483646);
+}
+
+// Réseau pour un écran w × h : neurones, petits signaux, et le chemin de
+// l'impulsion principale (de proche en proche, de la gauche vers la droite).
+function buildNetwork(w, h) {
+    const rnd = seeded(77);
+    const count = Math.min(MAX_NODES, Math.max(24, Math.round((w * h) / AREA_PER_NODE)));
+    const nodes = Array.from({ length: count }, () => {
+        const angle = rnd() * Math.PI * 2, speed = 6 + rnd() * 10; // px/s
+        return { x0: rnd() * w, y0: rnd() * h, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, r: 1.1 + rnd() * 1.4, x: 0, y: 0 };
+    });
+    const signals = Array.from({ length: AMBIENT_SIGNALS }, () => ({
+        at: rnd() * DURATION, dur: 0.9 + rnd() * 0.6, from: nodes[Math.floor(rnd() * count)]
+    }));
+
+    const band = nodes.filter(n => n.y0 > h * 0.2 && n.y0 < h * 0.8);
+    const path = [(band.length ? band : nodes).reduce((a, b) => (b.x0 < a.x0 ? b : a))];
+    while (path.length < PATH_LENGTH) {
+        const cur = path[path.length - 1];
+        const next = nodes
+            .filter(n => !path.includes(n) && n.x0 > cur.x0 + w * 0.025)
+            .sort((a, b) => Math.hypot(a.x0 - cur.x0, a.y0 - cur.y0) - Math.hypot(b.x0 - cur.x0, b.y0 - cur.y0))[0];
+        if (!next) break;
+        path.push(next);
+    }
+    return { nodes, signals, path };
 }
 
 const SERIF = '"Instrument Serif", Georgia, serif';
@@ -55,7 +96,7 @@ function createRenderer(canvas) {
     const ctx = canvas.getContext('2d');
     const rnd = seeded(2026);
     const hasSpacing = 'letterSpacing' in ctx;
-    let w = 0, h = 0;
+    let w = 0, h = 0, net = null;
 
     // Grain : quelques tuiles de bruit calculées une fois, décalées à chaque image.
     const grain = Array.from({ length: 4 }, () => {
@@ -79,6 +120,86 @@ function createRenderer(canvas) {
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        net = buildNetwork(w, h);
+    }
+
+    function circle(x, y, r, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function line(a, b, color, width = 1) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+    }
+
+    // Point lumineux qui parcourt une connexion (p de 0 à 1).
+    function pulse(a, b, p, alpha = 1) {
+        const x = mix(a.x, b.x, p), y = mix(a.y, b.y, p);
+        circle(x, y, 6, rgba(CYAN, 0.2 * alpha));
+        circle(x, y, 2, rgba(CYAN, 0.95 * alpha));
+    }
+
+    // Voile sombre elliptique derrière un texte, pour qu'il reste lisible sur le réseau.
+    function veil(x, y, rx, ry, a) {
+        if (a <= 0) return;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(1, ry / rx);
+        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+        g.addColorStop(0, rgba(BG, 0.88 * a));
+        g.addColorStop(0.55, rgba(BG, 0.6 * a));
+        g.addColorStop(1, rgba(BG, 0));
+        ctx.fillStyle = g;
+        ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
+        ctx.restore();
+    }
+
+    function drawNetwork(t) {
+        const { nodes, signals, path } = net;
+        for (const n of nodes) {
+            n.x = wrap(n.x0 + n.vx * t, w + 80) - 40;
+            n.y = wrap(n.y0 + n.vy * t, h + 80) - 40;
+        }
+
+        // Le réseau du site, un peu plus discret.
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+                if (d < LINK_DISTANCE) line(nodes[i], nodes[j], rgba(VIOLET, 0.22 * (1 - d / LINK_DISTANCE)));
+            }
+        }
+        for (const n of nodes) circle(n.x, n.y, n.r, rgba(VIOLET, 0.45));
+
+        // Petits signaux d'ambiance, vers le voisin le plus proche.
+        for (const s of signals) {
+            const p = (t - s.at) / s.dur;
+            if (p < 0 || p > 1) continue;
+            let to = null, best = LINK_DISTANCE;
+            for (const n of nodes) {
+                const d = Math.hypot(n.x - s.from.x, n.y - s.from.y);
+                if (n !== s.from && d < best) { best = d; to = n; }
+            }
+            if (to) pulse(s.from, to, p, 0.7 * Math.min(1, p * 5, (1 - p) * 5));
+        }
+
+        // L'impulsion principale et sa trace, qui s'estompe derrière elle.
+        const progress = range(t, PATH_FROM, PATH_TO) * (path.length - 1);
+        const head = Math.floor(progress);
+        for (let i = 0; i < Math.min(head, path.length - 1); i++) {
+            const age = progress - (i + 1);
+            const a = Math.max(0.12, 1 - age * 0.18);
+            line(path[i], path[i + 1], rgba(CYAN, 0.85 * a), 1.6);
+            circle(path[i + 1].x, path[i + 1].y, 2.4, rgba(CYAN, 0.9 * a));
+            circle(path[i + 1].x, path[i + 1].y, 9, rgba(CYAN, 0.12 * a * Math.max(0, 1 - age)));
+        }
+        if (head < path.length - 1) pulse(path[head], path[head + 1], progress - head);
     }
 
     function setFont(font, spacing = 0) {
@@ -109,6 +230,7 @@ function createRenderer(canvas) {
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = rgba(BG, 1);
         ctx.fillRect(0, 0, w, h);
+        drawNetwork(t);
 
         // 1. Cartons de crédits, en fondu, avec une très légère montée.
         for (const c of CREDITS) {
@@ -116,6 +238,8 @@ function createRenderer(canvas) {
             if (a <= 0) continue;
             const rise = (1 - easeOut(range(t, c.from, c.from + 1))) * 8;
             const size = fit(c.big, 60 * Math.max(u, 0.75), `italic 400 SIZEpx ${SERIF}`, w * 0.86);
+            const rx = Math.min(w * 0.5, size * 7.5);
+            veil(cx, cy - size * 0.15, rx, Math.max(size * 2.4, rx * 0.33), a);
             text(c.small.toUpperCase(), cx, cy - size * 0.75 + rise, `400 ${small}px ${MONO}`, rgba(MUTED, a), small * 0.3);
             text(c.big, cx, cy + size * 0.35 + rise, `italic 400 ${size}px ${SERIF}`, rgba(TEXT, a));
         }
@@ -128,6 +252,8 @@ function createRenderer(canvas) {
             const size = Math.min(fit('Bastide', 400, `italic 400 SIZEpx ${SERIF}`, w - left * 2), 190);
             const base2 = h * 0.74;
             const base1 = base2 - size * 0.86;
+            const nameW = Math.min(w - left, size * 3.4);
+            veil(left + nameW * 0.45, base2 - size * 0.55, nameW * 0.85, size * 1.5, range(t, 5.45, 5.9) * (1 - out));
 
             // Le volet balaie l'écran de gauche à droite ; le texte n'existe que derrière lui.
             const sweep = easeInOut(range(t, 5.5, 6.25));

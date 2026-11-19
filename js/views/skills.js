@@ -63,7 +63,7 @@ function stackRowHTML(s, i, techCounts, span = 1) {
 function skillCardHTML(c, i) {
     const info = getLevelInfo(c.level);
     return `
-    <article class="skill-card card ${ACCENTS[i % ACCENTS.length]} reveal">
+    <article class="skill-card card ${ACCENTS[i % ACCENTS.length]}">
         <div class="skill-head">
             <span class="skill-icon"><span class="icon">${c.icon}</span></span>
             <span class="skill-level">Niveau ${c.level} · ${info.label}</span>

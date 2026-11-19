@@ -773,6 +773,23 @@
     gap: var(--space-sm);
 }
 
+/* Cartes jetées sur la table (controllers/skillsDeck.js). La grille sert de
+   repère aux mesures du paquet. Posée, chaque carte garde une légère
+   inclinaison (--tilt) et se redresse quand on s'en sert. */
+.skills-grid { position: relative; }
+
+.skill-card {
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-card:hover,
+.skill-card:focus-within,
+.skill-card:has(.skill-details.open) { transform: none; }
+
+/* Dans le paquet, seule la distribution compte : pas de survol ni de clic. */
+.skills-grid.is-stacked .skill-card { pointer-events: none; }
+
 .skill-head {
     display: flex;
     align-items: center;

@@ -1,5 +1,5 @@
 # Portfolio
-Voici mon portfolio en ligne : https://rbastide.github.io/Portfolio/#home
+Voici mon portfolio en ligne : https://rbastide.github.io/Portfolio
 
 Contexte produit et contraintes : [PROJECT-CONTEXT.md](PROJECT-CONTEXT.md)
 

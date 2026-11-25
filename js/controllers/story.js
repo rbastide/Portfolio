@@ -187,11 +187,11 @@ function atlasPose(L, { a, mode, u }) {
             pose.dissolve = since < 0 ? 0 : range(since, 0, DISSOLVE_MS);
         }
     } else if (mode === 'return') {
-        const rest = 0, elan = dropOf(L, 'elan') * enter;
+        const base = 0, elan = dropOf(L, 'elan') * enter;
         if (u < RETURN_FALL) {
             // Le réseau retombe ; les mains se reforment, au repos.
             pose.frame = 'rest';
-            pose.dy = mix(rest - L.cy - 1.1 * L.ky, rest, inQuad(u / RETURN_FALL));
+            pose.dy = mix(base - L.cy - 1.1 * L.ky, base, inQuad(u / RETURN_FALL));
             pose.dissolve = 1 - range(u, 0, RETURN_FALL * 0.85);
         } else if (u < RETURN_FALL + RETURN_CATCH) {
             // Amorti : les mains plient brièvement sous le choc.
@@ -300,24 +300,35 @@ function createRenderer(canvas, positions, introEnd = 0) {
     const keys = { desktop: cameraKeys(positions, false), mobile: cameraKeys(positions, true) };
     // Calque des mains : elles y sont dessinées puis la coupe de l'avant-bras
     // (bord gauche de la maquette) y est fondue, avant de passer sur le canvas.
-    const layer = document.createElement('canvas');
-    const lctx = layer.getContext('2d');
+    // Créé à la première main dessinée : inutile en mouvement réduit.
+    let layer = null, lctx = null, dpr = 1;
     let w = 0, h = 0;
 
+    function sizeLayer() {
+        layer.width = Math.round(w * dpr);
+        layer.height = Math.round(h * dpr);
+        lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
     function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
         w = canvas.clientWidth;
         h = canvas.clientHeight;
-        canvas.width = layer.width = Math.round(w * dpr);
-        canvas.height = layer.height = Math.round(h * dpr);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (layer) sizeLayer();
     }
 
     // Les deux mains (la droite en miroir par rapport au centre de l'écran),
     // les traits de vitesse et le fondu de la coupe des avant-bras.
     function drawHands(L, pose) {
         if (pose.alpha <= 0 || pose.dissolve >= 1) return;
+        if (!layer) {
+            layer = document.createElement('canvas');
+            lctx = layer.getContext('2d');
+            sizeLayer();
+        }
         const f = HANDS[pose.frame];
         const shift = -(1 - pose.enter) * (L.ox + (f.col0 + f.cols + 1) * CELL * L.s + 24);
         const rise = (1 - pose.enter) * h * 0.08;
@@ -446,7 +457,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
         ctx.clearRect(0, 0, w, h);
         if (!w || !h) return;
 
-        // t : progression de toute la section ; p : progression du parcours seul.
+        // t : progression des scènes, sur [0, 1] ; p : celle du parcours seul.
         const p = introEnd ? range(t, introEnd, 1) : t;
         const intro = introEnd ? ease(range(t, introEnd * 0.15, introEnd)) : 1;
         // Néon d'arrivée : seulement sur l'accueil, il s'efface dès qu'on défile.
@@ -722,9 +733,12 @@ export function initStory() {
             atlasMode = 'launch';
             atlasStart = now;
         } else if ((atlasMode === 'launch' || atlasMode === 'launched') && a < RETURN_AT) {
-            atlasMode = 'return';
+            // Réseau encore en main, ou retour à la scène 5 : pas de chute.
+            const inHand = atlasMode === 'launch' && now - atlasStart < PRISE_MS + DETENTE_MS;
+            atlasMode = inHand || a < 0.02 ? 'scroll' : 'return';
             atlasStart = now;
         }
+        if (atlasMode === 'return' && a < 0.02) atlasMode = 'scroll';
         return { a, mode: atlasMode, u: now - atlasStart };
     }
     // Saut sans animation (hors écran, chargement) : on se cale sur l'état final.
@@ -828,6 +842,7 @@ export function initStory() {
         measure();
         current = target;
         update(current);
+        wake();
     }).observe(stage);
 
     if (document.documentElement.classList.contains('intro-playing')) {

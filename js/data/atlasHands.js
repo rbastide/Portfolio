@@ -14,7 +14,8 @@
 //   - cells : chaîne de cols × rows caractères, ligne par ligne : '.' = vide, '0'..'9' = niveau
 //     (0 = plus petit carré, le plus clair ; 9 = plus gros, le plus dense) ;
 //   - grip : bout des doigts qui touche la voûte, en cellules, repère de l'image (pas du rectangle).
-//     Pour projection (main dissoute), c'est le grip de detente.
+//     Pour detente (la main a lâché la voûte), c'est le haut des doigts ; pour projection
+//     (main dissoute), le même point que detente.
 // SIZES[niveau] = côté du carré en px Figma (médiane relevée dans les SVG ; la maquette le fait
 // légèrement varier d'un carré à l'autre). Un carré est centré sur sa cellule.
 //

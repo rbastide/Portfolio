@@ -12,8 +12,10 @@
 
 .story {
     position: relative;
-    /* Un écran pour la scène + ~90 % d'écran de scroll par étape. */
-    height: calc(100svh + var(--story-scenes, 5) * 90svh);
+    /* Un écran pour la scène + ~90 % d'écran de scroll par étape, plus le
+       segment des mains d'Atlas (--story-atlas, posé par controllers/story.js
+       hors mouvement réduit). */
+    height: calc(100svh + var(--story-scenes, 5) * 90svh + var(--story-atlas, 0svh));
 }
 
 .story-stage {

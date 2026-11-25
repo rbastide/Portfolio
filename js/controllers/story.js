@@ -20,9 +20,29 @@
 // ensuite tracé, et de petites impulsions continuent d'alimenter le noyau.
 // Il s'efface dès qu'on quitte l'accueil.
 //
+// Puis un 6e temps, Atlas, sur un segment de scroll ajouté après la dernière
+// scène (ATLAS_SPAN) : les scènes gardent leur rythme sur [0, storyEnd], le
+// segment occupe [storyEnd, 1] avec sa propre progression a (0 à 1).
+//   - a 0 → 0.35 : le texte de la dernière scène s'efface, le réseau se
+//     recentre dans le haut de l'écran et deux mains en trame de points
+//     (controllers/atlasHands.js) entrent par les côtés pour le tenir par en
+//     dessous, comme Atlas porte la voûte céleste ;
+//   - a 0.35 → 0.8 : l'élan, au scroll : repos → élan → armé, le réseau
+//     descend avec le bout des doigts (les avant-bras ne bougent pas) ;
+//   - au-delà de LAUNCH_AT : le lancer se joue en temps réel, aux durées de la
+//     maquette Figma (prise 70 ms → détente 80 ms → projection 220 ms), le
+//     réseau sort par le haut avec une traînée de points et les mains se
+//     dissolvent. L'état « lancé » est gardé ;
+//   - en remontant sous RETURN_AT : « le ciel revient », en temps réel aussi :
+//     le réseau redescend dans les mains, qui se reforment et l'amortissent,
+//     puis le scroll reprend la main.
+// En mouvement réduit, pas de segment ni de mains.
+//
 // La progression affichée rattrape le scroll avec un léger retard : c'est ce
 // qui donne de l'inertie au mouvement.
 import { prefersReducedMotion } from '../utils/dom.js';
+import { ATLAS_HANDS } from '../data/atlasHands.js';
+import { drawHand, drawSpeedLines } from './atlasHands.js';
 
 const LAYERS = [4, 6, 6, 3];
 const LAYER_LABELS = ['INTERFACE', 'API', 'DONNÉES', 'SERVEUR'];
@@ -50,6 +70,140 @@ const ease = t => t * t * (3 - 2 * t);
 const mix = (a, b, t) => a + (b - a) * t;
 const mixColor = (c1, c2, t) => c1.map((v, i) => Math.round(mix(v, c2[i], t)));
 const rgba = ([r, g, b], a) => `rgba(${r}, ${g}, ${b}, ${clamp(a)})`;
+
+// ---- Atlas : les mains qui lancent le réseau ----
+const ATLAS_SPAN = 0.8;       // longueur du segment, en hauteurs d'écran (80svh)
+const ENTER_END = 0.35;       // a : fin de l'entrée des mains
+const ELAN_AT = 0.47;         // a : image « élan »
+const ARME_AT = 0.62;         // a : image « armé »
+const LAUNCH_AT = 0.8;        // a : le lancer part, en temps réel
+const RETURN_AT = 0.6;        // a : en remontant, le ciel revient
+const STEP_BLEND = 0.03;      // demi-largeur (en a) du glissement du réseau entre deux images
+const PRISE_MS = 70;          // durées de la maquette Figma
+const DETENTE_MS = 80;
+const PROJECTION_MS = 220;
+const DISSOLVE_MS = 400;      // dissolution des mains, depuis la projection
+const THROW_MS = 300;         // course du réseau vers le haut, depuis la détente
+const LAUNCH_MS = PRISE_MS + DETENTE_MS + DISSOLVE_MS;
+const RETURN_FALL = 300;      // le ciel revient : chute du réseau dans les mains
+const RETURN_CATCH = 120;     // amorti (image élan)
+const RETURN_MS = 600;
+// Cadrage : marge haute (sous l'en-tête), hauteur de maquette à faire tenir
+// à l'écran (du haut du réseau au poignet de l'image « armé », px Figma) et
+// taille du réseau par rapport aux mains.
+const ATLAS_TOP = 80;
+const ATLAS_VIEW_H = 850;
+const NET_UNIT = 245;         // unité du réseau, en px Figma
+const NET_ABOVE = 0.8;        // centre du réseau sous la marge haute (en unités)
+const GRIP_BELOW = 0.62;      // bout des doigts sous le centre du réseau (en unités) : juste
+                              // sous les neurones du bas des colonnes extrêmes
+const GRIP_AT = 0.95;         // bout des doigts sous les colonnes extrêmes (en unités)
+const MAX_STRETCH = 1.5;      // étirement horizontal maximal du réseau
+const MOBILE_HAND = 1.1;      // mains un peu plus grandes que la stricte mise à l'échelle sur mobile
+const MOBILE_REACH = 0.15;    // part de l'avant-bras qui peut sortir par le côté, sur mobile
+const ARM_FADE = 110;         // fondu de la coupe de l'avant-bras (px Figma)
+const TRAIL_MS = 24;          // écart pour mesurer la vitesse du réseau (traînée)
+const SINK = 0.05;            // le réseau s'enfonce entre les doigts à la prise (en unités)
+const HANDS = ATLAS_HANDS.frames;
+const CELL = ATLAS_HANDS.CELL;
+// Traits de vitesse de l'image 7, dans le repère de la maquette (px Figma).
+const SPEED = { x: 280, y: 205, height: 210 };
+
+const outCubic = t => 1 - Math.pow(1 - t, 3);
+const inQuad = t => t * t;
+
+// Image de la main pilotée par le scroll.
+const scrollFrame = a => (a < ELAN_AT ? 'rest' : a < ARME_AT ? 'elan' : 'arme');
+
+// Mise en place du segment selon l'écran : échelle des mains (px écran par px
+// Figma), repère de la maquette (ox, oy = coin haut-gauche de l'image de la
+// main gauche), centre et unités du réseau (kx peut être un peu plus large
+// que ky pour que le bout des doigts reste sous les bords du réseau).
+function atlasLayout(w, h) {
+    const mobile = w <= MOBILE_MAX;
+    const s = Math.min(w / ATLAS_HANDS.FRAME.w, (h - ATLAS_TOP) / ATLAS_VIEW_H) * (mobile ? MOBILE_HAND : 1);
+    const ky = NET_UNIT * s;
+    const surplus = Math.max(0, h - ATLAS_TOP - ATLAS_VIEW_H * s);
+    const cy = ATLAS_TOP + NET_ABOVE * ky + surplus * 0.3;
+    const rest = HANDS.rest.grip;
+    // Sur mobile, les avant-bras sortent davantage par les côtés : plus de
+    // place pour le réseau entre les mains.
+    const restX = (rest.col * CELL + CELL / 2) * s * (mobile ? 1 - MOBILE_REACH : 1);
+    const kx = clamp((w / 2 - restX) / GRIP_AT / ky, 1, MAX_STRETCH) * ky;
+    const ox = w / 2 - GRIP_AT * kx - (rest.col * CELL + CELL / 2) * s;
+    const oy = cy + GRIP_BELOW * ky - (rest.row * CELL + CELL / 2) * s;
+    return { s, kx, ky, cx: w / 2, cy, ox, oy };
+}
+
+// Point d'appui d'une image, main gauche, dans le repère de la maquette posé à l'écran.
+function gripOf(L, frame) {
+    const g = HANDS[frame].grip;
+    return { x: L.ox + (g.col * CELL + CELL / 2) * L.s, y: L.oy + (g.row * CELL + CELL / 2) * L.s };
+}
+
+// Descente du réseau quand la main prend l'image `frame` (px écran).
+const dropOf = (L, frame) => gripOf(L, frame).y - gripOf(L, 'rest').y;
+
+// Descente pilotée par le scroll : le réseau glisse d'une image à l'autre
+// autour de chaque seuil plutôt que de sauter.
+function scrollDrop(L, a) {
+    return mix(0, dropOf(L, 'elan'), ease(range(a, ELAN_AT - STEP_BLEND, ELAN_AT + STEP_BLEND))) +
+        (dropOf(L, 'arme') - dropOf(L, 'elan')) * ease(range(a, ARME_AT - STEP_BLEND, ARME_AT + STEP_BLEND));
+}
+
+// Pose du segment Atlas à un instant : { a, mode, u } vient du contrôleur
+// (mode : scroll | launch | launched | return ; u : ms depuis le début de la
+// séquence temps réel). Fonction pure : renvoie le cadrage du réseau (net :
+// part du recentrage, dy : décalage vertical), l'image des mains et leurs
+// effets.
+function atlasPose(L, { a, mode, u }) {
+    const enter = ease(range(a, 0.02, ENTER_END));
+    const pose = {
+        net: ease(range(a, 0, ENTER_END)),
+        enter,
+        alpha: range(a, 0.02, 0.14),
+        frame: scrollFrame(a),
+        dy: scrollDrop(L, a) * enter,
+        dissolve: 0, tint: 0, speed: 0
+    };
+    // Hauteur à parcourir pour que le réseau (halo compris) sorte par le haut.
+    const away = L.cy + dropOf(L, 'prise') + 2.6 * L.ky;
+
+    if (mode === 'launch' || mode === 'launched') {
+        const t = mode === 'launched' ? LAUNCH_MS : u;
+        const grip = dropOf(L, 'prise') + SINK * L.ky;
+        if (t < PRISE_MS) {
+            // Prise : les mains remontent en tenant le réseau.
+            pose.frame = 'prise';
+            pose.dy = mix(dropOf(L, 'arme'), grip, ease(t / PRISE_MS));
+            pose.tint = 0.5 * t / PRISE_MS;
+        } else {
+            // Détente puis projection : départ très sec, puis sortie par le haut.
+            pose.dy = grip - away * outCubic(range(t, PRISE_MS, PRISE_MS + THROW_MS));
+            const since = t - PRISE_MS - DETENTE_MS;
+            pose.frame = since < 0 ? 'detente' : 'projection';
+            pose.tint = since < 0 ? 1 : mix(1, 0.4, range(since, 0, DISSOLVE_MS));
+            pose.speed = since < 0 ? 1 : 1 - range(since, 0, PROJECTION_MS * 0.7);
+            pose.dissolve = since < 0 ? 0 : range(since, 0, DISSOLVE_MS);
+        }
+    } else if (mode === 'return') {
+        const rest = 0, elan = dropOf(L, 'elan') * enter;
+        if (u < RETURN_FALL) {
+            // Le réseau retombe ; les mains se reforment, au repos.
+            pose.frame = 'rest';
+            pose.dy = mix(rest - L.cy - 1.1 * L.ky, rest, inQuad(u / RETURN_FALL));
+            pose.dissolve = 1 - range(u, 0, RETURN_FALL * 0.85);
+        } else if (u < RETURN_FALL + RETURN_CATCH) {
+            // Amorti : les mains plient brièvement sous le choc.
+            pose.frame = 'elan';
+            pose.dy = mix(rest, elan, outCubic(range(u, RETURN_FALL, RETURN_FALL + RETURN_CATCH * 0.5)));
+        } else {
+            // Retour à la pose que donne le scroll.
+            pose.dy = mix(elan, pose.dy, ease(range(u, RETURN_FALL + RETURN_CATCH, RETURN_MS)));
+        }
+    }
+    return pose;
+}
 
 // Hasard reproductible : le réseau est le même à chaque visite.
 function seeded(seed) {
@@ -144,15 +298,64 @@ function createRenderer(canvas, positions, introEnd = 0) {
     const ctx = canvas.getContext('2d');
     const net = buildNetwork();
     const keys = { desktop: cameraKeys(positions, false), mobile: cameraKeys(positions, true) };
+    // Calque des mains : elles y sont dessinées puis la coupe de l'avant-bras
+    // (bord gauche de la maquette) y est fondue, avant de passer sur le canvas.
+    const layer = document.createElement('canvas');
+    const lctx = layer.getContext('2d');
     let w = 0, h = 0;
 
     function resize() {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         w = canvas.clientWidth;
         h = canvas.clientHeight;
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(h * dpr);
+        canvas.width = layer.width = Math.round(w * dpr);
+        canvas.height = layer.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    // Les deux mains (la droite en miroir par rapport au centre de l'écran),
+    // les traits de vitesse et le fondu de la coupe des avant-bras.
+    function drawHands(L, pose) {
+        if (pose.alpha <= 0 || pose.dissolve >= 1) return;
+        const f = HANDS[pose.frame];
+        const shift = -(1 - pose.enter) * (L.ox + (f.col0 + f.cols + 1) * CELL * L.s + 24);
+        const rise = (1 - pose.enter) * h * 0.08;
+        const g = gripOf(L, pose.frame);
+        const opts = { scale: L.s, alpha: 1, tint: pose.tint, dissolve: pose.dissolve };
+        lctx.clearRect(0, 0, w, h);
+        drawHand(lctx, pose.frame, { ...opts, x: g.x + shift, y: g.y + rise });
+        drawHand(lctx, pose.frame, { ...opts, x: w - g.x - shift, y: g.y + rise, mirror: true });
+
+        const cut = L.ox + shift, fade = ARM_FADE * L.s;
+        if (cut + fade > 0) {
+            lctx.save();
+            lctx.globalCompositeOperation = 'destination-out';
+            for (const side of [1, -1]) {
+                const from = side > 0 ? cut : w - cut, to = from + side * fade;
+                const grad = lctx.createLinearGradient(from, 0, to, 0);
+                grad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                lctx.fillStyle = grad;
+                lctx.fillRect(side > 0 ? -1 : to, 0, side > 0 ? to + 1 : w + 1 - to, h);
+            }
+            lctx.restore();
+        }
+        ctx.save();
+        ctx.globalAlpha = pose.alpha;
+        ctx.drawImage(layer, 0, 0, w, h);
+        ctx.restore();
+
+        if (pose.speed > 0) {
+            drawSpeedLines(ctx, {
+                x1: L.ox + SPEED.x * L.s,
+                x2: w - L.ox - SPEED.x * L.s,
+                y: L.oy + SPEED.y * L.s,
+                height: SPEED.height * L.s,
+                alpha: pose.speed * 0.9,
+                scale: L.s
+            });
+        }
     }
 
     function circle(x, y, r, color) {
@@ -238,7 +441,8 @@ function createRenderer(canvas, positions, introEnd = 0) {
         return { drawn: 1, head, charge: Math.max(flash, pulseFlash, 0.25) };
     }
 
-    function draw(t, clock = Infinity) {
+    // atlas : état du segment Atlas ({ a, mode, u }, voir atlasPose), ou null.
+    function draw(t, clock = Infinity, atlas = null) {
         ctx.clearRect(0, 0, w, h);
         if (!w || !h) return;
 
@@ -252,10 +456,20 @@ function createRenderer(canvas, positions, introEnd = 0) {
         const mobile = w <= MOBILE_MAX;
         const unit = mobile ? Math.min(w * 0.32, h * 0.15) : Math.min(w * 0.2, h * 0.25);
         const cam = cameraAt(mobile ? keys.mobile : keys.desktop, t);
-        const cx = w / 2 + cam.x * w;
-        const cy = h / 2 + cam.y * h;
-        const k = unit * cam.zoom;
-        const toScreen = (x, y) => [cx + x * k, cy + y * k];
+        let cx = w / 2 + cam.x * w;
+        let cy = h / 2 + cam.y * h;
+        let k = unit * cam.zoom, kx = k;
+        // Segment Atlas : le réseau se recadre au-dessus des mains et suit le
+        // bout de leurs doigts.
+        const L = atlas && (atlas.a > 0 || atlas.mode !== 'scroll') ? atlasLayout(w, h) : null;
+        const pose = L ? atlasPose(L, atlas) : null;
+        if (pose) {
+            cx = mix(cx, L.cx, pose.net);
+            cy = mix(cy, L.cy, pose.net) + pose.dy;
+            kx = mix(k, L.kx, pose.net);
+            k = mix(k, L.ky, pose.net);
+        }
+        const toScreen = (x, y) => [cx + x * kx, cy + y * k];
 
         // Phases (voir l'en-tête du fichier).
         const gather = p0 => ease(range(p, 0.13 + p0, 0.31 + p0));
@@ -407,6 +621,24 @@ function createRenderer(canvas, positions, introEnd = 0) {
             }
         }
 
+        // Lancer et retour : une traînée de points verticale derrière chaque
+        // neurone, d'autant plus longue que le réseau va vite.
+        if (pose && (atlas.mode === 'launch' || atlas.mode === 'return')) {
+            const before = atlasPose(L, { ...atlas, u: Math.max(0, atlas.u - TRAIL_MS) });
+            const speed = before.dy - pose.dy; // > 0 : le réseau monte
+            const len = Math.min(Math.abs(speed) * 1.6, h * 0.45);
+            const step = CELL * L.s * 1.5;
+            if (len > step) {
+                const dir = Math.sign(speed);
+                const dots = Math.floor(len / step);
+                const size = Math.max(1.2, 2.6 * L.s);
+                for (let j = 1; j <= dots; j++) {
+                    ctx.fillStyle = rgba(mixColor(VIOLET, CYAN, pose.tint), 0.75 * (1 - j / (dots + 1)));
+                    for (const n of net.nodes) ctx.fillRect(n.x - size / 2, n.y + dir * j * step - size / 2, size, size);
+                }
+            }
+        }
+
         for (const n of net.nodes) {
             const out = n.layer === LAYERS.length - 1 ? finale : 0;
             const color = mixColor(mixColor(tint, CYAN, n.glow), GREEN, out);
@@ -424,6 +656,8 @@ function createRenderer(canvas, positions, introEnd = 0) {
                 ctx.fillText(label, x, y);
             });
         }
+
+        if (pose) drawHands(L, pose);
     }
 
     return { resize, draw };
@@ -468,12 +702,46 @@ export function initStory() {
     let target = 0, current = 0, frame = 0, last = 0, visible = false;
     const introEnd = introCount / scenes.length;
 
+    // Segment Atlas : il allonge la section ; storyEnd = part de la progression
+    // occupée par les scènes (recalculée à chaque mesure).
+    section.style.setProperty('--story-atlas', `${ATLAS_SPAN * 100}svh`);
+    let storyEnd = 1;
+    const sceneProgress = t => clamp(t / storyEnd);
+    const atlasProgress = t => (storyEnd < 1 ? range(t, storyEnd, 1) : 0);
+
+    // Séquences temps réel du segment : le lancer (launch → launched) et le
+    // retour (return → scroll). atlasStart : début de la séquence en cours.
+    let atlasMode = 'scroll', atlasStart = 0;
+    const atlasBusy = () => atlasMode === 'launch' || atlasMode === 'return';
+    function atlasState(t) {
+        const a = atlasProgress(t);
+        const now = performance.now();
+        if (atlasMode === 'launch' && now - atlasStart >= LAUNCH_MS) atlasMode = 'launched';
+        if (atlasMode === 'return' && now - atlasStart >= RETURN_MS) atlasMode = 'scroll';
+        if (atlasMode === 'scroll' && a >= LAUNCH_AT) {
+            atlasMode = 'launch';
+            atlasStart = now;
+        } else if ((atlasMode === 'launch' || atlasMode === 'launched') && a < RETURN_AT) {
+            atlasMode = 'return';
+            atlasStart = now;
+        }
+        return { a, mode: atlasMode, u: now - atlasStart };
+    }
+    // Saut sans animation (hors écran, chargement) : on se cale sur l'état final.
+    function settleAtlas() {
+        const a = atlasProgress(target);
+        if (a >= LAUNCH_AT) atlasMode = 'launched';
+        else if (a < RETURN_AT || atlasMode === 'scroll') atlasMode = 'scroll';
+    }
+
     // Horloge du néon d'arrivée : elle démarre à la fin de l'intro, ou tout de
     // suite si l'intro ne se joue pas.
     let feedStart = null;
     const feedClock = () => (feedStart === null ? null : (performance.now() - feedStart) / 1000);
     // Tant que l'accueil est à l'écran, le néon s'anime même sans scroll.
-    const live = () => feedStart !== null && visible && !document.hidden && current < introEnd * 0.45;
+    // Idem pendant le lancer et le retour des mains d'Atlas.
+    const live = () => visible && !document.hidden &&
+        ((feedStart !== null && current < introEnd * 0.45) || atlasBusy());
     function startFeed() {
         if (feedStart !== null) return;
         feedStart = performance.now();
@@ -488,21 +756,31 @@ export function initStory() {
         const rect = section.getBoundingClientRect();
         const total = scrollLength();
         target = total > 0 ? clamp(-rect.top / total) : 0;
+        storyEnd = total > 0 ? clamp(1 - stage.offsetHeight * ATLAS_SPAN / total, 0.01) : 1;
         visible = rect.bottom > 0 && rect.top < window.innerHeight;
     }
 
-    function update(p) {
-        renderer.draw(p, feedClock());
+    // t : progression de toute la section ; p : celle des scènes, sur [0, storyEnd].
+    function update(t) {
+        const p = sceneProgress(t);
+        const atlas = atlasState(t);
+        renderer.draw(p, feedClock(), atlas);
         stage.style.setProperty('--story-progress', `${(p * 100).toFixed(2)}%`);
 
+        // Le texte de la dernière scène s'efface en montant quand les mains arrivent.
+        const leave = range(atlas.a, 0, 0.12);
         let best = 0;
         scenes.forEach((scene, i) => {
-            const o = Math.round(sceneOpacity(i, scenes.length, p) * 1000) / 1000;
-            if (o > sceneOpacity(best, scenes.length, p)) best = i;
+            const isLast = i === scenes.length - 1;
+            const fade = isLast ? 1 - leave : 1;
+            const shown = Math.round(sceneOpacity(i, scenes.length, p) * 1000) / 1000;
+            const o = Math.round(shown * fade * 1000) / 1000;
+            if (shown > sceneOpacity(best, scenes.length, p)) best = i;
             if (o === opacities[i]) return;
             opacities[i] = o;
             scene.style.opacity = o;
-            scene.style.transform = `translateY(${((1 - o) * 20).toFixed(1)}px)`;
+            const dy = isLast && leave > 0 ? -leave * 24 : (1 - o) * 20;
+            scene.style.transform = `translateY(${dy.toFixed(1)}px)`;
             scene.classList.toggle('is-active', o > 0.5);
         });
 
@@ -526,7 +804,7 @@ export function initStory() {
     function wake() {
         measure();
         // Hors de l'écran, inutile de dessiner : on se cale directement.
-        if (!visible) { current = target; return; }
+        if (!visible) { current = target; settleAtlas(); return; }
         if (!frame && current === target && !live()) return;
         if (!frame) {
             last = performance.now();
@@ -540,7 +818,7 @@ export function initStory() {
         const scene = e.target.closest('.story-scene');
         if (!scene) return;
         const i = Number(scene.dataset.scene);
-        const p = i === scenes.length - 1 ? 0.97 : (i + 0.5) / scenes.length;
+        const p = (i === scenes.length - 1 ? 0.97 : (i + 0.5) / scenes.length) * storyEnd;
         const top = section.getBoundingClientRect().top + window.scrollY;
         window.scrollTo({ top: top + scrollLength() * p, behavior: 'auto' });
     });
@@ -563,5 +841,6 @@ export function initStory() {
     renderer.resize();
     measure();
     current = target;
+    settleAtlas();
     update(current);
 }

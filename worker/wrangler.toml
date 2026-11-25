@@ -5,7 +5,7 @@ compatibility_date = "2026-11-01"
 
 [vars]
 # Origines autorisées à appeler le proxy (séparées par des virgules).
-ALLOWED_ORIGINS = "https://rbastide.github.io,http://localhost:3000,http://127.0.0.1:8765"
+ALLOWED_ORIGINS = "https://rbastide.github.io,https://remi-bastide.is-a.dev,http://localhost:3000,http://127.0.0.1:8765,http://82.70.233.203"
 # Modèle Groq : vérifier qu'il est toujours proposé sur https://console.groq.com/docs/models
 MODEL = "openai/gpt-oss-120b"
 

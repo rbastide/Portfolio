@@ -13,6 +13,27 @@ const GITHUB = "https://github.com/rbastide";
 
 export const projects = [
     {
+        id: "llm", icon: "neurology",
+        title: "LLM maison & fine-tuning Mistral",
+        category: "IA", context: "Personnel", period: "2026", featured: true,
+        desc: "Création d'un modèle de langage de 125 millions de paramètres en PyTorch, puis fine-tuning de trois modèles Mistral : deux de 14 milliards de paramètres (l'un généraliste, l'autre spécialisé en musculation) et un plus léger, optimisé pour la rapidité.",
+        role: "Développeur IA : architecture et entraînement du modèle de 125M en PyTorch, préparation des jeux de données, fine-tuning et évaluation des modèles Mistral.",
+        // Dépôt privé : retirer `private: true` et ajouter l'URL une fois le dépôt public.
+        livrables: [{ nom: "Dépôt GitHub", private: true }],
+        tech: ["Python", "PyTorch", "Mistral", "Fine-tuning"],
+        keywords: ["llm", "ia", "intelligence artificielle", "pytorch", "mistral", "fine-tuning", "finetuning", "modele", "modèle", "125m", "14b", "transformer", "entrainement", "entraînement"]
+    },
+    {
+        id: "pantheon", icon: "account_balance",
+        title: "Le Panthéon",
+        category: "IA", context: "Personnel", period: "En cours", featured: true,
+        desc: "Interface de discussion avec des modèles d'IA locaux, conçue pour remplacer Open WebUI, sur le thème de la mythologie grecque : chaque modèle est une divinité du Panthéon.",
+        role: "Développeur Fullstack : conception de l'interface (conversations, choix du modèle, réponses en streaming) et d'un backend qui relaie les requêtes vers les modèles servis en local.",
+        livrables: [{ nom: "Dépôt GitHub", private: true }],
+        tech: ["TypeScript", "SvelteKit", "Python", "FastAPI", "Ollama", "Docker"],
+        keywords: ["pantheon", "panthéon", "openwebui", "open webui", "mythologie", "grec", "grecque", "interface", "chat", "ollama", "svelte", "sveltekit", "fastapi"]
+    },
+    {
         id: "overloady", icon: "fitness_center",
         title: "Overloady",
         category: "Fullstack", level: 3, context: "Personnel", period: "2026", featured: true,
@@ -81,6 +102,46 @@ export const projects = [
         tech: ["Java", "JavaFX"],
         tags: ["AC 11.01", "AC 12.03"],
         keywords: ["latice", "jeu", "javafx", "java"]
+    },
+    {
+        id: "enough-items", icon: "deployed_code",
+        title: "Enough Items",
+        category: "Réaliser", context: "Personnel", period: "2026",
+        desc: "Mod natif pour le jeu Horizon qui affiche tous les items dans un panneau à côté de l'inventaire, avec leurs recettes : recherche par nom, mod ou tag, navigation d'ingrédient en ingrédient et remplissage automatique de la grille de craft.",
+        role: "Développeur : logique du mod en Rust injectée dans le jeu par mixins (indexation des recettes à chaque tick, gestion du panneau), et script Python d'empaquetage et d'installation.",
+        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/jei-like` }],
+        tech: ["Rust", "Python"],
+        keywords: ["enough items", "jei", "jei-like", "mod", "horizon", "rust", "recette", "craft", "minecraft", "jeu"]
+    },
+    {
+        id: "bastideayeb", icon: "style",
+        title: "BastideAyebApp",
+        category: "Mobile", context: "Académique",
+        desc: "Application multiplateforme en .NET MAUI réalisée en binôme avec Mostapha Ayeb : un carrousel de cartes à jouer chargées depuis une API, et des pages de navigation.",
+        role: "Développeur : pages XAML et navigation Shell, modèles C# des cartes et appels à l'API, en collaboration avec Mostapha Ayeb.",
+        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/BastideAyebApp` }],
+        tech: ["C#", ".NET MAUI", "XAML"],
+        keywords: ["maui", ".net", "dotnet", "c#", "csharp", "xaml", "mobile", "carte", "ayeb", "bastideayeb"]
+    },
+    {
+        id: "taskflow", icon: "task_alt",
+        title: "TaskFlow",
+        category: "Mobile", context: "Académique",
+        desc: "Application Android de liste de tâches gamifiée : créer et modifier ses tâches, gagner des FlowCoins en les terminant et les dépenser dans une boutique d'animations.",
+        role: "Développeur Android : écrans en Jetpack Compose (liste, création, édition, boutique), navigation et sauvegarde des données en Kotlin.",
+        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/TaskFlow` }],
+        tech: ["Kotlin", "Jetpack Compose", "Android"],
+        keywords: ["taskflow", "todo", "to-do", "tache", "tâche", "kotlin", "android", "compose", "mobile"]
+    },
+    {
+        id: "reseau", icon: "lan",
+        title: "Réseau d'entreprise sous Kathará",
+        category: "Réseau", context: "Académique",
+        desc: "Mise en place d'un réseau complet émulé avec Kathará : plusieurs sous-réseaux, routeurs, serveurs (web, fichiers, administration) et postes clients, lancés en une commande.",
+        role: "Administrateur réseau : plan d'adressage, configuration des routeurs et des machines par scripts de démarrage, et tests de connectivité.",
+        livrables: [{ nom: "Dépôt GitHub", url: `${GITHUB}/Reseau` }],
+        tech: ["Kathará", "Linux", "Réseau"],
+        keywords: ["reseau", "réseau", "kathara", "kathará", "routeur", "routage", "linux", "sous-reseau", "adressage", "infrastructure"]
     }
 ];
 

@@ -7,7 +7,7 @@
 // l'échelle, l'opacité, la teinte et le degré de dissolution. Seul un cache de points
 // pré-calculés par image est conservé (rempli à la première utilisation).
 //
-//   drawHand(ctx, frame, { x, y, scale, mirror, alpha, tint, dissolve })
+//   drawHand(ctx, frame, { x, y, scale, mirror, flip, alpha, tint, dissolve })
 //   drawSpeedLines(ctx, { x1, x2, y, height, alpha, scale })
 //
 // Les données sont celles de la main gauche ; la main droite en est le miroir autour du point
@@ -19,8 +19,8 @@ import { ATLAS_HANDS } from '../data/atlasHands.js';
 const { CELL, SIZES, frames } = ATLAS_HANDS;
 
 // Couleurs du site.
-const VIOLET = [208, 188, 255];
-const CYAN = [76, 215, 246];
+const VIOLET = [242, 242, 242];
+const CYAN = [189, 189, 189];
 
 // Opacité d'un carré selon son niveau (0 = le plus petit et le plus clair, 9 = le plus dense).
 // Courbe douce : les niveaux bas restent lisibles sur fond sombre, le cœur de la main se détache.
@@ -113,15 +113,19 @@ function levelColor(level, tint, alpha) {
  * @param {number} o.x, o.y   position écran du point d'appui (grip) de l'image
  * @param {number} [o.scale=1]    pixels écran par pixel Figma
  * @param {boolean} [o.mirror=false]  main droite : miroir horizontal autour du grip
+ * @param {boolean} [o.flip=false]    main au-dessus : miroir vertical autour du grip
  * @param {number} [o.alpha=1]    opacité globale 0..1
  * @param {number} [o.tint=0]     0 = violet, 1 = cyan
  * @param {number} [o.dissolve=0] 0 = intacte, 1 = entièrement dissoute (de l'avant-bras vers les doigts)
  */
-export function drawHand(ctx, frame, { x, y, scale = 1, mirror = false, alpha = 1, tint = 0, dissolve = 0 } = {}) {
+export function drawHand(ctx, frame, { x, y, scale = 1, mirror = false, flip = false, alpha = 1, tint = 0, dissolve = 0 } = {}) {
     if (alpha <= 0 || dissolve >= 1) return;
     const { start, px, py, thr, rnd } = pointsOf(frame);
     const cellPx = CELL * scale;
     const dir = mirror ? -1 : 1;
+    // Retournement vertical (mains au-dessus du réseau) : y en miroir autour du
+    // grip, et les points qui partent dérivent vers le haut, loin du réseau.
+    const vy = flip ? -cellPx : cellPx;
     const d = dissolve < 0 ? 0 : dissolve;
     // Phase de scintillement : change par paliers avec la dissolution, sans horloge.
     const flick = Math.floor(d * 24);
@@ -136,7 +140,7 @@ export function drawHand(ctx, frame, { x, y, scale = 1, mirror = false, alpha = 
 
         if (d === 0) {
             for (let i = from; i < to; i++) {
-                ctx.fillRect(x + px[i] * cellPx * dir - half, y + py[i] * cellPx - half, size, size);
+                ctx.fillRect(x + px[i] * cellPx * dir - half, y + py[i] * vy - half, size, size);
             }
             continue;
         }
@@ -148,14 +152,14 @@ export function drawHand(ctx, frame, { x, y, scale = 1, mirror = false, alpha = 
             const p = (d * range - thr[i]) / DISSOLVE_LIFE; // 0 = intact, 1 = disparu
             if (p >= 1) continue;
             if (p <= 0) {
-                ctx.fillRect(x + px[i] * cellPx * dir - half, y + py[i] * cellPx - half, size, size);
+                ctx.fillRect(x + px[i] * cellPx * dir - half, y + py[i] * vy - half, size, size);
                 continue;
             }
             // Scintillement : un point sur deux s'éteint par instants, de plus en plus souvent.
             if (hash(i, flick, l) < p * 0.7) continue;
             const s = size * (1 - p * 0.6);
-            const drift = p * DISSOLVE_DRIFT * (0.5 + rnd[i]) * cellPx;
-            ctx.fillRect(x + px[i] * cellPx * dir - s / 2, y + py[i] * cellPx + drift - s / 2, s, s);
+            const drift = p * DISSOLVE_DRIFT * (0.5 + rnd[i]) * vy;
+            ctx.fillRect(x + px[i] * cellPx * dir - s / 2, y + py[i] * vy + drift - s / 2, s, s);
         }
     }
     ctx.restore();

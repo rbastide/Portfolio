@@ -9,8 +9,6 @@ import { story } from '../data/story.js';
 import { heroSceneHTML } from './hero.js';
 import { projects } from '../data/projects.js';
 
-const MINOR_MARKS = 4; // graduations fines entre deux scènes sur la règle
-
 const pad = n => String(n).padStart(2, '0');
 
 function sceneHTML(scene, i, data) {
@@ -48,21 +46,6 @@ function sceneHTML(scene, i, data) {
         </article>`;
 }
 
-function rulerHTML(count) {
-    const segment = `
-                <div class="story-ruler-seg">
-                    <span class="mark-major"></span>
-                    <span class="story-ruler-minors">${'<span class="mark-minor"></span>'.repeat(MINOR_MARKS)}</span>
-                </div>`;
-    return `
-        <div class="story-ruler" aria-hidden="true">
-            <span class="story-count"><span data-story-count>01</span> / ${pad(count)}</span>
-            <div class="story-ruler-bar">${segment.repeat(count)}
-                <span class="mark-major"></span>
-            </div>
-        </div>`;
-}
-
 export function storyHTML(data) {
     return `
     <section id="story" class="story" aria-labelledby="story-heading" style="--story-scenes: ${story.length}">
@@ -71,7 +54,6 @@ export function storyHTML(data) {
             <div class="story-scrim" aria-hidden="true"></div>
             <h2 id="story-heading" class="sr-only">Mon parcours</h2>
             ${story.map((scene, i) => sceneHTML(scene, i, data)).join('')}
-            ${rulerHTML(story.length)}
             <a href="#projects" class="story-skip">Passer l'intro<span class="icon">south</span></a>
             <div class="story-hint" aria-hidden="true">
                 <span>Faites défiler</span>

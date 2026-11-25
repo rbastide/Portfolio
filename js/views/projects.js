@@ -1,131 +1,110 @@
 // ============================================
-// VUE — Projets
+// VUE — Projets : vitrine plein écran
 // ============================================
-// Une scène collée à l'écran : en-tête, barre de filtres compacte (recherche
-// + menus Type, Contexte, Technologie), puis une piste horizontale de cartes
-// que le scroll vertical fait glisser (controllers/projectsTrack.js). Le
-// filtrage est géré par initProjectFilters (controllers/interactions.js).
-import { getCategories, getContexts, getTechCounts } from '../data/projects.js';
+// Tous les projets tiennent sur un seul écran, sans scroll ni carrousel : une
+// grille de cartes compactes. Au bout du parcours, le réseau lancé par les
+// mains s'écrase au sol et ses éclats forment des flaques d'huile qui font
+// apparaître les cartes une à une (controllers/showcase.js). Un clic sur une
+// carte l'agrandit en plein écran (.sc-zoom) ; « Continuer » rend la page.
+// Les filtres sont repliés derrière un seul bouton discret.
+import { getCategories, getContexts } from '../data/projects.js';
 
-const normalize = text => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const pad = n => String(n).padStart(2, '0');
 
-function livrableHTML(l) {
-    return l.private
-        ? `<span class="project-link is-private" title="Dépôt privé — bientôt public"><span class="icon">lock</span>${l.nom} (bientôt public)</span>`
-        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="project-link">${l.nom}<span class="icon">arrow_outward</span></a>`;
+// Projets mis en avant en tête, l'ordre d'origine est conservé sinon.
+export const sortProjects = projects =>
+    [...projects].sort((a, b) => (b.featured === true) - (a.featured === true));
+
+function cardHTML(p, i) {
+    return `
+        <li class="sc-cell" data-category="${p.category}" data-context="${p.context}" data-tech="${p.tech.join('|')}">
+            <button type="button" class="sc-card" id="project-${p.id}" data-project="${p.id}" aria-haspopup="dialog"
+                aria-label="${p.title} — voir le détail">
+                <span class="sc-card-top">
+                    <span class="sc-index">${pad(i + 1)}</span>
+                    <span class="sc-icon icon" aria-hidden="true">${p.icon || 'folder'}</span>
+                </span>
+                <span class="sc-title">${p.title}</span>
+                <span class="sc-meta">${[p.category, p.period || p.context].filter(Boolean).join(' · ')}</span>
+                <span class="sc-desc">${p.desc}</span>
+                <span class="sc-tech">${p.tech.slice(0, 4).map(t => `<span>${t}</span>`).join('')}</span>
+                <span class="sc-open icon" aria-hidden="true">open_in_full</span>
+            </button>
+        </li>`;
 }
 
-function projectCardHTML(p, i) {
-    const search = normalize([p.title, p.desc, p.role, p.context, p.category, ...p.tech, ...(p.keywords || [])].join(' '));
+function filterGroupHTML(group, label, values) {
     return `
-    <article class="project-row" id="project-${p.id}" data-category="${p.category}" data-context="${p.context}"
-        data-tech="${p.tech.join('|')}" data-search="${search.replace(/"/g, '')}">
-        <div class="project-top">
-            <span class="project-index">${pad(i + 1)}</span>
-            <span class="project-icon"><span class="icon">${p.icon || 'folder'}</span></span>
-            <div class="project-side-text">
-                ${p.period ? `<span class="project-period">${p.period}</span>` : ''}
-                <span class="project-context">${p.context}</span>
-                ${p.featured
-                    ? '<span class="project-status"><span class="dot dot-sm"></span>Récent</span>'
-                    : `<span class="project-level">Niveau ${p.level}</span>`}
-            </div>
-        </div>
-
-        <div class="project-main">
-            <div class="project-heading">
-                <h3 class="project-title">${p.title}</h3>
-                <span class="project-type">${p.category}</span>
-            </div>
-            <p class="project-desc">${p.desc}</p>
-            <details class="project-role">
-                <summary>Mon rôle<span class="icon">expand_more</span></summary>
-                <p>${p.role}</p>
-            </details>
-            <div class="chip-row">
-                ${p.tech.map(t => `<button type="button" class="chip chip-tech" data-tech="${t}" title="Voir les projets en ${t}">${t}</button>`).join('')}
-                ${(p.tags || []).map(t => `<span class="chip ac">${t}</span>`).join('')}
-            </div>
-        </div>
-
-        <div class="project-links">
-            ${p.livrables.map(livrableHTML).join('')}
-        </div>
-    </article>`;
-}
-
-function optionHTML(group, value, label, count) {
-    return `
-            <button type="button" class="filter-btn" data-group="${group}" data-value="${value}" aria-pressed="false">
-                ${label}<span class="filter-count">${count}</span>
-            </button>`;
-}
-
-// Un menu déroulant par critère ; le bouton affiche le choix courant.
-function dropHTML(group, label, options) {
-    return `
-        <details class="filter-drop">
-            <summary class="filter-drop-btn">
-                <span class="filter-drop-label">${label}</span>
-                <span class="filter-drop-value" data-filter-current="${group}">Tous</span>
-                <span class="icon" aria-hidden="true">expand_more</span>
-            </summary>
-            <div class="filter-drop-panel" role="group" aria-label="${label}">${options}
-            </div>
-        </details>`;
-}
-
-function filtersHTML(projects) {
-    const count = (key, value) => projects.filter(p => p[key] === value).length;
-
-    return `
-    <div class="project-filters reveal">
-        <label class="project-search">
-            <span class="icon" aria-hidden="true">search</span>
-            <input type="search" id="project-search" placeholder="Rechercher un projet, une techno..." autocomplete="off" aria-label="Rechercher un projet">
-        </label>
-        ${dropHTML('category', 'Type', getCategories().map(c => optionHTML('category', c, c, count('category', c))).join(''))}
-        ${dropHTML('context', 'Contexte', getContexts().map(c => optionHTML('context', c, c, count('context', c))).join(''))}
-        ${dropHTML('tech', 'Techno', getTechCounts().map(([t, n]) => optionHTML('tech', t, t, n)).join(''))}
-        <div class="filter-summary">
-            <span id="project-results" aria-live="polite">${projects.length} projets</span>
-            <button type="button" class="filter-reset" id="filter-reset" disabled><span class="icon">filter_alt_off</span>Tout décocher</button>
-        </div>
-    </div>`;
+            <div class="sc-filter-group" role="group" aria-label="${label}">
+                <span class="sc-filter-label">${label}</span>
+                ${values.map(v => `<button type="button" class="sc-filter-opt" data-group="${group}" data-value="${v}" aria-pressed="false">${v}</button>`).join('')}
+            </div>`;
 }
 
 export function projectsHTML({ projects }) {
-    // Les projets mis en avant passent en tête, l'ordre d'origine est conservé sinon.
-    const sorted = [...projects].sort((a, b) => (b.featured === true) - (a.featured === true));
+    const sorted = sortProjects(projects);
 
     return `
-    <section id="projects" class="projects-section">
-        <div class="projects-pin">
-            <div class="projects-top">
-                <div class="section-head split reveal">
-                    <h2 class="section-title">Projets</h2>
-                    <p class="section-aside">Applications web fullstack, outils déployés pour le Grand Périgueux, infrastructures Linux et projets académiques du BUT.</p>
-                </div>
-                ${filtersHTML(projects)}
-            </div>
+    <section id="projects" class="showcase" aria-labelledby="projects-heading" style="--count: ${sorted.length}">
+        <canvas class="sc-canvas" aria-hidden="true"></canvas>
 
-            <div class="project-viewport">
-                <div class="project-list project-track">
-                    ${sorted.map(projectCardHTML).join('')}
-                    <div class="project-empty" id="project-empty" hidden>
-                        <span class="icon">search_off</span>
-                        <p>Aucun projet ne correspond à ces filtres.</p>
-                        <button type="button" class="btn btn-tonal" data-reset-filters>Réinitialiser les filtres</button>
+        <div class="sc-inner">
+            <header class="sc-head">
+                <h2 id="projects-heading" class="sc-heading">Projets <span class="sc-total">${pad(sorted.length)}</span></h2>
+                <div class="sc-filters">
+                    <button type="button" class="sc-filter-toggle" aria-expanded="false" aria-controls="sc-filter-panel">
+                        <span class="icon" aria-hidden="true">tune</span><span class="sc-filter-state">Filtrer</span>
+                    </button>
+                    <div class="sc-filter-panel" id="sc-filter-panel" hidden>
+                        ${filterGroupHTML('category', 'Type', getCategories())}
+                        ${filterGroupHTML('context', 'Contexte', getContexts())}
+                        <button type="button" class="sc-filter-reset" disabled>Tout afficher</button>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <div class="project-progress" aria-hidden="true">
-                <span class="project-count"><span data-project-count>01</span> / <span data-project-total>${pad(sorted.length)}</span></span>
-                <span class="project-progress-bar"><span class="project-progress-fill"></span></span>
-                <span class="project-hint">Défilez<span class="icon">east</span></span>
-            </div>
+            <ul class="sc-grid" role="list">
+                ${sorted.map(cardHTML).join('')}
+            </ul>
+
+            <footer class="sc-foot">
+                <button type="button" class="sc-skip">Passer l'animation<span class="icon" aria-hidden="true">fast_forward</span></button>
+                <button type="button" class="btn btn-primary sc-continue">Continuer<span class="icon" aria-hidden="true">south</span></button>
+            </footer>
+        </div>
+
+        <div class="sc-zoom" role="dialog" aria-modal="true" aria-labelledby="sc-zoom-title" hidden>
+            <div class="sc-zoom-body" tabindex="-1"></div>
+            <button type="button" class="sc-zoom-close" aria-label="Fermer le projet"><span class="icon" aria-hidden="true">close</span></button>
         </div>
     </section>`;
+}
+
+function livrableHTML(l) {
+    return l.private || !l.url
+        ? `<span class="sc-link is-private"><span class="icon" aria-hidden="true">lock</span>${l.nom} (privé, bientôt public)</span>`
+        : `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="sc-link">${l.nom}<span class="icon" aria-hidden="true">arrow_outward</span></a>`;
+}
+
+// Contenu du projet agrandi.
+export function projectDetailHTML(p, i) {
+    return `
+            <div class="sc-detail">
+                <div class="sc-detail-top">
+                    <span class="sc-index">${pad(i + 1)}</span>
+                    <span class="sc-icon icon" aria-hidden="true">${p.icon || 'folder'}</span>
+                    <span class="sc-meta">${[p.category, p.context, p.period].filter(Boolean).join(' · ')}</span>
+                </div>
+                <h3 id="sc-zoom-title" class="sc-detail-title">${p.title}</h3>
+                <p class="sc-detail-desc">${p.desc}</p>
+                <div class="sc-detail-role">
+                    <span class="sc-filter-label">Mon rôle</span>
+                    <p>${p.role}</p>
+                </div>
+                <ul class="sc-detail-tech" aria-label="Technologies">
+                    ${p.tech.map(t => `<li>${t}</li>`).join('')}
+                    ${(p.tags || []).map(t => `<li class="is-ac">${t}</li>`).join('')}
+                </ul>
+                <div class="sc-detail-links">${p.livrables.map(livrableHTML).join('')}</div>
+            </div>`;
 }

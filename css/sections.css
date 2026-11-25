@@ -212,9 +212,9 @@
 .stack-editor {
     --gutter: 5ch;
     overflow: hidden;
-    border: 1px solid rgba(73, 68, 84, 0.6);
+    border: 1px solid rgba(72, 72, 72, 0.6);
     border-radius: var(--radius-lg);
-    background: rgba(13, 14, 19, 0.9);
+    background: rgba(10, 10, 10, 0.9);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
@@ -227,7 +227,7 @@
     gap: var(--space-md);
     height: 38px;
     padding-left: var(--space-md);
-    border-bottom: 1px solid rgba(73, 68, 84, 0.6);
+    border-bottom: 1px solid rgba(72, 72, 72, 0.6);
     background: rgba(26, 27, 33, 0.9);
 }
 
@@ -237,20 +237,20 @@
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background: #ff5f57;
+    background: #6e6e6e;
     opacity: 0.75;
 }
 
-.editor-dots span:nth-child(2) { background: #febc2e; }
-.editor-dots span:nth-child(3) { background: #28c840; }
+.editor-dots span:nth-child(2) { background: #9a9a9a; }
+.editor-dots span:nth-child(3) { background: #c4c4c4; }
 
 .editor-tab {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     padding: 0 var(--space-md);
-    border-inline: 1px solid rgba(73, 68, 84, 0.6);
-    background: rgba(13, 14, 19, 0.9);
+    border-inline: 1px solid rgba(72, 72, 72, 0.6);
+    background: rgba(10, 10, 10, 0.9);
     box-shadow: inset 0 2px 0 var(--primary);
     font-size: var(--text-xs);
     color: var(--on-surface);
@@ -260,7 +260,7 @@
     padding: 0 4px;
     border-radius: 3px;
     background: var(--secondary);
-    color: #0d0e13;
+    color: #0a0a0a;
     font-size: 10px;
     line-height: 14px;
     font-weight: 700;
@@ -375,7 +375,7 @@ button.tok-str:focus-visible {
     gap: var(--space-md);
     padding: 3px var(--space-md);
     background: color-mix(in srgb, var(--primary) 16%, transparent);
-    border-top: 1px solid rgba(73, 68, 84, 0.6);
+    border-top: 1px solid rgba(72, 72, 72, 0.6);
     font-size: 11px;
     line-height: 18px;
     color: var(--on-surface-variant);

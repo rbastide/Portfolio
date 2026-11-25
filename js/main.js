@@ -3,7 +3,7 @@
 // ============================================
 //   data/         contenu du portfolio (profil, compétences, projets)
 //   views/        génération du HTML de chaque section
-//   controllers/  comportements (navigation, filtres, apparitions, réseau de neurones, curseur...)
+//   controllers/  comportements (navigation, vitrine des projets, apparitions, réseau de neurones, curseur...)
 //   chatbot/      assistant local ReyMysterio
 import { profile } from './data/profile.js';
 import { competences } from './data/competences.js';
@@ -22,8 +22,8 @@ import { initNeuralNetwork } from './controllers/neural.js';
 import { initNeuralCursor } from './controllers/cursor.js';
 import { initStory } from './controllers/story.js';
 import { initSkillsDeck } from './controllers/skillsDeck.js';
-import { initProjectsTrack } from './controllers/projectsTrack.js';
-import { initReveal, initSkillDetails, initProjectFilters } from './controllers/interactions.js';
+import { initShowcase } from './controllers/showcase.js';
+import { initReveal, initSkillDetails } from './controllers/interactions.js';
 import { Chatbot } from './chatbot/chatbot.js';
 import { initChatDock } from './chatbot/dock.js';
 
@@ -53,8 +53,7 @@ async function init() {
     initNeuralCursor();
     initSkillDetails();
     initSkillsDeck();
-    initProjectFilters();
-    initProjectsTrack();
+    initShowcase();
     initNavigation();
 }
 

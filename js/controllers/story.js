@@ -23,19 +23,23 @@
 // Puis un 6e temps, Atlas, sur un segment de scroll ajouté après la dernière
 // scène (ATLAS_SPAN) : les scènes gardent leur rythme sur [0, storyEnd], le
 // segment occupe [storyEnd, 1] avec sa propre progression a (0 à 1).
+// La maquette Figma est retournée verticalement : les mains arrivent par le
+// haut et tiennent le réseau par au-dessus (y écran = mirrorY - y maquette).
 //   - a 0 → 0.35 : le texte de la dernière scène s'efface, le réseau se
-//     recentre dans le haut de l'écran et deux mains en trame de points
-//     (controllers/atlasHands.js) entrent par les côtés pour le tenir par en
-//     dessous, comme Atlas porte la voûte céleste ;
+//     recentre et deux mains en trame de points (controllers/atlasHands.js)
+//     descendent par les côtés pour le saisir par au-dessus ;
 //   - a 0.35 → 0.8 : l'élan, au scroll : repos → élan → armé, le réseau
-//     descend avec le bout des doigts (les avant-bras ne bougent pas) ;
+//     remonte avec le bout des doigts (les avant-bras ne bougent pas) ;
 //   - au-delà de LAUNCH_AT : le lancer se joue en temps réel, aux durées de la
-//     maquette Figma (prise 70 ms → détente 80 ms → projection 220 ms), le
-//     réseau sort par le haut avec une traînée de points et les mains se
-//     dissolvent. L'état « lancé » est gardé ;
-//   - en remontant sous RETURN_AT : « le ciel revient », en temps réel aussi :
-//     le réseau redescend dans les mains, qui se reforment et l'amortissent,
-//     puis le scroll reprend la main.
+//     maquette (prise 70 ms → détente 80 ms → projection 220 ms) : le réseau
+//     est projeté vers le sol avec une traînée de points et s'y écrase, les
+//     mains se dissolvent. À l'impact, le réseau disparaît du canvas et
+//     l'événement « atlas:impact » passe la main aux projets
+//     (controllers/showcase.js), qui le brisent en éclats. « atlas:launch »
+//     part dès le début du lancer, pour bloquer le scroll ;
+//   - en remontant sous RETURN_AT : le réseau se reforme au sol et remonte
+//     dans les mains, qui se reforment et l'amortissent, puis le scroll
+//     reprend la main.
 // En mouvement réduit, pas de segment ni de mains.
 //
 // La progression affichée rattrape le scroll avec un léger retard : c'est ce
@@ -59,10 +63,10 @@ const SCENE_FADE = 0.04;      // part de la progression pour un fondu de texte
 const MOBILE_MAX = 820;       // en dessous, textes centrés en bas et réseau en haut
 
 // Couleurs du thème (base.css).
-const VIOLET = [208, 188, 255];
-const CYAN = [76, 215, 246];
-const GREEN = [78, 222, 163];
-const MUTED = [179, 173, 189];
+const VIOLET = [242, 242, 242];
+const CYAN = [189, 189, 189];
+const GREEN = [224, 224, 224];
+const MUTED = [176, 176, 176];
 
 const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 const range = (p, from, to) => clamp((p - from) / (to - from));
@@ -83,7 +87,7 @@ const PRISE_MS = 70;          // durées de la maquette Figma
 const DETENTE_MS = 80;
 const PROJECTION_MS = 220;
 const DISSOLVE_MS = 400;      // dissolution des mains, depuis la projection
-const THROW_MS = 300;         // course du réseau vers le haut, depuis la détente
+const THROW_MS = 340;         // course du réseau jusqu'au sol, depuis la prise
 const LAUNCH_MS = PRISE_MS + DETENTE_MS + DISSOLVE_MS;
 const RETURN_FALL = 300;      // le ciel revient : chute du réseau dans les mains
 const RETURN_CATCH = 120;     // amorti (image élan)
@@ -106,6 +110,12 @@ const TRAIL_MS = 24;          // écart pour mesurer la vitesse du réseau (tra�
 const SINK = 0.05;            // le réseau s'enfonce entre les doigts à la prise (en unités)
 const HANDS = ATLAS_HANDS.frames;
 const CELL = ATLAS_HANDS.CELL;
+// Mains au-dessus : sol, course du lancer et coupe du poignet par le haut.
+const FLOOR = 0.05;           // marge sous le point d'impact (part de la hauteur d'écran)
+const THROW_MIN = 0.22;       // course minimale du réseau jusqu'au sol (part de la hauteur)
+const ARM_CUT = 0.3;          // part de la main (côté poignet) qui peut sortir par le haut
+const NET_HALF = 0.78;        // demi-hauteur du réseau, neurones compris (en unités)
+const HAND_FIG = ATLAS_VIEW_H - (NET_ABOVE + GRIP_BELOW) * NET_UNIT; // grip → poignet (px Figma)
 // Traits de vitesse de l'image 7, dans le repère de la maquette (px Figma).
 const SPEED = { x: 280, y: 205, height: 210 };
 
@@ -121,7 +131,11 @@ const scrollFrame = a => (a < ELAN_AT ? 'rest' : a < ARME_AT ? 'elan' : 'arme');
 // que ky pour que le bout des doigts reste sous les bords du réseau).
 function atlasLayout(w, h) {
     const mobile = w <= MOBILE_MAX;
-    const s = Math.min(w / ATLAS_HANDS.FRAME.w, (h - ATLAS_TOP) / ATLAS_VIEW_H) * (mobile ? MOBILE_HAND : 1);
+    // Hauteur pour la main (moins sa coupe), le réseau et la course du lancer :
+    // les mains rétrécissent si l'écran est trop bas pour les trois.
+    const room = h * (1 - THROW_MIN - FLOOR);
+    const fit = room / ((1 - ARM_CUT) * HAND_FIG + (GRIP_BELOW + NET_HALF) * NET_UNIT);
+    const s = Math.min(Math.min(w / ATLAS_HANDS.FRAME.w, (h - ATLAS_TOP) / ATLAS_VIEW_H) * (mobile ? MOBILE_HAND : 1), fit);
     const ky = NET_UNIT * s;
     const surplus = Math.max(0, h - ATLAS_TOP - ATLAS_VIEW_H * s);
     const cy = ATLAS_TOP + NET_ABOVE * ky + surplus * 0.3;
@@ -132,7 +146,14 @@ function atlasLayout(w, h) {
     const kx = clamp((w / 2 - restX) / GRIP_AT / ky, 1, MAX_STRETCH) * ky;
     const ox = w / 2 - GRIP_AT * kx - (rest.col * CELL + CELL / 2) * s;
     const oy = cy + GRIP_BELOW * ky - (rest.row * CELL + CELL / 2) * s;
-    return { s, kx, ky, cx: w / 2, cy, ox, oy };
+    // Maquette retournée : y écran = mirrorY - y. Le bout des doigts descend
+    // assez pour que seul le poignet sorte par le haut ; la place restante est
+    // partagée avec la course du lancer.
+    const spare = Math.max(0, room - (1 - ARM_CUT) * HAND_FIG * s - (GRIP_BELOW + NET_HALF) * ky);
+    const netY = (1 - ARM_CUT) * HAND_FIG * s + spare * 0.35 + GRIP_BELOW * ky; // centre du réseau, au repos
+    // Décalage (repère de la maquette) qui pose le bas du réseau sur le sol.
+    const impactDy = netY - (h * (1 - FLOOR) - NET_HALF * ky);
+    return { s, kx, ky, cx: w / 2, cy, ox, oy, netY, mirrorY: cy + netY, impactDy, floor: h * (1 - FLOOR) };
 }
 
 // Point d'appui d'une image, main gauche, dans le repère de la maquette posé à l'écran.
@@ -166,9 +187,6 @@ function atlasPose(L, { a, mode, u }) {
         dy: scrollDrop(L, a) * enter,
         dissolve: 0, tint: 0, speed: 0
     };
-    // Hauteur à parcourir pour que le réseau (halo compris) sorte par le haut.
-    const away = L.cy + dropOf(L, 'prise') + 2.6 * L.ky;
-
     if (mode === 'launch' || mode === 'launched') {
         const t = mode === 'launched' ? LAUNCH_MS : u;
         const grip = dropOf(L, 'prise') + SINK * L.ky;
@@ -178,8 +196,11 @@ function atlasPose(L, { a, mode, u }) {
             pose.dy = mix(dropOf(L, 'arme'), grip, ease(t / PRISE_MS));
             pose.tint = 0.5 * t / PRISE_MS;
         } else {
-            // Détente puis projection : départ très sec, puis sortie par le haut.
-            pose.dy = grip - away * outCubic(range(t, PRISE_MS, PRISE_MS + THROW_MS));
+            // Détente puis projection : départ sec, le réseau file vers le sol en
+            // accélérant ; à l'impact il disparaît (les éclats sont aux projets).
+            const d = range(t, PRISE_MS, PRISE_MS + THROW_MS);
+            pose.dy = mix(grip, L.impactDy, 0.55 * d + 0.45 * d * d);
+            pose.gone = t >= PRISE_MS + THROW_MS;
             const since = t - PRISE_MS - DETENTE_MS;
             pose.frame = since < 0 ? 'detente' : 'projection';
             pose.tint = since < 0 ? 1 : mix(1, 0.4, range(since, 0, DISSOLVE_MS));
@@ -189,9 +210,9 @@ function atlasPose(L, { a, mode, u }) {
     } else if (mode === 'return') {
         const base = 0, elan = dropOf(L, 'elan') * enter;
         if (u < RETURN_FALL) {
-            // Le réseau retombe ; les mains se reforment, au repos.
+            // Le réseau se reforme au sol et remonte ; les mains se reforment, au repos.
             pose.frame = 'rest';
-            pose.dy = mix(base - L.cy - 1.1 * L.ky, base, inQuad(u / RETURN_FALL));
+            pose.dy = mix(L.impactDy, base, inQuad(u / RETURN_FALL));
             pose.dissolve = 1 - range(u, 0, RETURN_FALL * 0.85);
         } else if (u < RETURN_FALL + RETURN_CATCH) {
             // Amorti : les mains plient brièvement sous le choc.
@@ -331,12 +352,14 @@ function createRenderer(canvas, positions, introEnd = 0) {
         }
         const f = HANDS[pose.frame];
         const shift = -(1 - pose.enter) * (L.ox + (f.col0 + f.cols + 1) * CELL * L.s + 24);
+        // Maquette retournée : les mains descendent par le haut en entrant.
         const rise = (1 - pose.enter) * h * 0.08;
         const g = gripOf(L, pose.frame);
-        const opts = { scale: L.s, alpha: 1, tint: pose.tint, dissolve: pose.dissolve };
+        const gy = L.mirrorY - (g.y + rise);
+        const opts = { scale: L.s, alpha: 1, tint: pose.tint, dissolve: pose.dissolve, flip: true };
         lctx.clearRect(0, 0, w, h);
-        drawHand(lctx, pose.frame, { ...opts, x: g.x + shift, y: g.y + rise });
-        drawHand(lctx, pose.frame, { ...opts, x: w - g.x - shift, y: g.y + rise, mirror: true });
+        drawHand(lctx, pose.frame, { ...opts, x: g.x + shift, y: gy });
+        drawHand(lctx, pose.frame, { ...opts, x: w - g.x - shift, y: gy, mirror: true });
 
         const cut = L.ox + shift, fade = ARM_FADE * L.s;
         if (cut + fade > 0) {
@@ -361,7 +384,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
             drawSpeedLines(ctx, {
                 x1: L.ox + SPEED.x * L.s,
                 x2: w - L.ox - SPEED.x * L.s,
-                y: L.oy + SPEED.y * L.s,
+                y: L.mirrorY - (L.oy + SPEED.y * L.s),
                 height: SPEED.height * L.s,
                 alpha: pose.speed * 0.9,
                 scale: L.s
@@ -476,7 +499,8 @@ function createRenderer(canvas, positions, introEnd = 0) {
         const pose = L ? atlasPose(L, atlas) : null;
         if (pose) {
             cx = mix(cx, L.cx, pose.net);
-            cy = mix(cy, L.cy, pose.net) + pose.dy;
+            // Repère retourné : un dy positif (maquette) fait monter le réseau.
+            cy = mix(cy, L.netY, pose.net) - pose.dy;
             kx = mix(k, L.kx, pose.net);
             k = mix(k, L.ky, pose.net);
         }
@@ -499,6 +523,13 @@ function createRenderer(canvas, positions, introEnd = 0) {
             const sx = w / 2 + cam.x * w * d.z + x * unit * 1.1;
             const sy = h / 2 + cam.y * h * d.z + d.y * unit;
             circle(sx, sy, d.r, rgba(VIOLET, 0.08 + 0.22 * d.z));
+        }
+
+        // Après l'impact, le réseau n'est plus là : ses éclats sont dessinés
+        // par les projets (controllers/showcase.js). Restent les mains qui se dissolvent.
+        if (pose && pose.gone) {
+            drawHands(L, pose);
+            return;
         }
 
         // Neurones : d'un noyau serré (ouverture) à l'éparpillement, puis aux
@@ -545,7 +576,7 @@ function createRenderer(canvas, positions, introEnd = 0) {
             if (feed.head >= 0) {
                 const hp = pointAt(path, feed.head * path.len);
                 circle(hp.x, hp.y, 10, rgba(CYAN, 0.18 * feedAlpha));
-                circle(hp.x, hp.y, 2.6, rgba([235, 252, 255], feedAlpha));
+                circle(hp.x, hp.y, 2.6, rgba([250, 250, 250], feedAlpha));
             }
 
             // Le noyau chargé : un éclat cyan qui s'ouvre puis retombe.
@@ -636,11 +667,12 @@ function createRenderer(canvas, positions, introEnd = 0) {
         // neurone, d'autant plus longue que le réseau va vite.
         if (pose && (atlas.mode === 'launch' || atlas.mode === 'return')) {
             const before = atlasPose(L, { ...atlas, u: Math.max(0, atlas.u - TRAIL_MS) });
-            const speed = before.dy - pose.dy; // > 0 : le réseau monte
+            const speed = before.dy - pose.dy; // > 0 : le réseau descend (repère retourné)
             const len = Math.min(Math.abs(speed) * 1.6, h * 0.45);
             const step = CELL * L.s * 1.5;
             if (len > step) {
-                const dir = Math.sign(speed);
+                // La traînée reste derrière le réseau : au-dessus quand il tombe.
+                const dir = -Math.sign(speed);
                 const dots = Math.floor(len / step);
                 const size = Math.max(1.2, 2.6 * L.s);
                 for (let j = 1; j <= dots; j++) {
@@ -671,7 +703,17 @@ function createRenderer(canvas, positions, introEnd = 0) {
         if (pose) drawHands(L, pose);
     }
 
-    return { resize, draw };
+    // Neurones tels que dessinés à la dernière image (px écran, le canvas
+    // couvre l'écran) et hauteur du sol : de quoi briser le réseau à l'impact.
+    function snapshot() {
+        return {
+            nodes: net.nodes.map(n => ({ x: n.x, y: n.y, r: n.r, layer: n.layer })),
+            edges: net.edges.filter(e => e.weight > 0.55).map(e => [net.nodes.indexOf(e.a), net.nodes.indexOf(e.b)]),
+            floor: h * (1 - FLOOR)
+        };
+    }
+
+    return { resize, draw, snapshot };
 }
 
 // Opacité d'une scène de texte : la première est visible dès le départ,
@@ -690,7 +732,6 @@ export function initStory() {
     const stage = section.querySelector('.story-stage');
     const canvas = section.querySelector('.story-canvas');
     const scenes = [...section.querySelectorAll('.story-scene')];
-    const counter = section.querySelector('[data-story-count]');
     const hint = section.querySelector('.story-hint');
     const skip = section.querySelector('.story-skip');
     const introCount = scenes.filter(s => s.classList.contains('is-intro')).length;
@@ -722,7 +763,8 @@ export function initStory() {
 
     // Séquences temps réel du segment : le lancer (launch → launched) et le
     // retour (return → scroll). atlasStart : début de la séquence en cours.
-    let atlasMode = 'scroll', atlasStart = 0;
+    // impactPending : un lancer est parti et l'impact n'a pas encore été transmis.
+    let atlasMode = 'scroll', atlasStart = 0, impactPending = false;
     const atlasBusy = () => atlasMode === 'launch' || atlasMode === 'return';
     function atlasState(t) {
         const a = atlasProgress(t);
@@ -732,6 +774,8 @@ export function initStory() {
         if (atlasMode === 'scroll' && a >= LAUNCH_AT) {
             atlasMode = 'launch';
             atlasStart = now;
+            impactPending = true;
+            window.dispatchEvent(new CustomEvent('atlas:launch'));
         } else if ((atlasMode === 'launch' || atlasMode === 'launched') && a < RETURN_AT) {
             // Réseau encore en main, ou retour à la scène 5 : pas de chute.
             const inHand = atlasMode === 'launch' && now - atlasStart < PRISE_MS + DETENTE_MS;
@@ -739,10 +783,20 @@ export function initStory() {
             atlasStart = now;
         }
         if (atlasMode === 'return' && a < 0.02) atlasMode = 'scroll';
+        if (atlasMode === 'scroll' || atlasMode === 'return') impactPending = false;
         return { a, mode: atlasMode, u: now - atlasStart };
+    }
+    // Impact : le réseau touche le sol, les projets prennent le relais.
+    function checkImpact(atlas) {
+        if (!impactPending) return;
+        if (atlas.mode === 'launched' || (atlas.mode === 'launch' && atlas.u >= PRISE_MS + THROW_MS)) {
+            impactPending = false;
+            window.dispatchEvent(new CustomEvent('atlas:impact', { detail: renderer.snapshot() }));
+        }
     }
     // Saut sans animation (hors écran, chargement) : on se cale sur l'état final.
     function settleAtlas() {
+        impactPending = false;
         const a = atlasProgress(target);
         if (a >= LAUNCH_AT) atlasMode = 'launched';
         else if (a < RETURN_AT || atlasMode === 'scroll') atlasMode = 'scroll';
@@ -761,7 +815,6 @@ export function initStory() {
         feedStart = performance.now();
         wake();
     }
-    let active = -1;
     const opacities = scenes.map(() => -1);
 
     const scrollLength = () => section.offsetHeight - stage.offsetHeight;
@@ -778,18 +831,17 @@ export function initStory() {
     function update(t) {
         const p = sceneProgress(t);
         const atlas = atlasState(t);
+        // L'impact se mesure sur l'image d'avant : le réseau y est encore dessiné.
+        checkImpact(atlas);
         renderer.draw(p, feedClock(), atlas);
-        stage.style.setProperty('--story-progress', `${(p * 100).toFixed(2)}%`);
 
         // Le texte de la dernière scène s'efface en montant quand les mains arrivent.
         const leave = range(atlas.a, 0, 0.12);
-        let best = 0;
         scenes.forEach((scene, i) => {
             const isLast = i === scenes.length - 1;
             const fade = isLast ? 1 - leave : 1;
             const shown = Math.round(sceneOpacity(i, scenes.length, p) * 1000) / 1000;
             const o = Math.round(shown * fade * 1000) / 1000;
-            if (shown > sceneOpacity(best, scenes.length, p)) best = i;
             if (o === opacities[i]) return;
             opacities[i] = o;
             scene.style.opacity = o;
@@ -798,10 +850,6 @@ export function initStory() {
             scene.classList.toggle('is-active', o > 0.5);
         });
 
-        if (best !== active) {
-            active = best;
-            counter.textContent = String(best + 1).padStart(2, '0');
-        }
         hint.style.opacity = 1 - range(p, 0, 0.025);
         skip.classList.toggle('is-hidden', p > 0.9);
     }

@@ -42,8 +42,8 @@ const HUB_PULSE = 20;           // une impulsion du faisceau toutes les X images
 const HUB_OFFSET = 40;          // distance entre le gros neurone et le cadre
 
 // Couleurs du thème (base.css) : lignes violettes, signaux cyan.
-const LINE = [208, 188, 255];
-const SIGNAL = [76, 215, 246];
+const LINE = [242, 242, 242];
+const SIGNAL = [189, 189, 189];
 const rgba = ([r, g, b], a) => `rgba(${r}, ${g}, ${b}, ${a})`;
 
 // Couleur --neon d'un cadre, en [r, g, b] (repli : cyan).

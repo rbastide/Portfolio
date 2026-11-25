@@ -35,8 +35,8 @@ const FADE_MS = 600;      // fondu de fin
 const SKIP_FADE_MS = 350; // fondu quand on passe l'intro
 const FONT_TIMEOUT = 1200; // attente maximale des polices avant de démarrer
 
-const BG = [12, 12, 15], VIOLET = [208, 188, 255], CYAN = [76, 215, 246];
-const MUTED = [141, 135, 154], TEXT = [227, 225, 233];
+const BG = [10, 10, 10], VIOLET = [242, 242, 242], CYAN = [189, 189, 189];
+const MUTED = [140, 140, 140], TEXT = [236, 236, 236];
 
 // Réseau de fond, réglé comme celui du site (controllers/neural.js).
 const LINK_DISTANCE = 150;  // au-delà, deux neurones ne sont plus reliés

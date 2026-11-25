@@ -1,7 +1,20 @@
 // ============================================
 // CONTRÔLEUR — Navigation
 // ============================================
-const SECTIONS = ['about', 'projects', 'skills', 'contact'];
+// Les projets sont un calque plein écran (controllers/showcase.js), pas une
+// section du défilement : ils ne sont pas suivis ici.
+const SECTIONS = ['about', 'skills', 'contact'];
+
+// Pas d'en-tête sur le parcours d'ouverture : il apparaît une fois le parcours
+// sorti par le haut de l'écran (et reste masqué sur la vitrine des projets).
+function initHeaderVisibility() {
+    const story = document.getElementById('story');
+    if (!story) return;
+    const root = document.documentElement;
+    new IntersectionObserver(([entry]) => {
+        root.classList.toggle('nav-hidden', entry.isIntersecting);
+    }, { rootMargin: '0px 0px -99% 0px', threshold: 0 }).observe(story);
+}
 
 // Surligne le lien de la section qui croise le milieu de l'écran.
 // (L'ancien seuil de 30 % ne se déclenchait jamais sur les sections plus
@@ -47,12 +60,14 @@ function initMobileMenu() {
 // n'a pas pu se positionner sur l'ancre de l'URL (#projects...) au chargement.
 function scrollToInitialHash() {
     const id = decodeURIComponent(location.hash.slice(1));
-    if (!id) return;
+    // Les ancres de projets sont ouvertes par la vitrine.
+    if (!id || id === 'projects' || id.startsWith('project-')) return;
     const target = document.getElementById(id);
     if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
 }
 
 export function initNavigation() {
+    initHeaderVisibility();
     initActiveLink();
     initMobileMenu();
     scrollToInitialHash();

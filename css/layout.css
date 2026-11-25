@@ -9,10 +9,21 @@
     left: 0;
     right: 0;
     z-index: 50;
-    background: rgba(18, 19, 24, 0.8);
+    background: rgba(17, 17, 17, 0.8);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* Masqué sur le parcours d'ouverture et sur la vitrine des projets
+   (js/controllers/navigation.js, js/controllers/showcase.js). */
+html:is(.nav-hidden, .showcase-open) #main-nav {
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.35s ease, opacity 0.35s ease, visibility 0s linear 0.35s;
 }
 
 .nav-inner {
@@ -37,7 +48,7 @@
     gap: var(--space-xs);
     padding: var(--space-xs) var(--space-sm);
     border-radius: 999px;
-    border: 1px solid rgba(149, 142, 160, 0.35);
+    border: 1px solid rgba(150, 150, 150, 0.35);
     font-family: var(--font-body);
     font-size: var(--text-xs);
     line-height: 16px;
@@ -51,7 +62,7 @@
     gap: var(--space-xs);
     padding: var(--space-xs);
     border-radius: var(--radius-md);
-    background: rgba(13, 14, 19, 0.6);
+    background: rgba(10, 10, 10, 0.6);
 }
 
 .nav-link {
@@ -125,7 +136,7 @@
         flex-direction: column;
         align-items: stretch;
         padding: var(--space-sm);
-        background: rgba(30, 31, 37, 0.96);
+        background: rgba(28, 28, 28, 0.96);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--border-glass);
@@ -177,14 +188,15 @@
 }
 
 .aurora-1 {
-    --blob-color: var(--primary-container);
-    --blob-opacity: 0.22;
+    --blob-color: #ffffff;
+    --blob-opacity: 0.07;
     top: -30vmax;
     left: -15vmax;
 }
 
 .aurora-2 {
-    --blob-color: var(--secondary-container);
+    --blob-color: #9a9a9a;
+    --blob-opacity: 0.1;
     --blob-duration: 9s;
     top: -20vmax;
     right: -25vmax;
@@ -193,8 +205,8 @@
 }
 
 .aurora-3 {
-    --blob-color: var(--tertiary-container);
-    --blob-opacity: 0.12;
+    --blob-color: #5c5c5c;
+    --blob-opacity: 0.16;
     --blob-duration: 12s;
     bottom: -35vmax;
     left: 10vmax;
@@ -202,8 +214,8 @@
 }
 
 .aurora-4 {
-    --blob-color: var(--aurora-magenta);
-    --blob-opacity: 0.1;
+    --blob-color: #d6d6d6;
+    --blob-opacity: 0.06;
     --blob-duration: 10s;
     bottom: -30vmax;
     right: -20vmax;
@@ -251,7 +263,7 @@ main, #footer { position: relative; z-index: 2; }
     height: 6px;
     margin: -3px 0 0 -3px;
     background: var(--secondary);
-    box-shadow: 0 0 10px 1px rgba(76, 215, 246, 0.6);
+    box-shadow: 0 0 10px 1px rgba(189, 189, 189, 0.6);
 }
 
 /* L'élément ne fait que se déplacer (transform posé par cursor.js) ; le cercle
@@ -269,7 +281,7 @@ main, #footer { position: relative; z-index: 2; }
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 1.5px solid rgba(208, 188, 255, 0.55);
+    border: 1.5px solid rgba(242, 242, 242, 0.55);
     transition: scale 0.25s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.25s ease,
                 background-color 0.25s ease,
@@ -278,9 +290,9 @@ main, #footer { position: relative; z-index: 2; }
 
 /* Survol d'un élément cliquable : l'anneau s'éclaire, sans changer de taille. */
 .cursor-ring.is-hovering::before {
-    border-color: rgba(76, 215, 246, 0.95);
-    background-color: rgba(76, 215, 246, 0.12);
-    box-shadow: 0 0 14px rgba(76, 215, 246, 0.45);
+    border-color: rgba(189, 189, 189, 0.95);
+    background-color: rgba(189, 189, 189, 0.12);
+    box-shadow: 0 0 14px rgba(189, 189, 189, 0.45);
 }
 
 /* Clic : l'anneau se resserre autour du point et s'illumine ; l'onde
@@ -288,8 +300,8 @@ main, #footer { position: relative; z-index: 2; }
 .cursor-ring.is-pressed::before {
     scale: 0.6;
     border-color: var(--secondary);
-    background-color: rgba(76, 215, 246, 0.25);
-    box-shadow: 0 0 18px rgba(76, 215, 246, 0.6);
+    background-color: rgba(189, 189, 189, 0.25);
+    box-shadow: 0 0 18px rgba(189, 189, 189, 0.6);
     transition-duration: 0.12s;
 }
 
@@ -399,11 +411,11 @@ main { padding-top: var(--nav-height); }
     background: var(--aurora-button);
     background-size: 300% 100%;
     color: var(--on-primary-container);
-    box-shadow: 0 0 16px rgba(160, 120, 255, 0.35), 0 0 32px rgba(76, 215, 246, 0.12);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.35), 0 0 32px rgba(189, 189, 189, 0.12);
     animation: aurora-shift var(--aurora-duration) ease-in-out infinite alternate;
 }
 
-.btn-primary:hover { box-shadow: 0 0 24px rgba(160, 120, 255, 0.55), 0 0 40px rgba(76, 215, 246, 0.25); }
+.btn-primary:hover { box-shadow: 0 0 24px rgba(255, 255, 255, 0.55), 0 0 40px rgba(189, 189, 189, 0.25); }
 
 .btn-light {
     background: var(--primary);
@@ -569,7 +581,7 @@ html.intro-playing { overflow: hidden; }
     padding: 0 var(--space-md);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 999px;
-    background: rgba(13, 14, 19, 0.6);
+    background: rgba(10, 10, 10, 0.6);
     font-family: 'IBM Plex Mono', var(--font-mono); /* police de l'intro */
     font-size: var(--text-xs);
     color: var(--outline);

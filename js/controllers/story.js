@@ -196,7 +196,7 @@ function atlasPose(L, { a, mode, u }) {
         } else if (u < RETURN_FALL + RETURN_CATCH) {
             // Amorti : les mains plient brièvement sous le choc.
             pose.frame = 'elan';
-            pose.dy = mix(rest, elan, outCubic(range(u, RETURN_FALL, RETURN_FALL + RETURN_CATCH * 0.5)));
+            pose.dy = mix(base, elan, outCubic(range(u, RETURN_FALL, RETURN_FALL + RETURN_CATCH * 0.5)));
         } else {
             // Retour à la pose que donne le scroll.
             pose.dy = mix(elan, pose.dy, ease(range(u, RETURN_FALL + RETURN_CATCH, RETURN_MS)));

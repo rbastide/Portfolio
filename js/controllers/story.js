@@ -741,7 +741,7 @@ export function initStory() {
     // Tant que l'accueil est à l'écran, le néon s'anime même sans scroll.
     // Idem pendant le lancer et le retour des mains d'Atlas.
     const live = () => visible && !document.hidden &&
-        ((feedStart !== null && current < introEnd * 0.45) || atlasBusy());
+        ((feedStart !== null && sceneProgress(current) < introEnd * 0.45) || atlasBusy());
     function startFeed() {
         if (feedStart !== null) return;
         feedStart = performance.now();

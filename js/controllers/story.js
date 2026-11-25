@@ -771,11 +771,16 @@ export function initStory() {
         const now = performance.now();
         if (atlasMode === 'launch' && now - atlasStart >= LAUNCH_MS) atlasMode = 'launched';
         if (atlasMode === 'return' && now - atlasStart >= RETURN_MS) atlasMode = 'scroll';
-        if (atlasMode === 'scroll' && a >= LAUNCH_AT) {
+        // Déclenché par la vraie position du scroll (target), pas la position lissée :
+        // sinon la page a déjà défilé au-delà du parcours quand le lancer part.
+        if (atlasMode === 'scroll' && Math.max(a, atlasProgress(target)) >= LAUNCH_AT) {
             atlasMode = 'launch';
             atlasStart = now;
             impactPending = true;
-            window.dispatchEvent(new CustomEvent('atlas:launch'));
+            // y : position de scroll du point de lancer, où la page est retenue.
+            const top = section.getBoundingClientRect().top + window.scrollY;
+            const y = top + scrollLength() * (storyEnd + (1 - storyEnd) * LAUNCH_AT);
+            window.dispatchEvent(new CustomEvent('atlas:launch', { detail: { y } }));
         } else if ((atlasMode === 'launch' || atlasMode === 'launched') && a < RETURN_AT) {
             // Réseau encore en main, ou retour à la scène 5 : pas de chute.
             const inHand = atlasMode === 'launch' && now - atlasStart < PRISE_MS + DETENTE_MS;

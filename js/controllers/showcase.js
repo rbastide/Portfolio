@@ -198,16 +198,18 @@ export function initShowcase() {
     }
 
     // ---------- Blocage de la page ----------
-    let locked = false, isOpen = false, returnToSkills = false, lockTimer = 0;
+    let locked = false, isOpen = false, returnToSkills = false, lockTimer = 0, lockY = 0;
     const others = () => [
         ...[...document.body.children].filter(el => el !== main && el.tagName !== 'SCRIPT'),
         ...[...main.children].filter(el => el !== section)
     ];
 
-    function lock() {
+    function lock(y = window.scrollY) {
         if (locked) return;
         locked = true;
+        lockY = y;
         root.classList.add('is-locked');
+        window.scrollTo({ top: lockY, behavior: 'instant' });
         // Une entrée d'historique à consommer : le bouton Retour reste sur place.
         history.pushState({ showcase: true }, '', location.href);
     }
@@ -217,6 +219,12 @@ export function initShowcase() {
         clearTimeout(lockTimer);
         root.classList.remove('is-locked');
     }
+
+    // overflow: hidden ne retient pas l'inertie d'un pavé tactile ni le doigt sur
+    // iOS : tout défilement pendant le blocage est ramené au point de blocage.
+    window.addEventListener('scroll', () => {
+        if (locked && Math.abs(window.scrollY - lockY) > 1) window.scrollTo({ top: lockY, behavior: 'instant' });
+    }, { passive: true });
 
     window.addEventListener('popstate', () => {
         if (!locked) return;
@@ -328,8 +336,8 @@ export function initShowcase() {
     }
 
     // Le lancer part : plus de scroll. Filet de sécurité si l'impact n'arrive pas.
-    window.addEventListener('atlas:launch', () => {
-        lock();
+    window.addEventListener('atlas:launch', e => {
+        lock(e.detail?.y);
         clearTimeout(lockTimer);
         lockTimer = setTimeout(() => { if (locked && !isOpen) open('direct'); }, 1500);
     });

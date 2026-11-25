@@ -434,7 +434,9 @@ function initFilters(section, cells) {
 
 // ---------- Éclats et flaques d'huile ----------
 // onUI : le décor peut apparaître ; onCard(i) : la carte i est formée.
-function createFluid(canvas, section, cells, onUI, onCard) {
+// Tout est mesuré dans le repère du canvas (plein écran ici, sous la grille
+// pour les compétences : controllers/skillsDeck.js).
+export function createFluid(canvas, section, cells, onUI, onCard) {
     const ctx = canvas.getContext('2d');
     const layer = document.createElement('canvas');
     const lctx = layer.getContext('2d', { willReadFrequently: true });
@@ -446,8 +448,8 @@ function createFluid(canvas, section, cells, onUI, onCard) {
 
     function resize() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
-        w = section.clientWidth;
-        h = section.clientHeight;
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -458,15 +460,16 @@ function createFluid(canvas, section, cells, onUI, onCard) {
         measure();
     }
 
-    // Cible de chaque flaque : la carte, à l'écran.
+    // Cible de chaque flaque : la carte, dans le repère du canvas.
     function measure() {
+        const o = canvas.getBoundingClientRect();
         rects = cells.map(c => {
             const r = c.getBoundingClientRect();
-            return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height };
+            return { x: r.left - o.left + r.width / 2, y: r.top - o.top + r.height / 2, w: r.width, h: r.height };
         });
     }
 
-    new ResizeObserver(() => { if (running) resize(); }).observe(section);
+    new ResizeObserver(() => { if (running) resize(); }).observe(canvas);
 
     function start_(detail) {
         resize();

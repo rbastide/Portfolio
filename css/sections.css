@@ -424,22 +424,40 @@ button.tok-str:focus-visible {
     gap: var(--space-sm);
 }
 
-/* Cartes jetées sur la table (controllers/skillsDeck.js). La grille sert de
-   repère aux mesures du paquet. Posée, chaque carte garde une légère
-   inclinaison (--tilt) et se redresse quand on s'en sert. */
+/* Cartes nées de flaques d'huile (controllers/skillsDeck.js), comme les
+   projets. Posée, chaque carte garde une légère inclinaison (--tilt) et se
+   redresse quand on s'en sert. */
 .skills-grid { position: relative; }
 
 .skill-card {
+    position: relative;
+    z-index: 1;
     transform: rotate(var(--tilt, 0deg));
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, filter 0.5s ease;
 }
 
 .skill-card:hover,
 .skill-card:focus-within,
 .skill-card:has(.skill-details.open) { transform: none; }
 
-/* Dans le paquet, seule la distribution compte : pas de survol ni de clic. */
-.skills-grid.is-stacked .skill-card { pointer-events: none; }
+/* Avant sa flaque, la carte est invisible. */
+.skills-grid.is-fluid .skill-card:not(.is-in) {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+    filter: blur(6px);
+    pointer-events: none;
+}
+
+/* Calque du liquide, un peu plus grand que la grille pour le liseré des flaques. */
+.skills-fluid {
+    position: absolute;
+    top: -40px;
+    left: -24px;
+    width: calc(100% + 48px);
+    height: calc(100% + 80px);
+    z-index: 0;
+    pointer-events: none;
+}
 
 .skill-head {
     display: flex;

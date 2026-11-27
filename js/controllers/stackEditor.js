@@ -115,7 +115,8 @@ export function initStackEditor() {
         if (state !== 'min') return;
         state = 'open';
         editor.hidden = false;
-        editor.scrollIntoView({ block: 'center' });
+        // Instantané : un défilement doux depuis le parcours déclencherait le lancer vers les projets.
+        editor.scrollIntoView({ block: 'center', behavior: 'instant' });
         const li = tile;
         tile = null;
         const done = () => removeMinimized(li);

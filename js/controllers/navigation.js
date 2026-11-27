@@ -66,8 +66,28 @@ function scrollToInitialHash() {
     if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
 }
 
+// Depuis le parcours, défiler en douceur vers une section plus bas passerait par
+// le lancer d'Atlas (controllers/story.js), qui ouvre la vitrine des projets et
+// bloque la page : on saute directement à la section (en-tête, Dock, liens).
+function initSectionLinks() {
+    const story = document.getElementById('story');
+    if (!story) return;
+    document.addEventListener('click', e => {
+        const link = e.target.closest('a[href^="#"]');
+        if (!link || e.defaultPrevented) return;
+        const id = decodeURIComponent(link.getAttribute('href').slice(1));
+        if (!id || id === 'story' || id === 'projects' || id.startsWith('project-')) return;
+        const target = document.getElementById(id);
+        if (!target || story.getBoundingClientRect().bottom <= 0) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
+        history.pushState(null, '', `#${id}`);
+    });
+}
+
 export function initNavigation() {
     initHeaderVisibility();
+    initSectionLinks();
     initActiveLink();
     initMobileMenu();
     scrollToInitialHash();

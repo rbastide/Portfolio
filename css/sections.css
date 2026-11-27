@@ -497,39 +497,106 @@ button.tok-str:focus-visible {
     gap: var(--space-sm);
 }
 
-/* Cartes nées de flaques d'huile (controllers/skillsDeck.js), comme les
-   projets. Posée, chaque carte garde une légère inclinaison (--tilt) et se
-   redresse quand on s'en sert. */
-.skills-grid { position: relative; }
+/* Graphe de dépendances (controllers/skillsDeck.js) : un nœud « BUT » envoie
+   une piste de circuit vers chaque carte ; à son arrivée, la bordure de la
+   carte se dessine et la carte apparaît. Pointillés entre compétences voisines. */
+.skills-graph { position: relative; }
+
+.skills-hub {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin: 0 auto 56px;
+    padding: 6px 14px;
+    border: 1px solid rgba(242, 242, 242, 0.25);
+    border-radius: 999px;
+    background: var(--surface-lowest);
+    font: 500 12px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+    transition: opacity 0.4s ease, scale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skills-hub-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--secondary);
+    animation: hub-ping 2s ease-out infinite;
+}
+
+@keyframes hub-ping {
+    from { box-shadow: 0 0 0 0 rgba(242, 242, 242, 0.5); }
+    to { box-shadow: 0 0 0 8px rgba(242, 242, 242, 0); }
+}
+
+.skills-traces {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.skills-traces * { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --len (longueur du tracé) est posé par le contrôleur. */
+.trace {
+    stroke: rgba(242, 242, 242, 0.3);
+    stroke-width: 1.25;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    transition: stroke-dashoffset 0.65s cubic-bezier(0.65, 0, 0.35, 1), stroke 0.3s ease;
+}
+
+.trace.is-on,
+.is-drawn .trace { stroke-dashoffset: 0; }
+.trace.is-hot { stroke: rgba(242, 242, 242, 0.85); }
+
+.trace-border {
+    stroke: rgba(242, 242, 242, 0.85);
+    stroke-width: 1.5;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+}
+
+.trace-border.is-on { animation: trace-draw 0.45s cubic-bezier(0.65, 0, 0.35, 1) forwards, trace-fade 0.6s ease 0.5s forwards; }
+.is-drawn .trace-border { opacity: 0; }
+
+@keyframes trace-draw { to { stroke-dashoffset: 0; } }
+@keyframes trace-fade { to { opacity: 0; } }
+
+.trace-link {
+    stroke: rgba(242, 242, 242, 0.3);
+    stroke-dasharray: 3 5;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.trace-link.is-on,
+.is-drawn .trace-link { opacity: 1; }
 
 .skill-card {
     position: relative;
     z-index: 1;
-    transform: rotate(var(--tilt, 0deg));
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, filter 0.5s ease;
+    transition: opacity 0.5s ease, translate 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.skill-card:hover,
-.skill-card:focus-within,
-.skill-card:has(.skill-details.open) { transform: none; }
-
-/* Avant sa flaque, la carte est invisible. */
-.skills-grid.is-fluid .skill-card:not(.is-in) {
+/* Avant l'arrivée de sa piste, la carte (et le nœud) sont invisibles. */
+.skills-graph.is-armed:not(.is-live, .is-drawn) .skills-hub { opacity: 0; scale: 0.8; }
+.skills-graph.is-armed .skill-card:not(.is-in) {
     opacity: 0;
-    transform: translateY(10px) scale(0.94);
-    filter: blur(6px);
+    translate: 0 8px;
     pointer-events: none;
 }
 
-/* Calque du liquide, un peu plus grand que la grille pour le liseré des flaques. */
-.skills-fluid {
-    position: absolute;
-    top: -40px;
-    left: -24px;
-    width: calc(100% + 48px);
-    height: calc(100% + 80px);
-    z-index: 0;
-    pointer-events: none;
+@media (prefers-reduced-motion: reduce) {
+    .skills-hub-dot { animation: none; }
 }
 
 .skill-head {

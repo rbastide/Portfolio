@@ -126,7 +126,11 @@ export function skillsHTML({ profile, competences }) {
                 <h3 class="section-subtitle">Les 6 compétences du BUT</h3>
             </div>
 
-            <div class="skills-grid">${competences.map(skillCardHTML).join('')}</div>
+            <div class="skills-graph">
+                <div class="skills-hub" aria-hidden="true"><span class="skills-hub-dot"></span>BUT Informatique</div>
+                <svg class="skills-traces" aria-hidden="true"></svg>
+                <div class="skills-grid">${competences.map(skillCardHTML).join('')}</div>
+            </div>
         </div>
     </section>`;
 }

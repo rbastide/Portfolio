@@ -46,6 +46,7 @@ export function projectsHTML({ projects }) {
 
     return `
     <section id="projects" class="showcase" aria-labelledby="projects-heading" style="--count: ${sorted.length}">
+        <canvas class="sc-bg" aria-hidden="true"></canvas>
         <canvas class="sc-canvas" aria-hidden="true"></canvas>
 
         <div class="sc-inner">
@@ -74,6 +75,7 @@ export function projectsHTML({ projects }) {
         </div>
 
         <div class="sc-zoom" role="dialog" aria-modal="true" aria-labelledby="sc-zoom-title" hidden>
+            <canvas class="sc-zoom-ink" aria-hidden="true"></canvas>
             <div class="sc-zoom-body" tabindex="-1"></div>
             <button type="button" class="sc-zoom-close" aria-label="Fermer le projet"><span class="icon" aria-hidden="true">close</span></button>
         </div>

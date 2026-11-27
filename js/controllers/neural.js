@@ -458,8 +458,8 @@ export function initNeuralNetwork() {
     }
 
     function loop() {
-        step();
-        draw();
+        // Caché sous la vitrine des projets : on laisse toute la place à son animation.
+        if (!document.documentElement.classList.contains('showcase-open')) { step(); draw(); }
         frame = requestAnimationFrame(loop);
     }
 

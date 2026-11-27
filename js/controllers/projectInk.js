@@ -190,7 +190,8 @@ function initDrift(section, canvas, reduced) {
     (function frame(now) {
         requestAnimationFrame(frame);
         // Rien à dessiner vitrine fermée, ni quand un projet agrandi la recouvre.
-        if (!root.classList.contains('showcase-open') || section.classList.contains('is-zooming')) return;
+        // Ni pendant les éclats : le fond n'apparaît qu'avec le décor (.is-ui).
+        if (!root.classList.contains('showcase-open') || !section.classList.contains('is-ui') || section.classList.contains('is-zooming')) return;
         draw(now / 1000);
     })(0);
 }

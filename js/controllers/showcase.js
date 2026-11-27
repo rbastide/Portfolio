@@ -442,7 +442,8 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
     const lctx = layer.getContext('2d', { willReadFrequently: true });
     const sprite = makeSprite();
     const palette = makePalette();
-    let w = 0, h = 0, dpr = 1, img = null;
+    let w = 0, h = 0, dpr = 1;
+    let bx0 = 0, by0 = 0, bx1 = 0, by1 = 0; // zone du calque touchée par les gouttes à cette image
     let frame = 0, start = 0, last = 0, running = false;
     let shards = [], drops = [], puddles = [], rects = [], floor = 0, impact = null, uiShown = false;
 
@@ -455,7 +456,6 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         layer.width = Math.ceil(w / RES);
         layer.height = Math.ceil(h / RES);
-        img = lctx.createImageData(layer.width, layer.height);
         floor = h * (1 - FLOOR);
         measure();
     }
@@ -530,8 +530,10 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
     // Halo additif d'une goutte sur le calque liquide.
     function blob(x, y, r) {
         if (r <= 0.5) return;
-        const R = r * SPRITE_REACH / RES;
-        lctx.drawImage(sprite, x / RES - R, y / RES - R, R * 2, R * 2);
+        const R = r * SPRITE_REACH / RES, lx = x / RES - R, ly = y / RES - R;
+        lctx.drawImage(sprite, lx, ly, R * 2, R * 2);
+        bx0 = Math.min(bx0, lx); by0 = Math.min(by0, ly);
+        bx1 = Math.max(bx1, lx + R * 2); by1 = Math.max(by1, ly + R * 2);
     }
 
     // Flaque sous une carte : une grille de gouttes qui recouvre son rectangle.
@@ -549,14 +551,17 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
         }
     }
 
-    // Seuil et couleur du film d'huile.
+    // Seuil et couleur du film d'huile, seulement là où il y a du liquide :
+    // relire tout le calque à chaque image faisait sauter des images.
     function shade(time) {
-        const data = img.data, W = layer.width, H = layer.height;
-        const src = lctx.getImageData(0, 0, W, H).data;
+        const X0 = Math.max(0, Math.floor(bx0)), Y0 = Math.max(0, Math.floor(by0));
+        const W = Math.min(layer.width, Math.ceil(bx1)) - X0, H = Math.min(layer.height, Math.ceil(by1)) - Y0;
+        if (W <= 0 || H <= 0) return;
+        const img = lctx.getImageData(X0, Y0, W, H), data = img.data;
         const phase = time * 0.06;
-        for (let y = 0, i = 0; y < H; y++) {
-            for (let x = 0; x < W; x++, i += 4) {
-                const a = src[i + 3];
+        for (let y = Y0, i = 0; y < Y0 + H; y++) {
+            for (let x = X0; x < X0 + W; x++, i += 4) {
+                const a = data[i + 3];
                 if (a < THRESHOLD - 14) { data[i + 3] = 0; continue; }
                 // Bord : reflets irisés ; cœur : huile presque noire.
                 const edge = 1 - clamp((a - THRESHOLD) / 110);
@@ -568,7 +573,7 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
                 data[i + 3] = clamp((a - THRESHOLD + 14) / 28) * 235;
             }
         }
-        lctx.putImageData(img, 0, 0);
+        lctx.putImageData(img, X0, Y0);
     }
 
     function tick(now) {
@@ -576,7 +581,6 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
         const dt = Math.min(1 / 30, (now - last) / 1000);
         last = now;
         const t = now - start;
-        const mobile = w <= MOBILE_MAX;
 
         // Physique des éclats : gravité, rebonds amortis sur le sol et les bords.
         for (const s of shards) {
@@ -600,6 +604,7 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
         lctx.globalCompositeOperation = 'source-over';
         lctx.clearRect(0, 0, layer.width, layer.height);
         lctx.globalCompositeOperation = 'lighter';
+        bx0 = by0 = Infinity; bx1 = by1 = -Infinity;
         let liquid = false;
         const poolY = floor - 6;
         for (const d of drops) {
@@ -681,8 +686,6 @@ export function createFluid(canvas, section, cells, onUI, onCard) {
             });
             ctx.closePath();
             ctx.fillStyle = `rgba(${s.color.join(',')}, ${0.85 * k + 0.1})`;
-            ctx.shadowColor = `rgba(${s.color.join(',')}, 0.6)`;
-            ctx.shadowBlur = mobile ? 0 : 8;
             ctx.fill();
             ctx.restore();
         }

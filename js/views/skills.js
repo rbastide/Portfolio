@@ -40,38 +40,42 @@ function stackItemHTML(item, techCounts) {
         title="Voir ${count > 1 ? `les ${count} projets` : 'le projet'} en ${tech}">${item}<sup class="tok-count">${count}</sup></button>`;
 }
 
-function stackLineHTML(s, i, techCounts) {
-    // Chaque techno garde sa virgule (ou le crochet final) : un retour à la
-    // ligne ne laisse jamais de ponctuation seule en début de ligne.
-    const last = s.items.length - 1;
-    const items = s.items
-        .map((item, j) => `<span class="tok-item">${stackItemHTML(item, techCounts)}${punct(j < last ? ',' : '],')}</span>`)
-        .join(' ');
+// Un onglet = un groupe, ouvert comme un fichier <clé>.ts : une techno par ligne.
+function stackPanelHTML(s, i, techCounts) {
+    const key = groupKey(s.group);
+    const last = s.items.length + 2;
     return `
-                <div class="code-line is-group" role="listitem" style="--i: ${i + 2}">
-                    <span class="sr-only">${s.group} : </span><span class="tok-key" aria-hidden="true">${groupKey(s.group)}</span>${punct(': [')}${items}
+                <div class="editor-code${i ? '' : ' is-active'}" role="tabpanel" id="stack-panel-${i}" aria-labelledby="stack-tab-${i}">
+                    <div class="code-line is-comment" aria-hidden="true" style="--i: 0">// ${s.items.length} technos · chiffre = projets qui l'utilisent, cliquez pour filtrer</div>
+                    <div class="code-line" aria-hidden="true" style="--i: 1"><span class="tok-kw">export const</span> <span class="tok-var">${key}</span> ${punct('= [')}</div>
+                    <div role="list" aria-label="${s.group}">
+                        ${s.items.map((item, j) => `<div class="code-line is-group" role="listitem" style="--i: ${j + 2}">${stackItemHTML(item, techCounts)}${punct(',')}</div>`).join('')}
+                    </div>
+                    <div class="code-line" aria-hidden="true" style="--i: ${last}">${punct('];')}<span class="editor-caret"></span></div>
                 </div>`;
 }
 
 function stackEditorHTML(stack, techCounts) {
     const total = stack.reduce((n, g) => n + g.items.length, 0);
-    const last = stack.length + 2;
     return `
-            <div class="stack-editor reveal">
-                <div class="editor-bar" aria-hidden="true">
-                    <span class="editor-dots"><span></span><span></span><span></span></span>
-                    <span class="editor-tab"><span class="editor-tab-lang">TS</span>stack.ts</span>
+            <div class="stack-app">
+            <div class="stack-editor reveal" role="region" aria-label="Éditeur de la stack">
+                <div class="editor-bar">
+                    <span class="editor-dots">
+                        <button type="button" class="editor-dot is-close" data-win="close" aria-label="Fermer l'éditeur"></button>
+                        <button type="button" class="editor-dot is-min" data-win="min" aria-label="Réduire l'éditeur dans le Dock"></button>
+                        <button type="button" class="editor-dot is-max" data-win="max" aria-label="Agrandir l'éditeur en plein écran" aria-pressed="false"></button>
+                    </span>
+                    <div class="editor-tabs" role="tablist" aria-label="Catégories de la stack">
+                        ${stack.map((g, i) => `<button type="button" class="editor-tab" role="tab" id="stack-tab-${i}" aria-controls="stack-panel-${i}" aria-selected="${i === 0}" tabindex="${i ? -1 : 0}"><span class="editor-tab-lang" aria-hidden="true">TS</span>${groupKey(g.group)}.ts</button>`).join('')}
+                    </div>
                 </div>
-                <div class="editor-code" role="list" aria-label="Technologies par domaine">
-                    <div class="code-line is-comment" aria-hidden="true" style="--i: 0">// chiffre = projets qui l'utilisent, cliquez pour filtrer</div>
-                    <div class="code-line" aria-hidden="true" style="--i: 1"><span class="tok-kw">export const</span> <span class="tok-var">stack</span> ${punct('= {')}</div>
-                    ${stack.map((g, i) => stackLineHTML(g, i, techCounts)).join('')}
-                    <div class="code-line" aria-hidden="true" style="--i: ${last}">${punct('};')}<span class="editor-caret"></span></div>
-                </div>
+                <div class="editor-panels">${stack.map((g, i) => stackPanelHTML(g, i, techCounts)).join('')}</div>
                 <div class="editor-status" aria-hidden="true">
                     <span>${stack.length} groupes · ${total} technos</span>
                     <span>TypeScript · UTF-8</span>
                 </div>
+            </div>
             </div>`;
 }
 

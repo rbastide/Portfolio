@@ -205,7 +205,7 @@ html.showcase-open :is(.chat-launcher, .chat-scrim, .chat-dock) { visibility: hi
     text-underline-offset: 3px;
 }
 
-.sc-filter-reset:disabled { opacity: 0.4; cursor: default; text-decoration: none; }
+.sc-filter-reset:disabled { opacity: 0.4; cursor: inherit; text-decoration: none; }
 
 /* ---------- Grille : tout tient dans l'écran ---------- */
 .sc-grid {

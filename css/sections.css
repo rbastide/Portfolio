@@ -231,30 +231,103 @@
     background: rgba(26, 27, 33, 0.9);
 }
 
-.editor-dots { display: flex; align-items: center; gap: 7px; }
+/* Fermer, réduire, agrandir (controllers/stackEditor.js) : le symbole apparaît au survol. */
+.editor-dots { display: flex; flex-shrink: 0; align-items: center; gap: 8px; }
 
-.editor-dots span {
-    width: 11px;
-    height: 11px;
+.editor-dot {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: 0;
     border-radius: 50%;
-    background: #6e6e6e;
-    opacity: 0.75;
+    background: var(--dot);
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
 }
 
-.editor-dots span:nth-child(2) { background: #9a9a9a; }
-.editor-dots span:nth-child(3) { background: #c4c4c4; }
+/* Zone de clic plus large que la pastille. */
+.editor-dot::before { content: ''; position: absolute; inset: -6px -4px; }
+
+.editor-dot::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: 700 10px/1 var(--font-mono);
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+}
+
+.editor-dot.is-close { --dot: #ff5f57; }
+.editor-dot.is-min { --dot: #febc2e; }
+.editor-dot.is-max { --dot: #28c840; }
+.editor-dot.is-close::after { content: '×'; }
+.editor-dot.is-min::after { content: '−'; }
+.editor-dot.is-max::after { content: '+'; }
+.stack-editor.is-maximized .editor-dot.is-max::after { content: '–'; }
+.editor-dots:hover .editor-dot::after,
+.editor-dot:focus-visible::after { opacity: 1; }
+.editor-dot:focus-visible { outline: 2px solid var(--on-surface); outline-offset: 2px; }
+
+/* Un onglet par catégorie ; la rangée défile si elle déborde. */
+.editor-tabs {
+    display: flex;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.editor-tabs::-webkit-scrollbar { display: none; }
 
 .editor-tab {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     gap: var(--space-sm);
     padding: 0 var(--space-md);
-    border-inline: 1px solid rgba(72, 72, 72, 0.6);
+    border: 0;
+    border-right: 1px solid rgba(72, 72, 72, 0.6);
+    background: none;
+    font: inherit;
+    font-size: var(--text-xs);
+    color: var(--outline);
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.editor-tab:first-child { border-left: 1px solid rgba(72, 72, 72, 0.6); }
+.editor-tab:hover { color: var(--on-surface-variant); background: rgba(255, 255, 255, 0.03); }
+.editor-tab:focus-visible { outline: 2px solid var(--on-surface); outline-offset: -2px; }
+
+.editor-tab[aria-selected="true"] {
     background: rgba(10, 10, 10, 0.9);
     box-shadow: inset 0 2px 0 var(--primary);
-    font-size: var(--text-xs);
     color: var(--on-surface);
 }
+
+/* Les fichiers occupent la même case : l'éditeur garde la hauteur du plus long. */
+.editor-panels { display: grid; }
+.editor-panels > .editor-code { grid-area: 1 / 1; visibility: hidden; }
+.editor-panels > .editor-code.is-active { visibility: visible; }
+
+/* ---- Plein écran, comme un projet agrandi ---- */
+html.editor-max main { z-index: 55; }
+html.editor-max :is(.chat-launcher, .chat-scrim, .chat-dock) { visibility: hidden; }
+
+.stack-editor.is-maximized {
+    position: fixed;
+    inset: clamp(10px, 3vw, 40px);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+    transform-origin: top left;
+}
+
+.stack-editor.is-maximized .editor-panels { flex: 1; min-height: 0; overflow-y: auto; }
+
 
 .editor-tab-lang {
     padding: 0 4px;

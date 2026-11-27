@@ -241,87 +241,14 @@ html:is(.nav-hidden, .showcase-open) #main-nav {
 
 main, #footer { position: relative; z-index: 2; }
 
-/* Curseur « neurone » (js/controllers/cursor.js) : seulement à la souris. */
-.has-neural-cursor,
-.has-neural-cursor * { cursor: none; }
-
-.has-neural-cursor :is(input, textarea, [contenteditable="true"]) { cursor: text; }
-
-.cursor-dot,
-.cursor-ring,
-.cursor-wave {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    pointer-events: none;
-    border-radius: 50%;
+/* Curseur façon macOS (css/cursors) : flèche partout, main sur ce qui se clique. */
+@media (pointer: fine) {
+    html { cursor: url('cursors/arrow.svg') 5 3, default; }
+    :is(a[href], button, label, select, summary, [role="button"], [role="tab"]):not(:disabled) {
+        cursor: url('cursors/hand.svg') 10 3, pointer !important;
+    }
+    :is(input, textarea, [contenteditable="true"]) { cursor: text; }
 }
-
-.cursor-dot {
-    width: 6px;
-    height: 6px;
-    margin: -3px 0 0 -3px;
-    background: var(--secondary);
-    box-shadow: 0 0 10px 1px rgba(189, 189, 189, 0.6);
-}
-
-/* L'élément ne fait que se déplacer (transform posé par cursor.js) ; le cercle
-   visible est son ::before. Un scale sur l'élément lui-même multiplierait
-   aussi sa translation : l'anneau partirait loin du curseur. */
-.cursor-ring {
-    width: 34px;
-    height: 34px;
-    margin: -17px 0 0 -17px;
-    transition: opacity 0.2s;
-}
-
-.cursor-ring::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1.5px solid rgba(242, 242, 242, 0.55);
-    transition: scale 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.25s ease,
-                background-color 0.25s ease,
-                box-shadow 0.25s ease;
-}
-
-/* Survol d'un élément cliquable : l'anneau s'éclaire, sans changer de taille. */
-.cursor-ring.is-hovering::before {
-    border-color: rgba(189, 189, 189, 0.95);
-    background-color: rgba(189, 189, 189, 0.12);
-    box-shadow: 0 0 14px rgba(189, 189, 189, 0.45);
-}
-
-/* Clic : l'anneau se resserre autour du point et s'illumine ; l'onde
-   (.cursor-wave) part du point de clic. */
-.cursor-ring.is-pressed::before {
-    scale: 0.6;
-    border-color: var(--secondary);
-    background-color: rgba(189, 189, 189, 0.25);
-    box-shadow: 0 0 18px rgba(189, 189, 189, 0.6);
-    transition-duration: 0.12s;
-}
-
-.cursor-wave {
-    width: 34px;
-    height: 34px;
-    margin: -17px 0 0 -17px;
-    border: 1.5px solid var(--secondary);
-    animation: cursor-wave 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes cursor-wave {
-    from { opacity: 0.8; scale: 0.4; }
-    to { opacity: 0; scale: 2.6; }
-}
-
-.cursor-hidden .cursor-dot,
-.cursor-hidden .cursor-ring,
-.cursor-typing .cursor-dot,
-.cursor-typing .cursor-ring { opacity: 0; }
 
 main { padding-top: var(--nav-height); }
 
@@ -593,3 +520,156 @@ html.intro-playing { overflow: hidden; }
 .intro.is-leaving .intro-skip { opacity: 0; transition: opacity 0.15s; }
 .intro-skip:hover,
 .intro-skip:focus-visible { color: var(--on-surface); border-color: var(--outline-variant); }
+
+/* ---------- Dock façon macOS (views/dock.js, controllers/dock.js) ----------
+   Les icônes grossissent sous la souris (--size posé par le contrôleur) et
+   débordent vers le haut ; le fond du Dock garde sa hauteur. */
+.dock {
+    --base: 48px;
+    position: fixed;
+    left: 50%;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: calc(var(--base) + 14px);
+    padding: 7px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background: rgba(40, 40, 44, 0.45);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    translate: -50% 0;
+    transition: translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Plein écran (vitrine des projets, éditeur agrandi) : le Dock s'efface vers le bas. */
+html:is(.showcase-open, .editor-max, .intro-pending) .dock { translate: -50% calc(100% + 20px); }
+
+.dock-apps,
+.dock-min {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dock-min li { display: flex; }
+
+.dock-sep {
+    align-self: stretch;
+    width: 1px;
+    margin: 2px 2px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Séparateur seulement s'il y a des fenêtres réduites. */
+.dock:not(:has(.dock-min li)) .dock-sep { display: none; }
+
+.dock-item {
+    --size: var(--base);
+    position: relative;
+    display: block;
+    width: var(--size);
+    height: var(--size);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    text-decoration: none;
+    transition: width 0.12s ease-out, height 0.12s ease-out;
+}
+
+.dock-icon {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 23%;
+    background: linear-gradient(180deg, var(--g1), var(--g2));
+    box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.25), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.dock-icon .icon { font-size: calc(var(--size) * 0.52); color: #fff; }
+.dock-item[data-app="stack"] .icon { color: #32d74b; }
+
+/* Vignette d'une fenêtre réduite : un éditeur miniature. */
+.dock-thumb {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dock-thumb-bar {
+    display: flex;
+    gap: 2px;
+    padding: 3px 4px;
+    background: #1a1b21;
+}
+
+.dock-thumb-bar i { width: 4px; height: 4px; border-radius: 50%; background: #ff5f57; }
+.dock-thumb-bar i:nth-child(2) { background: #febc2e; }
+.dock-thumb-bar i:nth-child(3) { background: #28c840; }
+
+.dock-thumb-lines {
+    flex: 1;
+    margin: 4px;
+    background: repeating-linear-gradient(180deg, rgba(189, 189, 189, 0.5) 0 2px, transparent 2px 6px);
+    mask: linear-gradient(90deg, #000 60%, transparent);
+}
+
+/* Nom de la section au survol, dans une bulle au-dessus de l'icône. */
+.dock-item::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 7px;
+    background: rgba(40, 40, 44, 0.92);
+    font: 500 12px/1.3 var(--font-mono);
+    color: #f2f2f2;
+    white-space: nowrap;
+    translate: -50% 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s, translate 0.15s;
+}
+
+.dock-item:hover::before,
+.dock-item:focus-visible::before { opacity: 1; translate: -50% 0; }
+
+.dock-item:focus-visible { outline: none; }
+.dock-item:focus-visible .dock-icon { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* Application ouverte : un point sous l'icône. */
+.dock-item.is-running::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Le bas de page ne passe pas sous le Dock. */
+#footer::after { content: ''; display: block; height: 80px; }
+
+@media (max-width: 640px) {
+    .dock { --base: 40px; gap: 6px; border-radius: 16px; }
+    .dock-apps, .dock-min { gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dock, .dock-item { transition: none; }
+}

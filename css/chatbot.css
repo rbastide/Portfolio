@@ -551,3 +551,8 @@
     .chat-launcher, .chat-dock, .chat-scrim { transition-duration: 0s; transition-delay: 0s; }
     .chat-launcher, .chat-dock { transform: none; }
 }
+
+/* Écran étroit : le lanceur passe au-dessus du Dock (css/layout.css) au lieu de le recouvrir. */
+@media (max-width: 900px) {
+    .chat-launcher { bottom: calc(max(10px, env(safe-area-inset-bottom)) + 76px); }
+}

@@ -27,6 +27,7 @@ export function initStackEditor() {
             t.tabIndex = i === j ? 0 : -1;
             panels[j].classList.toggle('is-active', i === j);
         });
+        app.querySelector('.editor-lang').textContent = tabs[i].dataset.lang;
         if (focus) tabs[i].focus();
         tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
         if (reduced) return;

@@ -12,6 +12,8 @@ const GROUP_KEYS = {
     'Langages': 'langages',
     'Front-end': 'front',
     'Back-end': 'back',
+    'Mobile': 'mobile',
+    'IA': 'ia',
     'Bases de données': 'données',
     'Système & DevOps': 'devops',
     'Tests & qualité': 'qualité',
@@ -22,6 +24,25 @@ const groupKey = group => GROUP_KEYS[group] || group.toLowerCase().replace(/[^\p
 
 // Ponctuation du code : visible, mais pas lue par les lecteurs d'écran.
 const punct = text => `<span class="tok-p" aria-hidden="true">${text}</span>`;
+
+const kw = text => `<span class="tok-kw">${text}</span>`;
+const v = text => `<span class="tok-var">${text}</span>`;
+
+// Chaque onglet est écrit dans un langage différent : ouverture, fin, commentaire,
+// séparateur (`last` pour le dernier élément), préfixe d'élément et guillemets (q).
+const TS = { ext: 'ts', name: 'TypeScript', badge: 'TS', color: '#4b9bf0', c: ['//'], open: k => `${kw('export const')} ${v(k)} ${punct('= [')}`, close: '];', sep: ',' };
+const LANGS = {
+    langages: TS,
+    front: { ext: 'jsonc', name: 'JSON with Comments', badge: '{}', color: '#cbcb41', c: ['//'], q: 'double', open: k => `${punct('{')} <span class="tok-key">"${k}"</span>${punct(': [')}`, close: ']}', sep: ',', last: '' },
+    back: { ext: 'java', name: 'Java', badge: 'JV', color: '#f89820', c: ['//'], q: 'double', open: k => `${kw('List')}${punct('&lt;')}${kw('String')}${punct('&gt;')} ${v(k)} ${punct('= List.of(')}`, close: ');', sep: ',', last: '' },
+    mobile: { ext: 'kt', name: 'Kotlin', badge: 'KT', color: '#b794ff', c: ['//'], q: 'double', open: k => `${kw('val')} ${v(k)} ${punct('= listOf(')}`, close: ')', sep: ',', last: '' },
+    ia: { ext: 'py', name: 'Python', badge: 'PY', color: '#ffd43b', c: ['#'], open: k => `${v(k)} ${punct('= [')}`, close: ']', sep: ',' },
+    données: { ext: 'sql', name: 'SQL', badge: 'SQL', color: '#e38c00', c: ['--'], open: () => `${kw('SELECT')} * ${kw('FROM')} ${v('stack')} ${kw('WHERE')} techno ${kw('IN')} ${punct('(')}`, close: ');', sep: ',', last: '' },
+    devops: { ext: 'yml', name: 'YAML', badge: 'YML', color: '#ff6b6b', c: ['#'], q: 'none', open: k => `<span class="tok-key">${k}</span>${punct(':')}`, close: '', pre: '- ' },
+    qualité: { ext: 'php', name: 'PHP', badge: 'PHP', color: '#a5a9e0', c: ['//'], open: k => `${v('$' + k)} ${punct('= [')}`, close: '];', sep: ',' },
+    méthodes: { ext: 'md', name: 'Markdown', badge: 'MD', color: '#6cc1e8', c: ['&lt;!--', ' --&gt;'], q: 'none', open: k => `${kw('##')} ${v(k)}`, close: '', pre: '- ' }
+};
+const langOf = key => LANGS[key] || TS;
 
 // Une techno de la stack est reliée aux projets si l'un de ses noms
 // (« Node.js / Express » → Node.js, Express) apparaît dans leurs technos.
@@ -40,18 +61,20 @@ function stackItemHTML(item, techCounts) {
         title="Voir ${count > 1 ? `les ${count} projets` : 'le projet'} en ${tech}">${item}<sup class="tok-count">${count}</sup></button>`;
 }
 
-// Un onglet = un groupe, ouvert comme un fichier <clé>.ts : une techno par ligne.
+// Un onglet = un groupe, ouvert comme un fichier <clé>.<ext> : une techno par ligne.
 function stackPanelHTML(s, i, techCounts) {
     const key = groupKey(s.group);
-    const last = s.items.length + 2;
+    const L = langOf(key);
+    const n = s.items.length;
+    const sep = j => j === n - 1 ? (L.last ?? L.sep ?? '') : (L.sep ?? '');
     return `
-                <div class="editor-code${i ? '' : ' is-active'}" role="tabpanel" id="stack-panel-${i}" aria-labelledby="stack-tab-${i}">
-                    <div class="code-line is-comment" aria-hidden="true" style="--i: 0">// ${s.items.length} technos · chiffre = projets qui l'utilisent, cliquez pour filtrer</div>
-                    <div class="code-line" aria-hidden="true" style="--i: 1"><span class="tok-kw">export const</span> <span class="tok-var">${key}</span> ${punct('= [')}</div>
+                <div class="editor-code${i ? '' : ' is-active'}" role="tabpanel" id="stack-panel-${i}" aria-labelledby="stack-tab-${i}"${L.q ? ` data-q="${L.q}"` : ''}>
+                    <div class="code-line is-comment" aria-hidden="true" style="--i: 0">${L.c[0]} ${n} technos · chiffre = projets qui l'utilisent, cliquez pour filtrer${L.c[1] || ''}</div>
+                    <div class="code-line" aria-hidden="true" style="--i: 1">${L.open(key)}</div>
                     <div role="list" aria-label="${s.group}">
-                        ${s.items.map((item, j) => `<div class="code-line is-group" role="listitem" style="--i: ${j + 2}">${stackItemHTML(item, techCounts)}${punct(',')}</div>`).join('')}
+                        ${s.items.map((item, j) => `<div class="code-line is-group" role="listitem" style="--i: ${j + 2}">${L.pre ? punct(L.pre) : ''}${stackItemHTML(item, techCounts)}${sep(j) && punct(sep(j))}</div>`).join('')}
                     </div>
-                    <div class="code-line" aria-hidden="true" style="--i: ${last}">${punct('];')}<span class="editor-caret"></span></div>
+                    <div class="code-line" aria-hidden="true" style="--i: ${n + 2}">${L.close && punct(L.close)}<span class="editor-caret"></span></div>
                 </div>`;
 }
 
@@ -67,13 +90,13 @@ function stackEditorHTML(stack, techCounts) {
                         <button type="button" class="editor-dot is-max" data-win="max" aria-label="Agrandir l'éditeur en plein écran" aria-pressed="false"></button>
                     </span>
                     <div class="editor-tabs" role="tablist" aria-label="Catégories de la stack">
-                        ${stack.map((g, i) => `<button type="button" class="editor-tab" role="tab" id="stack-tab-${i}" aria-controls="stack-panel-${i}" aria-selected="${i === 0}" tabindex="${i ? -1 : 0}"><span class="editor-tab-lang" aria-hidden="true">TS</span>${groupKey(g.group)}.ts</button>`).join('')}
+                        ${stack.map((g, i) => { const k = groupKey(g.group), L = langOf(k); return `<button type="button" class="editor-tab" role="tab" id="stack-tab-${i}" aria-controls="stack-panel-${i}" aria-selected="${i === 0}" tabindex="${i ? -1 : 0}" data-lang="${L.name}"><span class="editor-tab-lang" aria-hidden="true" style="background: ${L.color}">${L.badge}</span>${k}.${L.ext}</button>`; }).join('')}
                     </div>
                 </div>
                 <div class="editor-panels">${stack.map((g, i) => stackPanelHTML(g, i, techCounts)).join('')}</div>
                 <div class="editor-status" aria-hidden="true">
                     <span>${stack.length} groupes · ${total} technos</span>
-                    <span>TypeScript · UTF-8</span>
+                    <span><span class="editor-lang">${langOf(groupKey(stack[0].group)).name}</span> · UTF-8</span>
                 </div>
             </div>
             </div>`;

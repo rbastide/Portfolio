@@ -394,6 +394,12 @@ html.editor-max :is(.chat-launcher, .chat-scrim, .chat-dock) { visibility: hidde
     opacity: 0.7;
 }
 
+/* Guillemets selon le langage de l'onglet (views/skills.js). */
+.editor-code[data-q="double"] .tok-str::before,
+.editor-code[data-q="double"] .tok-str::after { content: '"' / ""; }
+.editor-code[data-q="none"] .tok-str::before,
+.editor-code[data-q="none"] .tok-str::after { content: none; }
+
 .tok-str::before { order: -1; }
 .tok-str::after { order: 1; }
 

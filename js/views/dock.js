@@ -5,11 +5,11 @@
 // stack : un point dessous quand elle est ouverte. À droite du séparateur, les
 // fenêtres réduites.
 const ITEMS = [
-    { id: 'story', label: 'Accueil', icon: 'home', g: ['#34c759', '#1f8a3b'] },
-    { id: 'projects', label: 'Projets', icon: 'folder_open', g: ['#ffd60a', '#ff9f0a'] },
-    { id: 'skills', label: 'Stack', icon: 'terminal', g: ['#3a3a3c', '#111113'], app: 'stack' },
-    { id: 'about', label: 'À propos', icon: 'person', g: ['#bf5af2', '#5e5ce6'] },
-    { id: 'contact', label: 'Contact', icon: 'mail', g: ['#5ac8fa', '#0a6cff'] }
+    { id: 'story', label: 'Accueil', icon: 'home' },
+    { id: 'projects', label: 'Projets', icon: 'folder_open' },
+    { id: 'skills', label: 'Stack', icon: 'terminal', app: 'stack' },
+    { id: 'about', label: 'À propos', icon: 'person' },
+    { id: 'contact', label: 'Contact', icon: 'mail' }
 ];
 
 export function dockHTML() {
@@ -18,7 +18,7 @@ export function dockHTML() {
         <ul class="dock-apps" role="list">
             ${ITEMS.map(i => `
             <li><a class="dock-item" href="#${i.id}" data-label="${i.label}"${i.app ? ` data-app="${i.app}"` : ''}>
-                <span class="dock-icon" style="--g1: ${i.g[0]}; --g2: ${i.g[1]}"><span class="icon" aria-hidden="true">${i.icon}</span></span>
+                <span class="dock-icon"><span class="icon" aria-hidden="true">${i.icon}</span></span>
                 <span class="sr-only">${i.label}</span>
             </a></li>`).join('')}
         </ul>

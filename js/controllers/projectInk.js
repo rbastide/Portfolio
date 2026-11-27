@@ -31,26 +31,25 @@ vec2 curl(vec2 p){
 const DRIFT = `
 precision highp float;
 uniform vec2 uRes;
-uniform float uTime;
+uniform float uTime, uPx;
 ${NOISE}
-float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 5; i++) { v += a * noise(p); p = p * 2.03 + 17.1; a *= .5; } return v; }
+// Chaque octave est tournée : la grille du bruit ne se voit plus (sinon, des blocs).
+float fbm(vec2 p){ float v = 0., a = .5; mat2 m = mat2(.8, .6, -.6, .8); for (int i = 0; i < 5; i++) { v += a * noise(p); p = m * p * 2.03 + 17.1; a *= .5; } return v; }
 void main(){
     vec2 uv = gl_FragCoord.xy / uRes;
     float t = uTime * .05;
     vec2 q = uv * vec2(uRes.x / uRes.y, 1.);
     vec2 w = vec2(fbm(q * 1.2 + t), fbm(q * 1.2 + 5.2 - t));
     vec2 qw = q + (w - .5) * 1.1 + vec2(t * .7, -t * .45);
-    float f1 = fbm(qw * 2.2 + vec2(0., uTime * .02));
-    float ridge = 1. - abs(fbm(qw * 4. + t) * 2. - 1.);
-    float ink = clamp(smoothstep(.28, .62, f1) * .42 + smoothstep(.55, .82, f1) * .38 + pow(ridge, 6.) * .32, 0., .9);
-    // une paillette par cellule au plus, seulement dans l'encre dense
-    vec2 gp = gl_FragCoord.xy / 2.6, c = floor(gp), f = fract(gp) - .5;
+    float ink = smoothstep(.38, .72, fbm(qw * 2.2 + vec2(0., uTime * .02)));
+    // une paillette ronde par cellule de 3 px CSS au plus, seulement dans l'encre
+    vec2 gp = gl_FragCoord.xy / (uPx * 3.), c = floor(gp), f = fract(gp) - .5;
     float r1 = h1(c), r2 = h1(c + 17.31), r3 = h1(c + 43.7), flake = 0.;
-    if (r1 < ink * .35)
-        flake = (1. - smoothstep(.1, .42, length(f - (vec2(r2, r3) - .5) * .4)))
-              * (.2 + .3 * r2 + pow(.5 + .5 * sin(uTime * (1.1 + r3 * 4.) + r1 * 90.), 12.));
-    float a = clamp(ink * .12 + flake * .3, 0., 1.);
-    gl_FragColor = vec4(vec3(.96, .9, .8) * a, a);
+    if (r1 < ink * .3)
+        flake = (1. - smoothstep(.12, .38, length(f - (vec2(r2, r3) - .5) * .3)))
+              * (.25 + .35 * r2 + 1.2 * pow(.5 + .5 * sin(uTime * (1.1 + r3 * 4.) + r1 * 90.), 12.));
+    float a = clamp(ink * .05 + flake * .35, 0., 1.);
+    gl_FragColor = vec4(vec3(.96, .88, .72) * a, a);
 }`;
 
 // ---------- Bassin du projet agrandi : simulation ----------
@@ -172,13 +171,15 @@ function initDrift(section, canvas, reduced) {
     gl.useProgram(prog.p);
     fullscreenTriangle(gl);
     const root = document.documentElement;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1);
+    // Pleine résolution : agrandies par le navigateur, les paillettes devenaient des carrés flous.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function draw(time) {
         fitCanvas(canvas, dpr);
         gl.viewport(0, 0, canvas.width, canvas.height);
         gl.uniform2f(prog.u.uRes, canvas.width, canvas.height);
         gl.uniform1f(prog.u.uTime, time);
+        gl.uniform1f(prog.u.uPx, dpr);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
